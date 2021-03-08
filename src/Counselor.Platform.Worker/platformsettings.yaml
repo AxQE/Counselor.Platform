@@ -1,0 +1,6 @@
+﻿Platform:
+Telegram:
+  IsEnabled: true
+Discord:
+  IsEnabled: false
+Cache:
