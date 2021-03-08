@@ -9,7 +9,7 @@ namespace Counselor.Platform.Worker.Systems.Discord
 {
 	class DiscordOutgoingService : IOutgoingService
 	{
-		public string SystemName => throw new NotImplementedException();
+		public string SystemName => "Discord";
 
 		public Task Send(IMessage message)
 		{

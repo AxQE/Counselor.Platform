@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Database
 {
-	public class ApplicationDbContext : DbContext, IApplicationDatabase
+	public partial class PlatformDbContext : DbContext, IPlatformDatabase
 	{
-		public ApplicationDbContext()
+		public DbSet<User> Users { get; set; }
+
+		public PlatformDbContext(DbContextOptions<PlatformDbContext> options) : base(options)
 		{
 			base.Database.EnsureCreated();
-		}
+		}		
 
 		public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 		{

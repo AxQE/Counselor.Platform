@@ -1,8 +1,8 @@
 ﻿namespace Counselor.Platform.Entities
 {
-	public class Transport : EntityBase
+	public class ErrorCode : EntityBase
 	{
 		public int Id { get; set; }
-		public string Name { get; set; }
+		public string Description { get; set; }
 	}
 }

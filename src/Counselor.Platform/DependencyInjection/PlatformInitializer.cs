@@ -16,7 +16,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddMemoryCache();
 			CreateConfigurations(services, hostContext);
 
-			services.AddDbContext<IApplicationDatabase, ApplicationDbContext>(options =>
+			services.AddDbContext<IPlatformDatabase, PlatformDbContext>(options =>
 				options.UseNpgsql(hostContext.Configuration.GetConnectionString("Platform:Database")).UseSnakeCaseNamingConvention());
 
 			services.AddSingleton<IOutgoingServicesPool, OutgoingServicePool>();

@@ -1,6 +1,8 @@
 ﻿Platform:
+  Database:
 Telegram:
   IsEnabled: true
+  Token:
 Discord:
   IsEnabled: false
 Cache:

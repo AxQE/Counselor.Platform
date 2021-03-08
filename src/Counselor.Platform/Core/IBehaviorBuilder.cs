@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Entities
+namespace Counselor.Platform.Core
 {
-	public class User : EntityBase
+	interface IBehaviorBuilder
 	{
-		public int Id { get; set; }
 	}
 }

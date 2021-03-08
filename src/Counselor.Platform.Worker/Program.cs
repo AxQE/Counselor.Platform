@@ -1,5 +1,5 @@
+using Counselor.Platform.Core;
 using Counselor.Platform.DependencyInjection;
-using Counselor.Platform.Options;
 using Counselor.Platform.Worker.Systems.Discord;
 using Counselor.Platform.Worker.Systems.Telegram;
 using Microsoft.Extensions.Configuration;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Counselor.Platform.Worker
-{
+{	
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -20,11 +20,16 @@ namespace Counselor.Platform.Worker
 				.ConfigureAppConfiguration((context, builder) =>
 				{
 					builder.AddYamlFile("platformsettings.yaml", optional: false, reloadOnChange: true);
+
+					if (context.HostingEnvironment.IsDevelopment())
+					{
+						builder.AddUserSecrets<Program>();
+					}
 				})
 				.ConfigureServices((hostContext, services) =>
 				{
 					CreateConfigurations(hostContext, services);
-
+					
 					RegistrateHostedServices(services);
 					RegistrateOutgoingServices(services);
 					RegistratePlatformServices(hostContext, services);
@@ -33,16 +38,18 @@ namespace Counselor.Platform.Worker
 		private static void RegistratePlatformServices(HostBuilderContext hostContext, IServiceCollection services)
 		{
 			services.AddSingleton<TelegramOutgoingService>();
+			services.AddSingleton<DiscordOutgoingService>();
+
 			var serviceProvider = services.BuildServiceProvider();
 
 			PlatformInitializer.Initialize(
 				services,
 				hostContext,
-				new[]
+				new IOutgoingService[]
 				{
-					serviceProvider.GetRequiredService<TelegramOutgoingService>()
-				}
-						);
+					serviceProvider.GetRequiredService<TelegramOutgoingService>(),
+					serviceProvider.GetRequiredService<DiscordOutgoingService>()
+				});
 		}
 
 		private static void RegistrateHostedServices(IServiceCollection services)

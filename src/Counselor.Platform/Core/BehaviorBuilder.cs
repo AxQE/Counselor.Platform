@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core
 {
-	interface IMessagePipeline
+	class BehaviorBuilder
 	{
 	}
 }

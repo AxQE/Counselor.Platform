@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Counselor.Platform.Core;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,11 +14,16 @@ namespace Counselor.Platform.Worker.Systems.Telegram
 		private readonly ILogger<TelegramWorker> _logger;
 		private readonly TelegramOptions _options;
 		private readonly TelegramBotClient _client;
+		private readonly IPipelineExecutor _pipelineExecutor;
 
-		public TelegramWorker(ILogger<TelegramWorker> logger, IOptions<TelegramOptions> options)
+		public TelegramWorker(
+			ILogger<TelegramWorker> logger, 
+			IOptions<TelegramOptions> options,
+			IPipelineExecutor pipelineExecutor)
 		{
 			_logger = logger;
 			_options = options.Value;
+			_pipelineExecutor = pipelineExecutor;
 
 			_client = new TelegramBotClient(_options.Token);
 			BotInitialize();
@@ -55,7 +61,7 @@ namespace Counselor.Platform.Worker.Systems.Telegram
 		{
 			if (!string.IsNullOrEmpty(e.Message.Text))
 			{
-
+				_pipelineExecutor.Run();
 			}			
 		}		
 	}
