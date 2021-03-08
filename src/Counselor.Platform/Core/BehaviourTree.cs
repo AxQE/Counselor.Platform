@@ -8,5 +8,12 @@ namespace Counselor.Platform.Core
 {
 	class BehaviourTree
 	{
+		private TreeNode Node { get; set; }
+
+		class TreeNode
+		{
+			public IBehavior Behavior { get; set; }
+			public HashSet<TreeNode> ChildNodes { get; set; }			
+		}
 	}
 }

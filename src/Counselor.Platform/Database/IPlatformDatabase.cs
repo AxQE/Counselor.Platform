@@ -9,8 +9,9 @@ namespace Counselor.Platform.Database
 	public interface IPlatformDatabase
 	{
 		public DbSet<User> Users { get; set; }
-
-		DatabaseFacade Database { get; }
+		public DbSet<Transport> Transports { get; set; }
+		public DbSet<UserTransport> UserTransports { get; set; }		
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+		int SaveChanges();
 	}
 }

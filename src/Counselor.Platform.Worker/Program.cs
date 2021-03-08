@@ -67,7 +67,7 @@ namespace Counselor.Platform.Worker
 		{
 			services.AddOptions();
 			services.Configure<TelegramOptions>(hostContext.Configuration.GetSection(TelegramOptions.SectionName));
-			services.Configure<DiscordOptions>(hostContext.Configuration.GetSection(DiscordOptions.SectionName));
+			services.Configure<DiscordOptions>(hostContext.Configuration.GetSection(DiscordOptions.SectionName));			
 		}
 	}
 }

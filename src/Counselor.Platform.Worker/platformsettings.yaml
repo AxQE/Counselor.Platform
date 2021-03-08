@@ -1,8 +1,14 @@
 ﻿Platform:
   Database:
+    Server: localhost
+    Port: 5432
+    UserId: counselor
+    Password: 
+    Database: counselor.platform
 Telegram:
   IsEnabled: true
   Token:
 Discord:
   IsEnabled: false
+  Token:
 Cache:

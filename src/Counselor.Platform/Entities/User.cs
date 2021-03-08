@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Counselor.Platform.Entities
+﻿namespace Counselor.Platform.Entities
 {
 	public class User : EntityBase
 	{
 		public int Id { get; set; }
+		public string Username { get; set; }
 	}
 }

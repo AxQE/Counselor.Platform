@@ -10,6 +10,8 @@ namespace Counselor.Platform.Database
 	public partial class PlatformDbContext : DbContext, IPlatformDatabase
 	{
 		public DbSet<User> Users { get; set; }
+		public DbSet<Transport> Transports { get; set; }
+		public DbSet<UserTransport> UserTransports { get; set; }
 
 		public PlatformDbContext(DbContextOptions<PlatformDbContext> options) : base(options)
 		{
@@ -17,6 +19,18 @@ namespace Counselor.Platform.Database
 		}		
 
 		public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+		{
+			SetModificationTime();
+			return await base.SaveChangesAsync(cancellationToken);
+		}
+
+		public override int SaveChanges()
+		{
+			SetModificationTime();
+			return base.SaveChanges();
+		}
+
+		private void SetModificationTime()
 		{
 			var entities = ChangeTracker
 				.Entries()
@@ -33,8 +47,6 @@ namespace Counselor.Platform.Database
 
 				entity.ModifiedOn = now;
 			}
-
-			return await base.SaveChangesAsync(cancellationToken);
 		}
 	}
 }

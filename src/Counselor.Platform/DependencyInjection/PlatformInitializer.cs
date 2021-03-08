@@ -15,12 +15,11 @@ namespace Counselor.Platform.DependencyInjection
 		{
 			services.AddMemoryCache();
 			CreateConfigurations(services, hostContext);
-
-			services.AddDbContext<IPlatformDatabase, PlatformDbContext>(options =>
-				options.UseNpgsql(hostContext.Configuration.GetConnectionString("Platform:Database")).UseSnakeCaseNamingConvention());
-
+			
 			services.AddSingleton<IOutgoingServicesPool, OutgoingServicePool>();
+			services.AddSingleton<IPipelineExecutor, PipelineExecutor>();
 
+			RegistrateDatabase(services, hostContext);
 			RegistratePoolServices(services, outgoingServices);
 		}
 
@@ -37,6 +36,19 @@ namespace Counselor.Platform.DependencyInjection
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)
 		{			
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
+			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));			
+		}
+
+		private static void RegistrateDatabase(IServiceCollection services, HostBuilderContext hostContext)
+		{
+			var dbOptions = new DatabaseOptions();
+			hostContext.Configuration.GetSection(DatabaseOptions.SectionName).Bind(dbOptions);
+
+			services.AddDbContext<IPlatformDatabase, PlatformDbContext>(options =>
+				options.UseNpgsql(dbOptions.BuildConnectionString()).UseSnakeCaseNamingConvention(),
+				ServiceLifetime.Transient,
+				ServiceLifetime.Transient
+				);
 		}
 	}
 }
