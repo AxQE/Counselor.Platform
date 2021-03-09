@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Core;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
+using Counselor.Platform.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,8 @@ namespace Counselor.Platform.DependencyInjection
 			
 			services.AddSingleton<IOutgoingServicesPool, OutgoingServicePool>();
 			services.AddSingleton<IPipelineExecutor, PipelineExecutor>();
+			services.AddSingleton<ConnectionsRepository>();
+			services.AddSingleton<DialogsRepository>();
 
 			RegistrateDatabase(services, hostContext);
 			RegistratePoolServices(services, outgoingServices);

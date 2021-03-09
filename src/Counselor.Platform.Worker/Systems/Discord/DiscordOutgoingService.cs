@@ -9,9 +9,9 @@ namespace Counselor.Platform.Worker.Systems.Discord
 {
 	class DiscordOutgoingService : IOutgoingService
 	{
-		public string SystemName => "Discord";
+		public string TransportSystemName => "Discord";
 
-		public Task Send(IMessage message)
+		public Task SendAsync(IMessage message, int userId)
 		{
 			throw new NotImplementedException();
 		}

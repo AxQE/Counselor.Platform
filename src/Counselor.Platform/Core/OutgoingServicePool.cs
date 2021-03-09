@@ -17,7 +17,7 @@ namespace Counselor.Platform.Core
 
 		public void Register(IOutgoingService outgoingService)
 		{
-			_outgoingServices.Add(outgoingService.SystemName, outgoingService);
+			_outgoingServices.Add(outgoingService.TransportSystemName, outgoingService);
 		}
 
 		public IOutgoingService Resolve(IMessage message)

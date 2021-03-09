@@ -4,7 +4,7 @@ namespace Counselor.Platform.Core
 {
 	public interface IOutgoingService
 	{
-		public string SystemName { get; }
-		Task Send(IMessage message);
+		public string TransportSystemName { get; }
+		Task SendAsync(IMessage message, int userId);
 	}
 }

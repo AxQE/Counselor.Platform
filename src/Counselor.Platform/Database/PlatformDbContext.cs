@@ -12,6 +12,9 @@ namespace Counselor.Platform.Database
 		public DbSet<User> Users { get; set; }
 		public DbSet<Transport> Transports { get; set; }
 		public DbSet<UserTransport> UserTransports { get; set; }
+		public DbSet<Dialog> Dialogs { get; set; }
+		public DbSet<Message> Messages { get; set; }
+		public DbSet<ErrorCode> ErrorCodes { get; set; }
 
 		public PlatformDbContext(DbContextOptions<PlatformDbContext> options) : base(options)
 		{

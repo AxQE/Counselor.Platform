@@ -15,7 +15,7 @@ namespace Counselor.Platform.Core
 			_logger = logger;
 		}
 
-		public async Task<PipelineResult> Run(IDialog dialog)
+		public async Task<PipelineResult> RunAsync(IDialog dialog)
 		{
 			var result = new PipelineResult();			
 

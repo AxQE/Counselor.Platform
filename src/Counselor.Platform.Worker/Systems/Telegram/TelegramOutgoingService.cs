@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Core;
+﻿using Counselor.Platform.Repositories;
+using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -7,22 +8,38 @@ using Telegram.Bot;
 
 namespace Counselor.Platform.Worker.Systems.Telegram
 {
-	class TelegramOutgoingService : IOutgoingService
+	class TelegramOutgoingService : OutgoingServiceBase
 	{
-		public string SystemName => "Telegram";
-		private readonly TelegramOptions _options;
-		private readonly TelegramBotClient _client;
+		protected override Func<string, string, Task> SendMessageToTransportAsync => SendAsync;
 
-		public TelegramOutgoingService(ILogger<TelegramWorker> logger, IOptions<TelegramOptions> options)
+		private readonly ILogger<TelegramOutgoingService> _logger;
+		private readonly TelegramOptions _options;
+		private readonly TelegramBotClient _client;		
+
+		public TelegramOutgoingService(
+			ILogger<TelegramOutgoingService> logger, 
+			IOptions<TelegramOptions> options,
+			ConnectionsRepository connections
+			)
+			: base(logger, options, connections)
 		{
-			_options = options.Value;
+			_logger = logger;
+			_options = options.Value;			
 
 			_client = new TelegramBotClient(_options.Token);
 		}
 
-		public async Task Send(IMessage message)
+		public async Task SendAsync(string connection, string message)
 		{
-			//_client.SendTextMessageAsync();
+			try
+			{				
+				await _client.SendTextMessageAsync(long.Parse(connection), message);
+			}
+			catch (Exception e)
+			{
+				_logger.LogError(e, "Error during send message to telegram.");
+				throw;
+			}
 		}
 	}
 }

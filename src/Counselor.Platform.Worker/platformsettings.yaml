@@ -12,3 +12,4 @@ Discord:
   IsEnabled: false
   Token:
 Cache:
+  UserDataLifetime: 90

@@ -4,6 +4,6 @@ namespace Counselor.Platform.Core
 {
 	public interface IPipelineExecutor
 	{
-		Task<PipelineResult> Run(IDialog dialog);
+		Task<PipelineResult> RunAsync(IDialog dialog);
 	}
 }
