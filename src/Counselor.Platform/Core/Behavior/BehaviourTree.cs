@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Core
+namespace Counselor.Platform.Core.Behavior
 {
 	class BehaviourTree
 	{

@@ -1,38 +1,28 @@
-﻿using Counselor.Platform.Core;
+﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Database;
-using Counselor.Platform.Entities;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
-using Chat = Telegram.Bot.Types.Chat;
 
-namespace Counselor.Platform.Worker.Systems.Telegram
+namespace Counselor.Platform.Worker.Transport.Telegram
 {
 	class TelegramWorker : IngoingServiceBase
 	{
-		private readonly Transport _transport;
 		private readonly ILogger<TelegramWorker> _logger;
 		private readonly TelegramOptions _options;
-		private readonly TelegramBotClient _client;				
-
-		protected override Action StartTransport => ExecuteTelegram;
+		private readonly TelegramBotClient _client;
 
 		public TelegramWorker(
 			ILogger<TelegramWorker> logger,
 			IOptions<TelegramOptions> options,
-			IPipelineExecutor pipelineExecutor,
-			//todo: нужно изменить работу с бд и освобождать после запроса, сервис живет постоянно и подключение будет слишком тяжелым при такой реализации
-			IPlatformDatabase database,
-			ConnectionsRepository connections,
-			DialogsRepository dialogs
-			) 
-			: base(logger, options, pipelineExecutor, database, connections, dialogs)
+			IServiceProvider serviceProvider
+			)
+			: base(logger, options, serviceProvider)
 		{
 			_logger = logger;
 			_options = options.Value;
@@ -40,11 +30,6 @@ namespace Counselor.Platform.Worker.Systems.Telegram
 			_client = new TelegramBotClient(_options.Token);
 			_client.OnMessage += OnMessageAsync;
 			_client.OnReceiveError += OnReceiveErrorAsync;
-		}
-
-		private void ExecuteTelegram()
-		{
-			_client.StartReceiving();
 		}
 
 		private async void OnReceiveErrorAsync(object sender, global::Telegram.Bot.Args.ReceiveErrorEventArgs e)
@@ -58,6 +43,11 @@ namespace Counselor.Platform.Worker.Systems.Telegram
 			{
 				await HandleMessageAsync(e.Message.Chat.Id.ToString(), e.Message.Chat.Username, e.Message.Text);
 			}
-		}		
+		}
+
+		protected override async Task StartTransportServiceAsync(CancellationToken cancellationToken)
+		{
+			_client.StartReceiving(cancellationToken: cancellationToken);
+		}
 	}
 }

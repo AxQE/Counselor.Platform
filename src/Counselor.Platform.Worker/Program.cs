@@ -1,13 +1,13 @@
-using Counselor.Platform.Core;
 using Counselor.Platform.DependencyInjection;
-using Counselor.Platform.Worker.Systems.Discord;
-using Counselor.Platform.Worker.Systems.Telegram;
+using Counselor.Platform.Services;
+using Counselor.Platform.Worker.Transport.Discord;
+using Counselor.Platform.Worker.Transport.Telegram;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Counselor.Platform.Worker
-{	
+{
 	public class Program
 	{
 		public static void Main(string[] args)
@@ -31,20 +31,18 @@ namespace Counselor.Platform.Worker
 					CreateConfigurations(hostContext, services);
 					
 					RegistrateHostedServices(services);
-					RegistrateOutgoingServices(services);
 					RegistratePlatformServices(hostContext, services);
 				});
 
 		private static void RegistratePlatformServices(HostBuilderContext hostContext, IServiceCollection services)
 		{
+			PlatformInitializer.Initialize(services, hostContext);
+
 			services.AddSingleton<TelegramOutgoingService>();
 			services.AddSingleton<DiscordOutgoingService>();
 
-			var serviceProvider = services.BuildServiceProvider();
-
-			PlatformInitializer.Initialize(
-				services,
-				hostContext,
+			var serviceProvider = services.BuildServiceProvider();			
+			PlatformInitializer.RegistratePoolServices(services,
 				new IOutgoingService[]
 				{
 					serviceProvider.GetRequiredService<TelegramOutgoingService>(),
@@ -56,11 +54,6 @@ namespace Counselor.Platform.Worker
 		{
 			services.AddHostedService<TelegramWorker>();
 			services.AddHostedService<DiscordWorker>();
-		}
-
-		private static void RegistrateOutgoingServices(IServiceCollection services)
-		{
-			services.BuildServiceProvider();
 		}
 
 		private static void CreateConfigurations(HostBuilderContext hostContext, IServiceCollection services)

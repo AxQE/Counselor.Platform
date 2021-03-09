@@ -1,1 +1,26 @@
-﻿
+﻿IsActive: true
+Name: Sample
+Steps:
+  - Name: Greeting
+    Parent: None
+    When: Always    
+    Message: "Hello, {username}!"
+
+  - Name: Child1
+    Parent: Greeting
+    When: Always
+    Message: Child1
+    Command:    
+
+  - Name: Child2
+    Parent: Greeting
+    When: Always
+    Message: Child2
+    Command:     
+    IsActive: false
+
+  - Name: Child3
+    Parent: Greeting
+    When: Always
+    Message: Child3
+    Command:    

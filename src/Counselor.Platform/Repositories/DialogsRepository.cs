@@ -1,5 +1,4 @@
-﻿using Counselor.Platform.Core;
-using Counselor.Platform.Database;
+﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using System;
 using System.Collections.Concurrent;
@@ -10,15 +9,13 @@ namespace Counselor.Platform.Repositories
 {
 	public class DialogsRepository
 	{
-		private readonly IPlatformDatabase _database;
-		private readonly ConcurrentDictionary<int, IDialog> _dialogs = new ConcurrentDictionary<int, IDialog>();
+		private readonly ConcurrentDictionary<int, Dialog> _dialogs = new ConcurrentDictionary<int, Dialog>();
 
-		public DialogsRepository(IPlatformDatabase database)
+		public DialogsRepository()
 		{
-			_database = database;
 		}
 
-		public async Task<IDialog> GetDialogAsync(User user, string payload)
+		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload)
 		{
 			if (!_dialogs.TryGetValue(user.Id, out var dialog))
 			{				
@@ -39,7 +36,7 @@ namespace Counselor.Platform.Repositories
 				_dialogs.TryAdd(user.Id, dialog);
 
 				//todo: нужна логика поиска диалога, пока что в случае если текущий диалог не будет найден в репо, то будет создан новый
-				await _database.Dialogs.AddAsync(dialog as Dialog);				
+				await dbContext.Dialogs.AddAsync(dialog);
 			}
 			else
 			{
@@ -50,10 +47,10 @@ namespace Counselor.Platform.Repositories
 						Payload = payload
 					});
 
-				_database.Dialogs.Update(dialog as Dialog);
+				dbContext.Dialogs.Update(dialog);
 			}
 
-			await _database.SaveChangesAsync();
+			await dbContext.SaveChangesAsync();
 
 			return dialog;
 		}

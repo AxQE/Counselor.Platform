@@ -28,6 +28,7 @@ namespace Counselor.Platform.Repositories
 			if (!_connections.TryGetValue(key, out var connectionId))
 			{
 				var userTransport = await _database.UserTransports
+							.AsNoTracking()
 							.Include(x => x.Transport)
 							.FirstOrDefaultAsync(y => y.Transport.Name.Equals(transport));
 

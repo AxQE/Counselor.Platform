@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Counselor.Platform.Entities;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Counselor.Platform.Core
+namespace Counselor.Platform.Services
 {
-	class OutgoingServicePool : IOutgoingServicesPool
+	class OutgoingServicePool : IOutgoingServicePool
 	{
 		private readonly Dictionary<string, IOutgoingService> _outgoingServices;
 
@@ -20,7 +18,7 @@ namespace Counselor.Platform.Core
 			_outgoingServices.Add(outgoingService.TransportSystemName, outgoingService);
 		}
 
-		public IOutgoingService Resolve(IMessage message)
+		public IOutgoingService Resolve(Message message)
 		{			
 			throw new NotImplementedException();
 		}

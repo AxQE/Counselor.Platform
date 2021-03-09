@@ -1,13 +1,13 @@
-﻿using Counselor.Platform.Core;
+﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using Counselor.Platform.Options;
-using Counselor.Platform.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,46 +15,39 @@ using System.Threading.Tasks;
 namespace Counselor.Platform.Services
 {
 	public abstract class IngoingServiceBase : BackgroundService
-	{
-		private readonly Transport _transport;
+	{		
 		private readonly ILogger<IngoingServiceBase> _logger;
 		private readonly TransportOptions _options;
-		private readonly IPipelineExecutor _pipelineExecutor;
-		private readonly IPlatformDatabase _database;
-		private readonly ConnectionsRepository _connections;
-		private readonly DialogsRepository _dialogs;
+		private readonly IServiceProvider _serviceProvider;
 
-		protected abstract Action StartTransport { get; }
-
+		//todo: нужно время жизни
+		private readonly ConcurrentDictionary<string, IPipelineExecutor> _executors = new ConcurrentDictionary<string, IPipelineExecutor>();		
 
 		public IngoingServiceBase(
 			ILogger<IngoingServiceBase> logger,
 			IOptions<TransportOptions> options,
-			IPipelineExecutor pipelineExecutor,
-			IPlatformDatabase database,
-			ConnectionsRepository connections,
-			DialogsRepository dialogs
+			IServiceProvider serviceProvider			
 			)
 		{
 			_logger = logger;
 			_options = options.Value;
-			_pipelineExecutor = pipelineExecutor;
-			_database = database;
-			_connections = connections;
-			_dialogs = dialogs;
+			_serviceProvider = serviceProvider;
 
-			_transport = _database.Transports.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName));
+			var database = _serviceProvider.GetRequiredService<IPlatformDatabase>();
+			var transport = database.Transports.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName));
 
-			if (_transport is null)
+			if (transport is null)
 			{
-				_transport = new Transport
+				transport = new Transport
 				{
 					Name = _options.TransportSystemName
 				};
 
-				_database.SaveChanges();
+				database.SaveChanges();
 			}
 		}
+
+		protected abstract Task StartTransportServiceAsync(CancellationToken cancellationToken);
 
 		protected override sealed async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
@@ -65,7 +58,7 @@ namespace Counselor.Platform.Services
 					_logger.LogInformation($"{_options.TransportSystemName} service worker is starting.");
 					while (!stoppingToken.IsCancellationRequested)
 					{
-						StartTransport();
+						await StartTransportServiceAsync(stoppingToken);
 						await Task.Delay(Timeout.Infinite, stoppingToken);
 					}
 				}
@@ -84,49 +77,20 @@ namespace Counselor.Platform.Services
 		{
 			try
 			{
-				await _pipelineExecutor.RunAsync(await FindOrCreateDialogAsync(connectionId, username, payload));
+				_logger.LogDebug($"Incoming message. Transport: {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
+
+				if (!_executors.TryGetValue(connectionId, out var pipelineExecutor))
+				{
+					pipelineExecutor = _serviceProvider.GetRequiredService<IPipelineExecutor>();
+					_executors.TryAdd(connectionId, pipelineExecutor);
+				}
+				
+				await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName);
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Pipeline failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 			}
-		}
-
-		protected virtual async Task<User> FindOrCreateUserAsync(string connectionId, string username)
-		{
-			//todo: хранить пользователя в кэше
-
-			var user =
-				(await _database.UserTransports
-					.Include(x => x.User)
-					.FirstOrDefaultAsync(x => x.Transport.Id == _transport.Id))?.User;
-
-			if (user is null)
-			{
-				_database.UserTransports.Add(
-					new UserTransport
-					{
-						Transport = _transport,
-						User = new User
-						{
-							Username = username
-						},
-						TransportUserId = connectionId
-					});
-				
-				await _database.SaveChangesAsync();
-				_logger.LogInformation($"New user just created. Username: {username}. Transport: {_options.TransportSystemName}.");
-			}
-
-			_connections.AddConnection(user.Id, _options.TransportSystemName, connectionId);
-
-			return user;
-		}
-
-		protected virtual async Task<IDialog> FindOrCreateDialogAsync(string connectionId, string username, string payload)
-		{
-			var user = await FindOrCreateUserAsync(connectionId, username);
-			return await _dialogs.GetDialogAsync(user, payload);			
 		}
 	}
 }

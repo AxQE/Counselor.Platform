@@ -1,7 +1,8 @@
-﻿using Counselor.Platform.Core;
+﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
+using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,23 +13,23 @@ namespace Counselor.Platform.DependencyInjection
 {
 	public static class PlatformInitializer
 	{
-		public static void Initialize(IServiceCollection services, HostBuilderContext hostContext, IReadOnlyCollection<IOutgoingService> outgoingServices)
+		public static void Initialize(IServiceCollection services, HostBuilderContext hostContext)
 		{
 			services.AddMemoryCache();
 			CreateConfigurations(services, hostContext);
-			
-			services.AddSingleton<IOutgoingServicesPool, OutgoingServicePool>();
-			services.AddSingleton<IPipelineExecutor, PipelineExecutor>();
+
+			services.AddSingleton<IOutgoingServicePool, OutgoingServicePool>();			
 			services.AddSingleton<ConnectionsRepository>();
 			services.AddSingleton<DialogsRepository>();
 
+			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
+
 			RegistrateDatabase(services, hostContext);
-			RegistratePoolServices(services, outgoingServices);
 		}
 
-		private static void RegistratePoolServices(IServiceCollection services, IReadOnlyCollection<IOutgoingService> outgoingServices)
+		public static void RegistratePoolServices(IServiceCollection services, IReadOnlyCollection<IOutgoingService> outgoingServices)
 		{
-			var pool = services.BuildServiceProvider().GetRequiredService<IOutgoingServicesPool>();
+			var pool = services.BuildServiceProvider().GetRequiredService<IOutgoingServicePool>();
 
 			foreach (var outgoingService in outgoingServices)
 			{
@@ -37,9 +38,10 @@ namespace Counselor.Platform.DependencyInjection
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)
-		{			
+		{
+			services.AddOptions();
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
-			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));			
+			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
 		}
 
 		private static void RegistrateDatabase(IServiceCollection services, HostBuilderContext hostContext)

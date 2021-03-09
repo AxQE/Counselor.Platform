@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Core;
+﻿using Counselor.Platform.Entities;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
 using Microsoft.Extensions.Logging;
@@ -13,8 +13,7 @@ namespace Counselor.Platform.Services
 		public string TransportSystemName => _options.TransportSystemName;
 		private readonly ILogger<OutgoingServiceBase> _logger;
 		private readonly TransportOptions _options;
-		private readonly ConnectionsRepository _connections;
-		protected abstract Func<string, string, Task> SendMessageToTransportAsync { get; }
+		private readonly ConnectionsRepository _connections;	
 
 		public OutgoingServiceBase(
 			ILogger<OutgoingServiceBase> logger, 
@@ -26,7 +25,9 @@ namespace Counselor.Platform.Services
 			_connections = connections;
 		}
 
-		public async Task SendAsync(IMessage message, int userId)
+		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload);
+
+		public async Task SendAsync(Message message, int userId)
 		{
 			try
 			{

@@ -6,12 +6,10 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Bot;
 
-namespace Counselor.Platform.Worker.Systems.Telegram
+namespace Counselor.Platform.Worker.Transport.Telegram
 {
 	class TelegramOutgoingService : OutgoingServiceBase
 	{
-		protected override Func<string, string, Task> SendMessageToTransportAsync => SendAsync;
-
 		private readonly ILogger<TelegramOutgoingService> _logger;
 		private readonly TelegramOptions _options;
 		private readonly TelegramBotClient _client;		
@@ -29,11 +27,11 @@ namespace Counselor.Platform.Worker.Systems.Telegram
 			_client = new TelegramBotClient(_options.Token);
 		}
 
-		public async Task SendAsync(string connection, string message)
+		protected override async Task SendMessageToTransportAsync(string connectionId, string message)
 		{
 			try
 			{				
-				await _client.SendTextMessageAsync(long.Parse(connection), message);
+				await _client.SendTextMessageAsync(long.Parse(connectionId), message);
 			}
 			catch (Exception e)
 			{

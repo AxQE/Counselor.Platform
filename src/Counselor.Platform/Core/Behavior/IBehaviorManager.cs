@@ -1,4 +1,4 @@
-﻿namespace Counselor.Platform.Core
+﻿namespace Counselor.Platform.Core.Behavior
 {
 	interface IBehaviorManager
 	{
