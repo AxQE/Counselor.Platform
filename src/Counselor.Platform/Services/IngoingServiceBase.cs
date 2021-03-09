@@ -8,7 +8,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,7 +84,7 @@ namespace Counselor.Platform.Services
 		{
 			try
 			{
-				await _pipelineExecutor.RunAsync(await GetOrCreateDialogAsync(connectionId, username, payload));
+				await _pipelineExecutor.RunAsync(await FindOrCreateDialogAsync(connectionId, username, payload));
 			}
 			catch (Exception ex)
 			{
@@ -114,8 +113,9 @@ namespace Counselor.Platform.Services
 						},
 						TransportUserId = connectionId
 					});
-
+				
 				await _database.SaveChangesAsync();
+				_logger.LogInformation($"New user just created. Username: {username}. Transport: {_options.TransportSystemName}.");
 			}
 
 			_connections.AddConnection(user.Id, _options.TransportSystemName, connectionId);
@@ -123,36 +123,10 @@ namespace Counselor.Platform.Services
 			return user;
 		}
 
-		protected virtual async Task<IDialog> GetOrCreateDialogAsync(string connectionId, string username, string payload)
+		protected virtual async Task<IDialog> FindOrCreateDialogAsync(string connectionId, string username, string payload)
 		{
 			var user = await FindOrCreateUserAsync(connectionId, username);
-
-			var dialog = _dialogs.GetDialog(user.Id) as Dialog;
-
-			if (dialog == null)
-			{
-				dialog = new Dialog
-				{
-					Id = new Guid(),
-					User = user,
-					Messages = new List<Message>
-					{
-						new Message
-						{
-							Id = new Guid(),
-							Payload = payload
-						}
-					}
-				};
-
-				//todo: нужна логика поиска диалога, пока что в случае если текущий диалог не будет найден в репо, то будет создан новый
-				await _database.Dialogs.AddAsync(dialog);
-				await _database.SaveChangesAsync();
-			}
-
-			_dialogs.AddDialog(user.Id, dialog);
-
-			return dialog;
+			return await _dialogs.GetDialogAsync(user, payload);			
 		}
 	}
 }

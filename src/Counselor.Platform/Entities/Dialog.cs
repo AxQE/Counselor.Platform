@@ -8,8 +8,8 @@ namespace Counselor.Platform.Entities
 	{
 		public Guid Id { get; set; }
 		public User User { get; set; }
-		public IEnumerable<Message> Messages { get; set; }
+		public List<Message> Messages { get; set; }
 		public int UserId { get => User.Id; }
-		IEnumerable<IMessage> IDialog.Messages => Messages;
+		List<IMessage> IDialog.Messages { get; }
 	}
 }

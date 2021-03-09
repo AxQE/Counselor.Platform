@@ -7,6 +7,6 @@ namespace Counselor.Platform.Core
 	{
 		public Guid Id { get; set; }
 		public int UserId { get; }
-		public IEnumerable<IMessage> Messages { get; }
+		public List<IMessage> Messages { get; }
 	}
 }
