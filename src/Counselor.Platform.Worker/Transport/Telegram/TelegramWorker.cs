@@ -1,7 +1,4 @@
-﻿using Counselor.Platform.Core.Pipeline;
-using Counselor.Platform.Database;
-using Counselor.Platform.Repositories;
-using Counselor.Platform.Services;
+﻿using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
