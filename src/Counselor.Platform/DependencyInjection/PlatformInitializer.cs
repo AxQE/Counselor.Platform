@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
 
 namespace Counselor.Platform.DependencyInjection
 {
@@ -25,16 +24,6 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
 
 			RegistrateDatabase(services, hostContext);
-		}
-
-		public static void RegistratePoolServices(IServiceCollection services, IReadOnlyCollection<IOutgoingService> outgoingServices)
-		{
-			var pool = services.BuildServiceProvider().GetRequiredService<IOutgoingServicePool>();
-
-			foreach (var outgoingService in outgoingServices)
-			{
-				pool.Register(outgoingService);
-			}
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)

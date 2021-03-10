@@ -1,31 +1,42 @@
-﻿using Counselor.Platform.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace Counselor.Platform.Services
 {
-	internal class OutgoingServicePool : IOutgoingServicePool
+	class OutgoingServicePool : IOutgoingServicePool
 	{
-		private readonly Dictionary<string, IOutgoingService> _outgoingServices;
+		private readonly IServiceProvider _serviceProvider;
 
-		public OutgoingServicePool()
+		private readonly ConcurrentDictionary<string, IOutgoingService> _outgoingServices = new ConcurrentDictionary<string, IOutgoingService>();
+
+		public OutgoingServicePool(IServiceProvider serviceProvider)
 		{
-			_outgoingServices = new Dictionary<string, IOutgoingService>();
-		}
+			_serviceProvider = serviceProvider;
 
-		public void Register(IOutgoingService outgoingService)
-		{
-			_outgoingServices.Add(outgoingService.TransportSystemName, outgoingService);
-		}
+			var services = from assembly in AppDomain.CurrentDomain.GetAssemblies()
+						   from assemblyType in assembly.GetTypes()
+						   where
+							   typeof(IOutgoingService).IsAssignableFrom(assemblyType)
+							   && !assemblyType.IsAbstract
+							   && !assemblyType.IsInterface
+						   select assemblyType;
 
-		public IOutgoingService Resolve(Message message)
-		{			
-			throw new NotImplementedException();
+			foreach (var service in services)
+			{
+				var concreteService = _serviceProvider.GetService(service) as IOutgoingService;
+				_outgoingServices.TryAdd(concreteService.TransportSystemName, concreteService);
+			}
 		}
 
 		public IOutgoingService Resolve(string transport)
 		{
-			return _outgoingServices[transport];
+			if (!_outgoingServices.TryGetValue(transport, out var service))
+			{
+				throw new ArgumentOutOfRangeException(nameof(transport), $"Service for {transport} not found in outgoing service pool.");
+			}
+
+			return service;
 		}
 	}
 }

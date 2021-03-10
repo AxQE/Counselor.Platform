@@ -1,4 +1,5 @@
 ﻿using Counselor.Platform.Entities;
+using System;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Services
