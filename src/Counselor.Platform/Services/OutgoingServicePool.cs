@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Counselor.Platform.Services
 {
-	class OutgoingServicePool : IOutgoingServicePool
+	internal class OutgoingServicePool : IOutgoingServicePool
 	{
 		private readonly Dictionary<string, IOutgoingService> _outgoingServices;
 
@@ -21,6 +21,11 @@ namespace Counselor.Platform.Services
 		public IOutgoingService Resolve(Message message)
 		{			
 			throw new NotImplementedException();
+		}
+
+		public IOutgoingService Resolve(string transport)
+		{
+			return _outgoingServices[transport];
 		}
 	}
 }

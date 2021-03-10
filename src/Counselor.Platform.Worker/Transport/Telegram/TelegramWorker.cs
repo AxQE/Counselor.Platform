@@ -46,5 +46,10 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 		{
 			_client.StartReceiving(cancellationToken: cancellationToken);
 		}
+
+		protected override async Task SendMessageToTransportAsync(string connectionId, string payload, CancellationToken cancellationToken = default)
+		{
+			await _client.SendTextMessageAsync(long.Parse(connectionId), payload, cancellationToken: cancellationToken);
+		}
 	}
 }

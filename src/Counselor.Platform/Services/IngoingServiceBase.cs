@@ -43,11 +43,15 @@ namespace Counselor.Platform.Services
 					Name = _options.TransportSystemName
 				};
 
+				database.Transports.Add(transport);
 				database.SaveChanges();
 			}
 		}
 
 		protected abstract Task StartTransportServiceAsync(CancellationToken cancellationToken);
+
+		//todo: нужно посмотреть насколько этот метод вообще нужен, можно заинжектить outgoingservice и слать сообщения через него
+		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload, CancellationToken cancellationToken = default);
 
 		protected override sealed async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
@@ -85,12 +89,24 @@ namespace Counselor.Platform.Services
 					_executors.TryAdd(connectionId, pipelineExecutor);
 				}
 				
-				await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName);
+				var result = await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName);
+
+				if (_options.SendErrorReport && !result.SuccessfullyCompleted)
+				{
+					//todo: добавить подробности ошибки (они лежат в результате), возможно делить ошибки на классы и те которые потенциально могут быть исправлены пользователем репортить
+					await SendMessageToTransportAsync(connectionId, "Во время обработки сообщения произошла ошибка. Обратитесь к системному администратору.");
+				}
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Pipeline failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 			}
+		}
+
+		class ExecutorMeta
+		{
+			public IPipelineExecutor Executor { get; set; }
+			public DateTime CreatedOn { get; set; }
 		}
 	}
 }

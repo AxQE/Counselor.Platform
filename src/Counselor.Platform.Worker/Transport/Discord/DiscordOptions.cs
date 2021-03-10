@@ -6,6 +6,7 @@ namespace Counselor.Platform.Worker.Transport.Discord
 	{
 		public const string SectionName = "Discord";
 		public override bool IsEnabled { get; set; }
-		public override string TransportSystemName => SectionName;
+		public override bool SendErrorReport { get; set; }
+		public override string TransportSystemName => SectionName;		
 	}
 }

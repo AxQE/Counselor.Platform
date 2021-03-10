@@ -8,8 +8,10 @@
 Telegram:
   IsEnabled: true
   Token:
+  SendErrorReport: false
 Discord:
   IsEnabled: false
   Token:
+  SendErrorReport: false
 Cache:
   UserDataLifetime: 90

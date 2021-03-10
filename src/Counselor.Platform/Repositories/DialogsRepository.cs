@@ -54,5 +54,22 @@ namespace Counselor.Platform.Repositories
 
 			return dialog;
 		}
+
+		public async Task<Message> CreateDialogMessage(IPlatformDatabase dbContext, Dialog dialog, string payload)
+		{
+			var message =
+				new Message
+				{
+					Id = new Guid(),
+					Payload = payload
+				};
+
+			dialog.Messages.Add(message);
+
+			dbContext.Dialogs.Update(dialog);
+			await dbContext.SaveChangesAsync();
+
+			return message;
+		}
 	}
 }

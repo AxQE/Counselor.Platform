@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using Counselor.Platform.Repositories;
+using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,13 +10,14 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Pipeline
 {
-	public class PipelineExecutor : IPipelineExecutor
+	internal class PipelineExecutor : IPipelineExecutor
 	{
 		private readonly SortedSet<IPipelineStep> _processingSteps = new SortedSet<IPipelineStep>();
 		private readonly ILogger<PipelineExecutor> _logger;
 		private readonly IPlatformDatabase _database;
-		private readonly ConnectionsRepository _connections;
-		private readonly DialogsRepository _dialogs;
+		private readonly IOutgoingServicePool _outgoingServicePool;
+		private readonly ConnectionsRepository _connectionsRepository;
+		private readonly DialogsRepository _dialogsRepository;
 
 		private Transport _transport;
 		private Dialog _dialog;
@@ -24,14 +26,16 @@ namespace Counselor.Platform.Core.Pipeline
 		public PipelineExecutor(
 			ILogger<PipelineExecutor> logger,
 			IPlatformDatabase database,
-			ConnectionsRepository connections,
-			DialogsRepository dialogs
+			IOutgoingServicePool outgoingServicePool,
+			ConnectionsRepository connectionsRepository,
+			DialogsRepository dialogsRepository
 			)
 		{
 			_logger = logger;
 			_database = database;
-			_connections = connections;
-			_dialogs = dialogs;
+			_outgoingServicePool = outgoingServicePool;
+			_connectionsRepository = connectionsRepository;
+			_dialogsRepository = dialogsRepository;
 		}
 
 		public async Task<PipelineResult> RunAsync(string connectionId, string username, string payload, string transport)
@@ -50,11 +54,11 @@ namespace Counselor.Platform.Core.Pipeline
 					_user = await FindOrCreateUserAsync(connectionId, username);
 				}
 
-				_dialog = await _dialogs.CreateOrUpdateDialogAsync(_database, _user, payload);
+				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload);
 
 				foreach (var step in _processingSteps)
 				{
-					await step.ExecuteAsync(_dialog);
+					await step.ExecuteAsync(_database, _outgoingServicePool.Resolve(transport), _dialog, transport);
 				}				
 			}
 			catch (Exception ex)
@@ -87,12 +91,14 @@ namespace Counselor.Platform.Core.Pipeline
 						User = user,
 						TransportUserId = connectionId
 					});
-
-				await _database.SaveChangesAsync();
+				
 				_logger.LogInformation($"New user just created. Username: {username}. Transport: {_transport.Name}.");
 			}
 
-			_connections.AddConnection(user.Id, _transport.Name, connectionId);
+			user.LastActivity = DateTime.Now;
+			await _database.SaveChangesAsync();
+
+			_connectionsRepository.AddConnection(user.Id, _transport.Name, connectionId);
 
 			return user;
 		}

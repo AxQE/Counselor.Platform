@@ -21,7 +21,12 @@ namespace Counselor.Platform.Worker.Transport.Discord
 		{
 			_logger = logger;
 			_options = options.Value;
-		}		
+		}
+
+		protected override Task SendMessageToTransportAsync(string connectionId, string payload, CancellationToken cancellationToken = default)
+		{
+			throw new NotImplementedException();
+		}
 
 		protected override Task StartTransportServiceAsync(CancellationToken cancellationToken)
 		{
