@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Counselor.Platform.Entities.Enums;
 
 namespace Counselor.Platform.Entities
 {
 	public class Message : EntityBase
 	{
-		public Guid Id { get; set; }
 		public string Payload { get; set; }
+		public MessageDirection Direction { get; set; }
 	}
 }

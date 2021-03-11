@@ -1,5 +1,4 @@
-﻿using Counselor.Platform.Entities;
-using Counselor.Platform.Options;
+﻿using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -27,18 +26,18 @@ namespace Counselor.Platform.Services
 
 		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload);
 
-		public async Task SendAsync(Message message, int userId)
+		public async Task SendAsync(string payload, int userId)
 		{
 			try
 			{
-				_logger.LogDebug($"Send message to {TransportSystemName}. Message: {message.Payload}. User: {userId}.");
+				_logger.LogDebug($"Send message to {TransportSystemName}. Message: {payload}. User: {userId}.");
 
 				var connectionId = await _connections.GetConnectionIdAsync(userId, TransportSystemName);
-				await SendMessageToTransportAsync(connectionId, message.Payload);
+				await SendMessageToTransportAsync(connectionId, payload);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Send message to {TransportSystemName} failed. Message: {message.Payload}. User: {userId}.");
+				_logger.LogError(ex, $"Send message to {TransportSystemName} failed. Message: {payload}. User: {userId}.");
 			}
 		}
 	}

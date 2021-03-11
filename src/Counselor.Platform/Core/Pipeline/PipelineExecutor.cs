@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
+using Counselor.Platform.Entities.Enums;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
@@ -54,7 +55,7 @@ namespace Counselor.Platform.Core.Pipeline
 					_user = await FindOrCreateUserAsync(connectionId, username);
 				}
 
-				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload);
+				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload, MessageDirection.In);
 
 				foreach (var step in _processingSteps)
 				{

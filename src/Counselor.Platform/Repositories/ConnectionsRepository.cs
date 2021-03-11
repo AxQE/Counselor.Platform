@@ -43,6 +43,7 @@ namespace Counselor.Platform.Repositories
 			return connectionId;
 		}
 
+		//todo: репо соединений не согласован с репо диалогов, соединения учитывают транспорт, диалоги не учитывают и предполагают что общение возможно только по одному транспорту
 		private string CreateKey(int userId, string transport)
 		{
 			return $"{transport}_{userId}";

@@ -2,6 +2,7 @@
 using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using Counselor.Platform.Options;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -34,7 +35,10 @@ namespace Counselor.Platform.Services
 			_serviceProvider = serviceProvider;
 
 			var database = _serviceProvider.GetRequiredService<IPlatformDatabase>();
-			var transport = database.Transports.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName));
+			var transport = database
+				.Transports
+				.AsNoTracking()
+				.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName));
 
 			if (transport is null)
 			{

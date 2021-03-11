@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Factories\" />
     <Folder Include="Commands\" />
+    <Folder Include="Factories\" />
     <Folder Include="Utils\" />
   </ItemGroup>
 

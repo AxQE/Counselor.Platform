@@ -1,6 +1,6 @@
 ﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
-using System;
+using Counselor.Platform.Entities.Enums;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,21 +15,23 @@ namespace Counselor.Platform.Repositories
 		{
 		}
 
-		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload)
+		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction)
 		{
+			var message = new Message
+			{
+				Payload = payload,
+				Direction = direction
+			};
+
 			if (!_dialogs.TryGetValue(user.Id, out var dialog))
 			{				
 				dialog = new Dialog
 				{
-					Id = new Guid(),
 					User = user,
+					State = DialogState.Active,
 					Messages = new List<Message>
 					{
-						new Message
-						{
-							Id = new Guid(),
-							Payload = payload
-						}
+						message
 					}
 				};
 
@@ -40,36 +42,39 @@ namespace Counselor.Platform.Repositories
 			}
 			else
 			{
-				dialog.Messages.Add(
-					new Message
-					{
-						Id = new Guid(),
-						Payload = payload
-					});
-
+				dialog.Messages.Add(message);
 				dbContext.Dialogs.Update(dialog);
 			}
 
+			dialog.CurrentMessage = message;
 			await dbContext.SaveChangesAsync();
 
 			return dialog;
 		}
 
-		public async Task<Message> CreateDialogMessage(IPlatformDatabase dbContext, Dialog dialog, string payload)
+		public async Task<Message> CreateDialogMessage(IPlatformDatabase dbContext, Dialog dialog, string payload, MessageDirection direction)
 		{
 			var message =
 				new Message
 				{
-					Id = new Guid(),
-					Payload = payload
+					Payload = payload,
+					Direction = direction
 				};
 
 			dialog.Messages.Add(message);
+			dialog.CurrentMessage = message;
 
 			dbContext.Dialogs.Update(dialog);
 			await dbContext.SaveChangesAsync();
 
 			return message;
+		}
+
+		public async Task FinishDialogAsync(IPlatformDatabase dbContext, Dialog dialog)
+		{
+			dialog.State = DialogState.Finished;
+			dbContext.Dialogs.Update(dialog);
+			await dbContext.SaveChangesAsync();
 		}
 	}
 }
