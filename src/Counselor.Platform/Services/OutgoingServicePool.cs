@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Counselor.Platform.Services
 {
-	class OutgoingServicePool : IOutgoingServicePool
+	public class OutgoingServicePool : IOutgoingServicePool
 	{
 		private readonly IServiceProvider _serviceProvider;
 

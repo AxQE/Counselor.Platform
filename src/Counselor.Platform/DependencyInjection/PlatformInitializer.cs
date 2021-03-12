@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Core.Pipeline;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
@@ -17,9 +18,19 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddMemoryCache();
 			CreateConfigurations(services, hostContext);
 
-			services.AddSingleton<IOutgoingServicePool, OutgoingServicePool>();			
+
+			#region services
+			services.AddSingleton<IOutgoingServicePool, OutgoingServicePool>();
+			#endregion
+
+			#region behavior
+			services.AddSingleton<IBehaviorManager, BehaviorManager>();
+			#endregion
+
+			#region repositories
 			services.AddSingleton<ConnectionsRepository>();
-			services.AddSingleton<DialogsRepository>();
+			services.AddSingleton<DialogsRepository>(); 
+			#endregion
 
 			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
 
@@ -31,6 +42,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddOptions();
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
 			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
+			services.Configure<PlatformOptions>(hostContext.Configuration.GetSection(PlatformOptions.SectionName));
 		}
 
 		private static void RegistrateDatabase(IServiceCollection services, HostBuilderContext hostContext)

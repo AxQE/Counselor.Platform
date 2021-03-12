@@ -12,7 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="platformsettings.yaml" />
+	  <Content Include="platformsettings.yaml">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
   </ItemGroup>
 
   <ItemGroup>

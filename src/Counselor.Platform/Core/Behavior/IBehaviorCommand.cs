@@ -2,7 +2,7 @@
 
 namespace Counselor.Platform.Core.Behavior
 {
-	class BehaviorCommand
+	interface IBehaviorCommand
 	{
 		public string Name { get; set; }
 		public BehaviorCommandType Type { get; set; }

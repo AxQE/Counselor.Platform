@@ -93,7 +93,7 @@ namespace Counselor.Platform.Services
 					_executors.TryAdd(connectionId, pipelineExecutor);
 				}
 				
-				var result = await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName);
+				var result = await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);
 
 				if (_options.SendErrorReport && !result.SuccessfullyCompleted)
 				{

@@ -1,6 +1,6 @@
 ﻿namespace Counselor.Platform.Services
 {
-	internal interface IOutgoingServicePool
+	public interface IOutgoingServicePool
 	{
 		IOutgoingService Resolve(string transport);
 	}

@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Database;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using Counselor.Platform.Entities.Enums;
 using Counselor.Platform.Repositories;
@@ -17,6 +18,7 @@ namespace Counselor.Platform.Core.Pipeline
 		private readonly ILogger<PipelineExecutor> _logger;
 		private readonly IPlatformDatabase _database;
 		private readonly IOutgoingServicePool _outgoingServicePool;
+		private readonly IBehaviorManager _behaviorManager;
 		private readonly ConnectionsRepository _connectionsRepository;
 		private readonly DialogsRepository _dialogsRepository;
 
@@ -28,6 +30,7 @@ namespace Counselor.Platform.Core.Pipeline
 			ILogger<PipelineExecutor> logger,
 			IPlatformDatabase database,
 			IOutgoingServicePool outgoingServicePool,
+			IBehaviorManager behaviorManager,
 			ConnectionsRepository connectionsRepository,
 			DialogsRepository dialogsRepository
 			)
@@ -35,11 +38,12 @@ namespace Counselor.Platform.Core.Pipeline
 			_logger = logger;
 			_database = database;
 			_outgoingServicePool = outgoingServicePool;
+			_behaviorManager = behaviorManager;
 			_connectionsRepository = connectionsRepository;
 			_dialogsRepository = dialogsRepository;
 		}
 
-		public async Task<PipelineResult> RunAsync(string connectionId, string username, string payload, string transport)
+		public async Task<PipelineResult> RunAsync(string connectionId, string username, string payload, string transport, string dialog)
 		{
 			var result = new PipelineResult();
 

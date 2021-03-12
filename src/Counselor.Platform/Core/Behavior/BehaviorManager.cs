@@ -1,26 +1,55 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Counselor.Platform.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Counselor.Platform.Core.Behavior
 {
 	class BehaviorManager : IBehaviorManager
-	{
-		private readonly IBehaviorBuilder _behaviorBuilder;
-		private readonly ILogger<BehaviorManager> _logger;		
+	{		
+		private readonly ILogger<BehaviorManager> _logger;
+		private readonly PlatformOptions _options;
+		private readonly Dictionary<string, Behavior> _availableBehaviors = new Dictionary<string, Behavior>();
 
-		public BehaviorManager(ILogger<BehaviorManager> logger, IBehaviorBuilder behaviorBuilder)
+		public BehaviorManager(
+			ILogger<BehaviorManager> logger, 			
+			IOptions<PlatformOptions> options
+			)
 		{
-			_logger = logger;
-			_behaviorBuilder = behaviorBuilder;
+			_logger = logger;			
+			_options = options.Value;
+			FillAvailableDialogs();
 		}
 
-		public IBehavior GetBehavior()
+		public IBehavior GetBehavior(string behaviorName)
 		{
-			throw new NotImplementedException();
+			if (!_availableBehaviors.TryGetValue(behaviorName, out var behavior))
+			{
+				throw new ArgumentOutOfRangeException(nameof(behaviorName), $"Behavior not found by name: {behaviorName}.");
+			}
+
+			return behavior;
+		}
+
+		private void FillAvailableDialogs()
+		{
+			var dialogsPath = _options.DialogsPath;
+
+			if (Directory.Exists(dialogsPath))
+			{
+				var deserializer = new YamlDotNet.Serialization.Deserializer();
+
+				foreach (var dialogFile in Directory.GetFiles(dialogsPath, "*.yaml", SearchOption.AllDirectories))
+				{
+					using (var reader = new StreamReader(dialogFile))
+					{						
+						var dialog = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
+						_availableBehaviors.Add(dialog.Name, dialog);
+					}
+				}
+			}
 		}
 	}
 }

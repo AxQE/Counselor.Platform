@@ -2,6 +2,6 @@
 {
 	interface IBehaviorManager
 	{
-		IBehavior GetBehavior();
+		IBehavior GetBehavior(string dialogName);
 	}
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Behavior
 {
-	class BehaviourTree
+	class BehaviorTree
 	{
 		private TreeNode Node { get; set; }
 

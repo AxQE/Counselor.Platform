@@ -1,26 +1,45 @@
-﻿IsActive: true
-Name: Sample
+﻿Name: Sample
+IsActive: true
 Steps:
-  - Name: Greeting
-    Parent: None
-    When: Always    
-    Message: "Hello, {username}!"
+  - Id: Greeting
+    FriendlyName: 
+    Transitions:
+      - Child1
+      - Child2
+      - Child3
+    Response: "Hello, {username}!"
+    Before: 
+    After: 
+    OnSuccess:
+      Type: Instruction
+      Name: Next
+    OnFailure: 
+      Type: Instruction
+      Name: Stop
+    Command:
+      Type: Text
+      Name: None
+      Data: None
+    IsActive: true
+    StepType: External
+    Condition:
+      Instruction: None
 
-  - Name: Child1
-    Parent: Greeting
-    When: Always
-    Message: Child1
+  - Id: Child1
+    Response: Child1
     Command:    
+    Condition:
+      Instruction: None
 
-  - Name: Child2
-    Parent: Greeting
-    When: Always
-    Message: Child2
+  - Id: Child2
+    Response: Child2
     Command:     
     IsActive: false
+    Condition:
+      Instruction: None
 
-  - Name: Child3
-    Parent: Greeting
-    When: Always
-    Message: Child3
+  - Id: Child3
+    Response: Child3
     Command:    
+    Condition:
+      Instruction: None
