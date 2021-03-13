@@ -7,5 +7,6 @@ namespace Counselor.Platform.Core.Behavior
 		public string Name { get; }
 		public bool IsActive { get; }
 		public List<BehaviorStep> Steps { get; }
+		public IBehaviorIterator Iterator { get; }
 	}
 }

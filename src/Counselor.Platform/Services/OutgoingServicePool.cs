@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Counselor.Platform.Utils;
+using System;
 using System.Collections.Concurrent;
-using System.Linq;
 
 namespace Counselor.Platform.Services
 {
@@ -14,18 +14,12 @@ namespace Counselor.Platform.Services
 		{
 			_serviceProvider = serviceProvider;
 
-			var services = from assembly in AppDomain.CurrentDomain.GetAssemblies()
-						   from assemblyType in assembly.GetTypes()
-						   where
-							   typeof(IOutgoingService).IsAssignableFrom(assemblyType)
-							   && !assemblyType.IsAbstract
-							   && !assemblyType.IsInterface
-						   select assemblyType;
-
-			foreach (var service in services)
+			foreach (var serviceType in TypeHelpers.GetTypeImplementations<IOutgoingService>())
 			{
-				var concreteService = _serviceProvider.GetService(service) as IOutgoingService;
-				_outgoingServices.TryAdd(concreteService.TransportSystemName, concreteService);
+				var service = _serviceProvider.GetService(serviceType) as IOutgoingService;
+
+				if (service != null)
+					_outgoingServices.TryAdd(service.TransportSystemName, service);
 			}
 		}
 

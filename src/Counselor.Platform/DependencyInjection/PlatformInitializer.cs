@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Core.Pipeline;
+using Counselor.Platform.Core.Pipeline.Steps;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
@@ -29,10 +30,13 @@ namespace Counselor.Platform.DependencyInjection
 
 			#region repositories
 			services.AddSingleton<ConnectionsRepository>();
-			services.AddSingleton<DialogsRepository>(); 
+			services.AddSingleton<DialogsRepository>();
 			#endregion
 
+			#region pipeline
 			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
+			services.AddTransient<PipelineBehaviorStep>();
+			#endregion			
 
 			RegistrateDatabase(services, hostContext);
 		}

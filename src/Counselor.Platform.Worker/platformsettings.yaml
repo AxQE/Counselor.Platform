@@ -9,6 +9,7 @@ Telegram:
   IsEnabled: true
   Token:
   SendErrorReport: false
+  DialogName: Sample
 Discord:
   IsEnabled: false
   Token:

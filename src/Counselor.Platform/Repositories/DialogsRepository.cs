@@ -15,7 +15,7 @@ namespace Counselor.Platform.Repositories
 		{
 		}
 
-		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction)
+		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction, string dialogName = null)
 		{
 			var message = new Message
 			{
@@ -29,6 +29,7 @@ namespace Counselor.Platform.Repositories
 				{
 					User = user,
 					State = DialogState.Active,
+					Name = dialogName,
 					Messages = new List<Message>
 					{
 						message

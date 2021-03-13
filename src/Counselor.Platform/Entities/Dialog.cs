@@ -9,5 +9,6 @@ namespace Counselor.Platform.Entities
 		public List<Message> Messages { get; set; }
 		public DialogState State { get; set; }
 		public Message CurrentMessage { get; set; }
+		public string Name { get; set; }
 	}
 }

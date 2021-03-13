@@ -23,14 +23,14 @@ namespace Counselor.Platform.Core.Behavior
 			FillAvailableDialogs();
 		}
 
-		public IBehavior GetBehavior(string behaviorName)
+		public IBehaviorIterator GetBehavior(string behaviorName)
 		{
 			if (!_availableBehaviors.TryGetValue(behaviorName, out var behavior))
 			{
 				throw new ArgumentOutOfRangeException(nameof(behaviorName), $"Behavior not found by name: {behaviorName}.");
 			}
 
-			return behavior;
+			return behavior.Iterator;
 		}
 
 		private void FillAvailableDialogs()

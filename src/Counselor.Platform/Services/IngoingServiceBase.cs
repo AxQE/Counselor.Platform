@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Core.Pipeline;
+﻿using Akka.Actor;
+using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 using Counselor.Platform.Options;
@@ -20,6 +21,7 @@ namespace Counselor.Platform.Services
 		private readonly ILogger<IngoingServiceBase> _logger;
 		private readonly TransportOptions _options;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly ActorSystem _actorSystem; //todo: перевести PipelineExecutor на акторы
 
 		//todo: нужно время жизни
 		private readonly ConcurrentDictionary<string, IPipelineExecutor> _executors = new ConcurrentDictionary<string, IPipelineExecutor>();		

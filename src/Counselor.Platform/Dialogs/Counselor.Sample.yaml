@@ -3,6 +3,7 @@ IsActive: true
 Steps:
   - Id: Greeting
     FriendlyName: 
+    IsRoot: true
     Transitions:
       - Child1
       - Child2

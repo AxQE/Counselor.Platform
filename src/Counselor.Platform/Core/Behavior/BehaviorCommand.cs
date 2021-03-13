@@ -1,4 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior.Enums;
+using System;
 
 namespace Counselor.Platform.Core.Behavior
 {

@@ -9,6 +9,7 @@ namespace Counselor.Platform.Core.Behavior
 	{
 		public string Id { get; set; }
 		public bool IsActive { get; set; } = true;
+		public bool IsRoot { get; set; } = false;
 		public string FriendlyName { get; set; }
 		public string Response { get; set; }
 		public BehaviorStepType StepType { get; set; } = BehaviorStepType.External;
