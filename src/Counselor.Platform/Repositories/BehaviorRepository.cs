@@ -1,24 +1,25 @@
-﻿using Counselor.Platform.Options;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Counselor.Platform.Core.Behavior
+namespace Counselor.Platform.Repositories
 {
-	class BehaviorManager : IBehaviorManager
-	{		
-		private readonly ILogger<BehaviorManager> _logger;
+	class BehaviorRepository
+	{
+		private readonly ILogger<BehaviorRepository> _logger;
 		private readonly PlatformOptions _options;
 		private readonly Dictionary<string, Behavior> _availableBehaviors = new Dictionary<string, Behavior>();
 
-		public BehaviorManager(
-			ILogger<BehaviorManager> logger, 			
+		public BehaviorRepository(
+			ILogger<BehaviorRepository> logger,
 			IOptions<PlatformOptions> options
 			)
 		{
-			_logger = logger;			
+			_logger = logger;
 			_options = options.Value;
 			FillAvailableDialogs();
 		}
@@ -44,7 +45,7 @@ namespace Counselor.Platform.Core.Behavior
 				foreach (var dialogFile in Directory.GetFiles(dialogsPath, "*.yaml", SearchOption.AllDirectories))
 				{
 					using (var reader = new StreamReader(dialogFile))
-					{						
+					{
 						var dialog = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
 						_availableBehaviors.Add(dialog.Name, dialog);
 					}

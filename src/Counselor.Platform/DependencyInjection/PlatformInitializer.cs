@@ -1,5 +1,4 @@
-﻿using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Core.Pipeline;
+﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Core.Pipeline.Steps;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
@@ -25,12 +24,13 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region behavior
-			services.AddSingleton<IBehaviorManager, BehaviorManager>();
+			
 			#endregion
 
 			#region repositories
 			services.AddSingleton<ConnectionsRepository>();
 			services.AddSingleton<DialogsRepository>();
+			services.AddSingleton<BehaviorRepository>();
 			#endregion
 
 			#region pipeline

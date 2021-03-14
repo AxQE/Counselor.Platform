@@ -1,7 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior.Enums;
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Behavior
 {
@@ -17,7 +15,7 @@ namespace Counselor.Platform.Core.Behavior
 		public BehaviorStepCondition Condition { get; set; }
 		public BehaviorCommand Command { get; set; }
 		public BehaviorCommand OnSuccess { get; set; }
-		public BehaviorCommand OnFailure { get; set; }		
+		public BehaviorCommand OnFailure { get; set; }
 		public BehaviorCommand Before { get; set; }
 		public BehaviorCommand After { get; set; }
 	}

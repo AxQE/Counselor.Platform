@@ -1,12 +1,9 @@
-﻿namespace Counselor.Platform.Core.Behavior
+﻿using Counselor.Platform.Core.Behavior.Interpreter;
+
+namespace Counselor.Platform.Core.Behavior
 {
-	class BehaviorStepCondition
+	class BehaviorStepCondition : IInstruction
 	{
 		public string Instruction { get; set; }
-
-		public bool Evaluate()
-		{
-			return true;
-		}
 	}
 }

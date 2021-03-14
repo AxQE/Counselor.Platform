@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Pipeline
 {
+	//todo: стоит подумать над медиатором
 	public interface IPipelineStep
 	{
 		public int StepPriority { get; }		

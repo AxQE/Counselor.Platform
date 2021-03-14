@@ -1,6 +1,6 @@
-﻿using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Database;
+﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
+using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
 using System;
 using System.Threading.Tasks;
@@ -9,11 +9,11 @@ namespace Counselor.Platform.Core.Pipeline.Steps
 {
 	class PipelineBehaviorStep : IPipelineStep
 	{
-		private readonly IBehaviorManager _behaviorManager;
+		private readonly BehaviorRepository _behaviorManager;
 
-		public PipelineBehaviorStep(IBehaviorManager behaviorManager)
+		public PipelineBehaviorStep(BehaviorRepository behaviorRepository)
 		{
-			_behaviorManager = behaviorManager;
+			_behaviorManager = behaviorRepository;
 		}
 
 		public int StepPriority => 50;
@@ -29,7 +29,10 @@ namespace Counselor.Platform.Core.Pipeline.Steps
 			{
 				foreach (var step in behavior.Current())
 				{
-					
+					if (step.IsActive)
+					{
+
+					}
 				}
 
 				behavior.Next();
