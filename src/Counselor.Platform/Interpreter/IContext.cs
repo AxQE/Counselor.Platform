@@ -1,7 +1,7 @@
 ﻿using Counselor.Platform.Database;
 using Counselor.Platform.Entities;
 
-namespace Counselor.Platform.Core.Behavior.Interpreter
+namespace Counselor.Platform.Interpreter
 {
 	interface IContext
 	{

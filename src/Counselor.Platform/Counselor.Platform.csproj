@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Core\Behavior\Interpreter\Expressions\" />
-    <Folder Include="Core\Behavior\Interpreter\Exceptions\" />
+    <Folder Include="Interpreter\Expressions\" />
+    <Folder Include="Interpreter\Exceptions\" />
     <Folder Include="Factories\" />
   </ItemGroup>
 

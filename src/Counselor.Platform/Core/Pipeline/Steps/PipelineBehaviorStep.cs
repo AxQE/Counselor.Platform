@@ -23,11 +23,11 @@ namespace Counselor.Platform.Core.Pipeline.Steps
 			if (string.IsNullOrEmpty(dialog.Name))
 				throw new ArgumentNullException(nameof(dialog.Name));
 
-			var behavior = _behaviorManager.GetBehavior(dialog.Name);
+			var behaviorIterator = _behaviorManager.GetBehavior(dialog.Name);
 
-			while (behavior.Current() != null)
+			while (behaviorIterator.Current() != null)
 			{
-				foreach (var step in behavior.Current())
+				foreach (var step in behaviorIterator.Current())
 				{
 					if (step.IsActive)
 					{
@@ -35,7 +35,7 @@ namespace Counselor.Platform.Core.Pipeline.Steps
 					}
 				}
 
-				behavior.Next();
+				behaviorIterator.Next();
 			}
 		}
 	}

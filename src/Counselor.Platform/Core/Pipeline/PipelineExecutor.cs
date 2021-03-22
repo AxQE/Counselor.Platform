@@ -54,6 +54,11 @@ namespace Counselor.Platform.Core.Pipeline
 			}
 		}
 
+		public void Dispose()
+		{
+			//todo: после введения времени жизни, пока пусть так живет
+		}
+
 		public async Task<PipelineResult> RunAsync(string connectionId, string username, string payload, string transport, string dialog)
 		{
 			var result = new PipelineResult();

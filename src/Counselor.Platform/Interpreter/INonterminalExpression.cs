@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Core.Behavior.Interpreter
+namespace Counselor.Platform.Interpreter
 {
-	interface ITerminalExpression : IAbstractExpression
+	interface INonterminalExpression : IAbstractExpression
 	{
 	}
 }

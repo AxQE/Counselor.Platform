@@ -1,4 +1,4 @@
-﻿namespace Counselor.Platform.Core.Behavior.Interpreter
+﻿namespace Counselor.Platform.Interpreter
 {
 	interface IInstruction
 	{

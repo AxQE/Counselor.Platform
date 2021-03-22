@@ -40,7 +40,7 @@ namespace Counselor.Platform.Services
 			var transport = database
 				.Transports
 				.AsNoTracking()
-				.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName));
+				.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName)); //todo: нужно приводить в один регистр имя системы
 
 			if (transport is null)
 			{
@@ -111,8 +111,9 @@ namespace Counselor.Platform.Services
 
 		class ExecutorMeta
 		{
-			public IPipelineExecutor Executor { get; set; }
-			public DateTime CreatedOn { get; set; }
+			public IPipelineExecutor Executor { get; init; }
+			public DateTime CreatedOn { get; init; }
+			public DateTime LastExecution { get; set; }
 		}
 	}
 }

@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Core.Behavior.Interpreter;
+﻿using Counselor.Platform.Interpreter;
 
 namespace Counselor.Platform.Core.Behavior
 {
