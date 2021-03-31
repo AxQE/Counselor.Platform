@@ -8,7 +8,7 @@ namespace Counselor.Platform.Interpreter
 {
 	class ExpressionValidator
 	{
-		public bool Validate(IInstruction instruction)
+		public bool Validate(IExpression expression)
 		{
 			return true;
 		}
