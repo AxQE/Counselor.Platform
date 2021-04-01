@@ -1,3 +1,4 @@
+using Counselor.Platform.Data.Options;
 using Counselor.Platform.WebClient.Data;
 using Counselor.Platform.WebClient.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -26,17 +27,19 @@ namespace Counselor.Platform.WebClient
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			//services.AddDbContext<ApplicationDbContext>(options =>
-			//	options.UseSqlServer(
-			//		Configuration.GetConnectionString("DefaultConnection")));
+			var dbOptions = new DatabaseOptions();
+			Configuration.GetSection(DatabaseOptions.SectionName).Bind(dbOptions);
+			
+			services.AddDbContext<WebClientDbContext>(options =>
+				options.UseNpgsql(dbOptions.BuildConnectionString()).UseSnakeCaseNamingConvention());
 
 			services.AddDatabaseDeveloperPageExceptionFilter();
 
 			services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-				.AddEntityFrameworkStores<ApplicationDbContext>();
+				.AddEntityFrameworkStores<WebClientDbContext>();
 
 			services.AddIdentityServer()
-				.AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+				.AddApiAuthorization<ApplicationUser, WebClientDbContext>();
 
 			services.AddAuthentication()
 				.AddIdentityServerJwt();

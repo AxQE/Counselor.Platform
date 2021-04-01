@@ -9,7 +9,7 @@ using System;
 
 namespace Counselor.Platform.WebClient.Data.Migrations
 {
-	[DbContext(typeof(ApplicationDbContext))]
+	[DbContext(typeof(WebClientDbContext))]
 	[Migration("00000000000000_CreateIdentitySchema")]
 	partial class CreateIdentitySchema
 	{

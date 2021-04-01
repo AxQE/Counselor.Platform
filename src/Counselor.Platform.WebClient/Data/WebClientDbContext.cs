@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.WebClient.Data
 {
-	public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+	public class WebClientDbContext : ApiAuthorizationDbContext<ApplicationUser>
 	{
-		public ApplicationDbContext(
+		public WebClientDbContext(
 			DbContextOptions options,
 			IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
 		{
