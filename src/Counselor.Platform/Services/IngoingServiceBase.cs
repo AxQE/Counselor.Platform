@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
 using Counselor.Platform.Core.Pipeline;
-using Counselor.Platform.Database;
-using Counselor.Platform.Entities;
+using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

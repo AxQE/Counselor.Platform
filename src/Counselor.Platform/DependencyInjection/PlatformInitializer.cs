@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Core.Pipeline.Steps;
+using Counselor.Platform.Data.Database;
 using Counselor.Platform.Database;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;

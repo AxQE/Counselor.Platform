@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+    <Folder Include="Expressions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
+  </ItemGroup>
+
+</Project>

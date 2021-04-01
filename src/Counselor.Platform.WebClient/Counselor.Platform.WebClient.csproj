@@ -10,17 +10,22 @@
 
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <UserSecretsId>38b3fe47-e6e2-497b-9a45-30d6861a48b5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EFCore.NamingConventions" Version="5.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="5.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.4" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>

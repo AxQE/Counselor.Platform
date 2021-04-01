@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Database;
+﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;

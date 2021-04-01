@@ -1,7 +1,7 @@
-﻿using Counselor.Platform.Entities.Enums;
+﻿using Counselor.Platform.Data.Entities.Enums;
 using System.Collections.Generic;
 
-namespace Counselor.Platform.Entities
+namespace Counselor.Platform.Data.Entities
 {
 	public class Dialog : EntityBase
 	{

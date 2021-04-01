@@ -1,6 +1,6 @@
-﻿using Counselor.Platform.Entities.Enums;
+﻿using Counselor.Platform.Data.Entities.Enums;
 
-namespace Counselor.Platform.Entities
+namespace Counselor.Platform.Data.Entities
 {
 	public class Message : EntityBase
 	{

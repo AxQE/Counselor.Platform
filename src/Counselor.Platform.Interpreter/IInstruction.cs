@@ -1,6 +1,6 @@
 ﻿namespace Counselor.Platform.Interpreter
 {
-	interface IInstruction
+	public interface IInstruction
 	{
 		public string Instruction { get; }
 	}

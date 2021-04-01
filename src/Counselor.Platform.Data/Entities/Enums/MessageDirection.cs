@@ -1,4 +1,4 @@
-﻿namespace Counselor.Platform.Entities.Enums
+﻿namespace Counselor.Platform.Data.Entities.Enums
 {
 	public enum MessageDirection
 	{

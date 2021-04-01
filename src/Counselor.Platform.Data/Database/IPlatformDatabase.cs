@@ -1,9 +1,9 @@
-﻿using Counselor.Platform.Entities;
+﻿using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Database
+namespace Counselor.Platform.Data.Database
 {
 	public interface IPlatformDatabase
 	{

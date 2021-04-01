@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Counselor.Platform.Entities
+namespace Counselor.Platform.Data.Entities
 {
 	public class EntityBase
 	{

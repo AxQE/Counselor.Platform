@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Entities;
+﻿using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Counselor.Platform.Database

@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Entities;
+﻿using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;

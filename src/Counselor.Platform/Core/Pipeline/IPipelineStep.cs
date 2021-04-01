@@ -1,5 +1,5 @@
-﻿using Counselor.Platform.Database;
-using Counselor.Platform.Entities;
+﻿using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
