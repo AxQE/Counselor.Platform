@@ -5,12 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
-    <Folder Include="Expressions\" />
+    <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
+    <Folder Include="Expressions\" />
   </ItemGroup>
 
 </Project>

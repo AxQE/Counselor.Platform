@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Database\Migrations\" />
     <Folder Include="Factories\" />
   </ItemGroup>
 
