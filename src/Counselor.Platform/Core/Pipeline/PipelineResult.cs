@@ -8,6 +8,6 @@
 		public PipelineResult()
 		{
 			SuccessfullyCompleted = true;
-		}		
+		}
 	}
 }

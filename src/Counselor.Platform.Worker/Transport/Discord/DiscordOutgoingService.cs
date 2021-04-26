@@ -10,7 +10,7 @@ namespace Counselor.Platform.Worker.Transport.Discord
 	class DiscordOutgoingService : OutgoingServiceBase
 	{
 		private readonly ILogger<DiscordOutgoingService> _logger;
-		private readonly DiscordOptions _options;		
+		private readonly DiscordOptions _options;
 
 		public DiscordOutgoingService(
 			ILogger<DiscordOutgoingService> logger,

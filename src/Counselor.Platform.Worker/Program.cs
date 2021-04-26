@@ -28,7 +28,7 @@ namespace Counselor.Platform.Worker
 				.ConfigureServices((hostContext, services) =>
 				{
 					CreateConfigurations(hostContext, services);
-					
+
 					RegistrateHostedServices(services);
 					RegistratePlatformServices(hostContext, services);
 				});
@@ -51,7 +51,7 @@ namespace Counselor.Platform.Worker
 		{
 			services.AddOptions();
 			services.Configure<TelegramOptions>(hostContext.Configuration.GetSection(TelegramOptions.SectionName));
-			services.Configure<DiscordOptions>(hostContext.Configuration.GetSection(DiscordOptions.SectionName));			
+			services.Configure<DiscordOptions>(hostContext.Configuration.GetSection(DiscordOptions.SectionName));
 		}
 	}
 }

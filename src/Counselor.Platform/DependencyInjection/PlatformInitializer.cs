@@ -1,12 +1,9 @@
 ﻿using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Core.Pipeline.Steps;
-using Counselor.Platform.Data.Database;
-using Counselor.Platform.Database;
+using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -25,7 +22,7 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region behavior
-			
+
 			#endregion
 
 			#region repositories
@@ -37,9 +34,9 @@ namespace Counselor.Platform.DependencyInjection
 			#region pipeline
 			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
 			services.AddTransient<PipelineBehaviorStep>();
-			#endregion			
+			#endregion
 
-			RegistrateDatabase(services, hostContext);
+			DatabaseInitializer.RegistrateDatabase(services, hostContext);
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)
@@ -48,18 +45,6 @@ namespace Counselor.Platform.DependencyInjection
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
 			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
 			services.Configure<PlatformOptions>(hostContext.Configuration.GetSection(PlatformOptions.SectionName));
-		}
-
-		private static void RegistrateDatabase(IServiceCollection services, HostBuilderContext hostContext)
-		{
-			var dbOptions = new DatabaseOptions();
-			hostContext.Configuration.GetSection(DatabaseOptions.SectionName).Bind(dbOptions);
-
-			services.AddDbContext<IPlatformDatabase, PlatformDbContext>(options =>
-				options.UseNpgsql(dbOptions.BuildConnectionString()).UseSnakeCaseNamingConvention(),
-				ServiceLifetime.Transient,
-				ServiceLifetime.Transient
-				);
 		}
 	}
 }

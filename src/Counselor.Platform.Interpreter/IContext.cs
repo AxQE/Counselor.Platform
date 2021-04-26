@@ -1,5 +1,5 @@
-﻿using Counselor.Platform.Data.Entities;
-using Counselor.Platform.Data.Database;
+﻿using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 
 namespace Counselor.Platform.Interpreter
 {

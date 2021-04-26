@@ -24,7 +24,7 @@ namespace Counselor.Platform.Repositories
 		public async Task<string> GetConnectionIdAsync(int userId, string transport)
 		{
 			var key = CreateKey(userId, transport);
-			
+
 			if (!_connections.TryGetValue(key, out var connectionId))
 			{
 				var userTransport = await _database.UserTransports
@@ -32,7 +32,7 @@ namespace Counselor.Platform.Repositories
 							.Include(x => x.Transport)
 							.FirstOrDefaultAsync(y => y.Transport.Name.Equals(transport));
 
-				if (userTransport is null || string.IsNullOrEmpty(userTransport.TransportUserId)) 
+				if (userTransport is null || string.IsNullOrEmpty(userTransport.TransportUserId))
 					throw new EntityNotFoundException($"UserTransport not found. Transport: {transport}. User: {userId}.");
 
 				connectionId = userTransport.TransportUserId;

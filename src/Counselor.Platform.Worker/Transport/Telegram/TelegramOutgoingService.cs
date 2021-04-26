@@ -12,17 +12,17 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 	{
 		private readonly ILogger<TelegramOutgoingService> _logger;
 		private readonly TelegramOptions _options;
-		private readonly TelegramBotClient _client;		
+		private readonly TelegramBotClient _client;
 
 		public TelegramOutgoingService(
-			ILogger<TelegramOutgoingService> logger, 
+			ILogger<TelegramOutgoingService> logger,
 			IOptions<TelegramOptions> options,
 			ConnectionsRepository connections
 			)
 			: base(logger, options, connections)
 		{
 			_logger = logger;
-			_options = options.Value;			
+			_options = options.Value;
 
 			_client = new TelegramBotClient(_options.Token);
 		}
@@ -30,7 +30,7 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 		protected override async Task SendMessageToTransportAsync(string connectionId, string message)
 		{
 			try
-			{				
+			{
 				await _client.SendTextMessageAsync(long.Parse(connectionId), message);
 			}
 			catch (Exception e)

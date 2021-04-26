@@ -8,6 +8,6 @@ namespace Counselor.Platform.Core.Behavior
 		public string Name { get; set; }
 		public BehaviorCommandType Type { get; set; }
 		public string Data { get; set; }
-		public string Instruction => Type == BehaviorCommandType.Instruction? Data : null;
+		public string Instruction => Type == BehaviorCommandType.Instruction ? Data : null;
 	}
 }

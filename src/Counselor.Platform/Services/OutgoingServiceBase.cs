@@ -12,10 +12,10 @@ namespace Counselor.Platform.Services
 		public string TransportSystemName => _options.TransportSystemName;
 		private readonly ILogger<OutgoingServiceBase> _logger;
 		private readonly TransportOptions _options;
-		private readonly ConnectionsRepository _connections;	
+		private readonly ConnectionsRepository _connections;
 
 		public OutgoingServiceBase(
-			ILogger<OutgoingServiceBase> logger, 
+			ILogger<OutgoingServiceBase> logger,
 			IOptions<TransportOptions> options,
 			ConnectionsRepository connections)
 		{

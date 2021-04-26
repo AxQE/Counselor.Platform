@@ -17,19 +17,19 @@ using System.Threading.Tasks;
 namespace Counselor.Platform.Services
 {
 	public abstract class IngoingServiceBase : BackgroundService
-	{		
+	{
 		private readonly ILogger<IngoingServiceBase> _logger;
 		private readonly TransportOptions _options;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly ActorSystem _actorSystem; //todo: перевести PipelineExecutor на акторы
 
 		//todo: нужно время жизни
-		private readonly ConcurrentDictionary<string, IPipelineExecutor> _executors = new ConcurrentDictionary<string, IPipelineExecutor>();		
+		private readonly ConcurrentDictionary<string, IPipelineExecutor> _executors = new ConcurrentDictionary<string, IPipelineExecutor>();
 
 		public IngoingServiceBase(
 			ILogger<IngoingServiceBase> logger,
 			IOptions<TransportOptions> options,
-			IServiceProvider serviceProvider			
+			IServiceProvider serviceProvider
 			)
 		{
 			_logger = logger;
@@ -94,7 +94,7 @@ namespace Counselor.Platform.Services
 					pipelineExecutor = _serviceProvider.GetRequiredService<IPipelineExecutor>();
 					_executors.TryAdd(connectionId, pipelineExecutor);
 				}
-				
+
 				var result = await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);
 
 				if (_options.SendErrorReport && !result.SuccessfullyCompleted)

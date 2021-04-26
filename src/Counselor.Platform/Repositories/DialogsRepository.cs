@@ -24,7 +24,7 @@ namespace Counselor.Platform.Repositories
 			};
 
 			if (!_dialogs.TryGetValue(user.Id, out var dialog))
-			{				
+			{
 				dialog = new Dialog
 				{
 					User = user,

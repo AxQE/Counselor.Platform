@@ -9,12 +9,12 @@ namespace Counselor.Platform.Utils
 		public static IEnumerable<Type> GetTypeImplementations<TInterface>()
 		{
 			var types = from assemblies in AppDomain.CurrentDomain.GetAssemblies()
-					from stepType in assemblies.GetTypes()
-					where
-						typeof(TInterface).IsAssignableFrom(stepType)
-						&& !stepType.IsAbstract
-						&& !stepType.IsInterface						
-					select stepType;
+						from stepType in assemblies.GetTypes()
+						where
+							typeof(TInterface).IsAssignableFrom(stepType)
+							&& !stepType.IsAbstract
+							&& !stepType.IsInterface
+						select stepType;
 
 			return types;
 		}

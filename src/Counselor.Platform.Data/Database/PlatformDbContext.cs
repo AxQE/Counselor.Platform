@@ -20,7 +20,7 @@ namespace Counselor.Platform.Database
 		public PlatformDbContext(DbContextOptions<PlatformDbContext> options) : base(options)
 		{
 			base.Database.EnsureCreated();
-		}		
+		}
 
 		public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 		{

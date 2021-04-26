@@ -42,7 +42,7 @@ namespace Counselor.Platform.Core.Behavior
 				if (processed?.Any() ?? false)
 					_current = _behavior.Steps.Where(x => processed.Contains(x.Id)).ToList();
 				else
-					_current = null;				
+					_current = null;
 			}
 			else
 			{
@@ -61,7 +61,7 @@ namespace Counselor.Platform.Core.Behavior
 				else
 				{
 					_current = null;
-				}				
+				}
 			}
 		}
 

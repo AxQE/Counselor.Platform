@@ -9,7 +9,7 @@ namespace Counselor.Platform.Core.Pipeline
 	//todo: стоит подумать над медиатором
 	public interface IPipelineStep
 	{
-		public int StepPriority { get; }		
+		public int StepPriority { get; }
 		Task ExecuteAsync(IPlatformDatabase database, IOutgoingService outgoingService, Dialog dialog, string transport);
 	}
 
