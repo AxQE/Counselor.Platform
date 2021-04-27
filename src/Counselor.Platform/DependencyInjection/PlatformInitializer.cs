@@ -16,7 +16,6 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddMemoryCache();
 			CreateConfigurations(services, hostContext);
 
-
 			#region services
 			services.AddSingleton<IOutgoingServicePool, OutgoingServicePool>();
 			#endregion
@@ -36,7 +35,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddTransient<PipelineBehaviorStep>();
 			#endregion
 
-			DatabaseInitializer.RegistrateDatabase(services, hostContext);
+			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)

@@ -4,16 +4,15 @@ using Counselor.Platform.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace Counselor.Platform.Data.DependencyInjection
 {
-	public static class DatabaseInitializer
+	public static class DatabaseDI
 	{
-		public static void RegistrateDatabase(IServiceCollection services, HostBuilderContext hostContext)
+		public static void ConfigureDatabase(IServiceCollection services, IConfiguration configuration)
 		{
 			var dbOptions = new DatabaseOptions();
-			hostContext.Configuration.GetSection(DatabaseOptions.SectionName).Bind(dbOptions);
+			configuration.GetSection(DatabaseOptions.SectionName).Bind(dbOptions);
 
 			services.AddDbContext<IPlatformDatabase, PlatformDbContext>(options =>
 				options.UseNpgsql(dbOptions.BuildConnectionString()).UseSnakeCaseNamingConvention(),
