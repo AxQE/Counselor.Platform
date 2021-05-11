@@ -8,8 +8,4 @@
     <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Expressions\" />
-  </ItemGroup>
-
 </Project>
