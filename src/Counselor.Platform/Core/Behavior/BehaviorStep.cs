@@ -12,11 +12,11 @@ namespace Counselor.Platform.Core.Behavior
 		public string Response { get; set; }
 		public BehaviorStepType StepType { get; set; } = BehaviorStepType.External;
 		public List<string> Transitions { get; set; }
-		public BehaviorStepCondition Condition { get; set; }
-		public BehaviorCommand Command { get; set; }
-		public BehaviorCommand OnSuccess { get; set; }
-		public BehaviorCommand OnFailure { get; set; }
-		public BehaviorCommand Before { get; set; }
-		public BehaviorCommand After { get; set; }
+		public BehaviorInstruction Condition { get; set; }
+		public BehaviorInstruction Command { get; set; }
+		public BehaviorInstruction OnSuccess { get; set; }
+		public BehaviorInstruction OnFailure { get; set; }
+		public BehaviorInstruction Before { get; set; }
+		public BehaviorInstruction After { get; set; }
 	}
 }

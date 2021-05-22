@@ -8,7 +8,7 @@ Steps:
       - Child1
       - Child2
       - Child3
-    Response: "Hello, {username}!"
+    Response: "Hello, {user:username}!"
     Before: 
     After: 
     OnSuccess:

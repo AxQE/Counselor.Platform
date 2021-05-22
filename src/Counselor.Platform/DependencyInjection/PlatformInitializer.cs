@@ -1,9 +1,11 @@
-﻿using Counselor.Platform.Core.Pipeline;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Core.Pipeline.Steps;
 using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Options;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
+using Counselor.Platform.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -21,7 +23,8 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region behavior
-
+			services.AddTransient<IMessageTemplateHandler, MessageTemplateHandler>();
+			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
 			#endregion
 
 			#region repositories

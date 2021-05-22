@@ -12,6 +12,7 @@
   <ItemGroup>
     <Folder Include="Entities\Factories\" />
     <Folder Include="Middleware\" />
+    <Folder Include="ActionFilters\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

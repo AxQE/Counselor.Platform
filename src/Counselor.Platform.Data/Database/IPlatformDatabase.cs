@@ -1,11 +1,12 @@
 ﻿using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Data.Database
 {
-	public interface IPlatformDatabase
+	public interface IPlatformDatabase : IDisposable
 	{
 		public DbSet<User> Users { get; set; }
 		public DbSet<Transport> Transports { get; set; }
