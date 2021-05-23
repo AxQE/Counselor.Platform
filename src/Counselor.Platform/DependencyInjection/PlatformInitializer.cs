@@ -2,7 +2,8 @@
 using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Core.Pipeline.Steps;
 using Counselor.Platform.Data.DependencyInjection;
-using Counselor.Platform.Options;
+using Counselor.Platform.Data.Options;
+using Counselor.Platform.Interpreter;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
 using Counselor.Platform.Utils;
@@ -25,6 +26,7 @@ namespace Counselor.Platform.DependencyInjection
 			#region behavior
 			services.AddTransient<IMessageTemplateHandler, MessageTemplateHandler>();
 			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
+			services.AddTransient<IInterpreter, InterpreterRuntime>();
 			#endregion
 
 			#region repositories

@@ -1,5 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Options;
+using Counselor.Platform.Data.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;

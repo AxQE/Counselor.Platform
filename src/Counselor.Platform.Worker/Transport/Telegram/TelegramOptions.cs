@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Options;
+﻿using Counselor.Platform.Data.Options;
 
 namespace Counselor.Platform.Worker.Transport.Telegram
 {

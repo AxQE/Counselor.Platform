@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Options;
+﻿using Counselor.Platform.Data.Options;
 using Counselor.Platform.Repositories;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

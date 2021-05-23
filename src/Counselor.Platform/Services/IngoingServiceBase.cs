@@ -2,7 +2,7 @@
 using Counselor.Platform.Core.Pipeline;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Counselor.Platform.Options;
+using Counselor.Platform.Data.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
