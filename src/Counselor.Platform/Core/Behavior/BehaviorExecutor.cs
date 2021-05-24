@@ -38,14 +38,21 @@ namespace Counselor.Platform.Core.Behavior
 					return;
 				}
 
-				if (PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
+				if (step.Command != null)
 				{
-					action?.Invoke();
+					if (PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
+					{
+						action?.Invoke();
+					}
+					else
+					{
+						var result = await _interpreter.Interpret(step.Command, dialog, database);
+					}
 				}
-				else
-				{
-					var result = await _interpreter.Interpret(step.Command, dialog, database);
-				}				
+
+				var response = await _interpreter.InsertEntityParameters(step.Response, dialog, database);
+
+				await outgoingService.SendAsync(response, dialog.User.Id);
 			}
 			catch (Exception ex)
 			{

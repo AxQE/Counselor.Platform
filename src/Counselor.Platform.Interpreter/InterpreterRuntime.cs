@@ -11,16 +11,16 @@ namespace Counselor.Platform.Interpreter
 {
 	public class InterpreterRuntime : IInterpreter
 	{
-		private static readonly ITextTemplateHandler _templateHandler = new TextTemplateHandler();
+		private static readonly TextTemplateHandler _templateHandler = new TextTemplateHandler();
 
 		public async Task<InterpretationResult> Interpret(IInstruction instruction, Dialog dialog, IPlatformDatabase database)
 		{			
 			return new InterpretationResult();
 		}
 
-		public async Task<string> FillEntityParameters(string message, Dialog dialog, IPlatformDatabase database)
+		public async Task<string> InsertEntityParameters(string message, Dialog dialog, IPlatformDatabase database)
 		{
-			throw new NotImplementedException();
+			return await _templateHandler.InsertEntityParameters(message, dialog, database);
 		}
 
 		public void Dispose()
