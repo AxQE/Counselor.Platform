@@ -3,7 +3,6 @@ using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
-using Counselor.Platform.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,8 +16,7 @@ namespace Counselor.Platform.Core.Pipeline
 	{
 		private readonly SortedSet<IPipelineStep> _processingSteps = new(new PipelineStepComparer());
 		private readonly ILogger<PipelineExecutor> _logger;
-		private readonly IPlatformDatabase _database;
-		private readonly IServiceProvider _serviceProvider;
+		private readonly IPlatformDatabase _database;		
 		private readonly IOutgoingServicePool _outgoingServicePool;
 		private readonly ConnectionsRepository _connectionsRepository;
 		private readonly DialogsRepository _dialogsRepository;
@@ -30,27 +28,22 @@ namespace Counselor.Platform.Core.Pipeline
 
 		public PipelineExecutor(
 			ILogger<PipelineExecutor> logger,
-			IPlatformDatabase database,
-			IServiceProvider serviceProvider,
+			IPlatformDatabase database,			
 			IOutgoingServicePool outgoingServicePool,
 			ConnectionsRepository connectionsRepository,
-			DialogsRepository dialogsRepository
+			DialogsRepository dialogsRepository,
+			IEnumerable<IPipelineStep> pipelineSteps
 			)
 		{
 			_logger = logger;
 			_database = database;
 			_outgoingServicePool = outgoingServicePool;
 			_connectionsRepository = connectionsRepository;
-			_dialogsRepository = dialogsRepository;
-			_serviceProvider = serviceProvider;
+			_dialogsRepository = dialogsRepository;			
 
-			foreach (var serviceType in TypeHelpers.GetTypeImplementations<IPipelineStep>())
+			foreach (var step in pipelineSteps)
 			{
-				var service = _serviceProvider.GetService(serviceType) as IPipelineStep;
-				if (service != null)
-					_processingSteps.Add(service);
-				else
-					_logger.LogWarning($"Was retrieved null for service type: {serviceType}.");
+				_processingSteps.Add(step);
 			}
 		}
 

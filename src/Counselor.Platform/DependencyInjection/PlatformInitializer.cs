@@ -6,7 +6,6 @@ using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
-using Counselor.Platform.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -24,7 +23,6 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region behavior
-			services.AddTransient<IMessageTemplateHandler, MessageTemplateHandler>();
 			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
 			services.AddTransient<IInterpreter, InterpreterRuntime>();
 			#endregion
@@ -37,7 +35,7 @@ namespace Counselor.Platform.DependencyInjection
 
 			#region pipeline
 			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
-			services.AddTransient<PipelineBehaviorStep>();
+			services.AddTransient<IPipelineStep, PipelineBehaviorStep>();
 			#endregion
 
 			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);

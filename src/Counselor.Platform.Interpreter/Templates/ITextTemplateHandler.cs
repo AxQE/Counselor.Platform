@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Utils
+namespace Counselor.Platform.Interpreter.Templates
 {
-	interface IMessageTemplateHandler
+	interface ITextTemplateHandler
 	{
 		Task<string> InsertEntityParameters(string messageTemplate);
 	}

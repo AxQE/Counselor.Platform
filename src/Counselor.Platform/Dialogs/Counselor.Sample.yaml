@@ -24,23 +24,23 @@ Steps:
     IsActive: true
     StepType: External
     Condition:
-      Instruction: None
+      Data: None
 
   - Id: Child1
     Response: Child1
     Command:    
     Condition:
-      Instruction: None
+      Data: None
 
   - Id: Child2
     Response: Child2
     Command:     
     IsActive: false
     Condition:
-      Instruction: None
+      Data: None
 
   - Id: Child3
     Response: Child3
     Command:    
     Condition:
-      Instruction: None
+      Data: None

@@ -16,6 +16,13 @@ namespace Counselor.Platform.Core.Behavior
 		private readonly IInterpreter _interpreter;
 		private readonly ILogger<BehaviorExecutor> _logger;
 
+		private static readonly Dictionary<string, Action> PredefinedBehaviorCommands = new Dictionary<string, Action>
+		{
+			{ "Next", null },
+			{ "None", null },
+			{ "Stop", null }
+		};
+
 		public BehaviorExecutor(IInterpreter interpreter, ILogger<BehaviorExecutor> logger)
 		{
 			_interpreter = interpreter;
@@ -26,12 +33,19 @@ namespace Counselor.Platform.Core.Behavior
 		{
 			try
 			{
-				if (!(await _interpreter.Interpret(step.Condition, dialog)).GetTypedResult<bool>())
+				if (!(await _interpreter.Interpret(step.Condition, dialog, database)).GetTypedResult<bool>())
 				{
 					return;
 				}
 
-				var result = await _interpreter.Interpret(step.Command, dialog);
+				if (PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
+				{
+					action?.Invoke();
+				}
+				else
+				{
+					var result = await _interpreter.Interpret(step.Command, dialog, database);
+				}				
 			}
 			catch (Exception ex)
 			{

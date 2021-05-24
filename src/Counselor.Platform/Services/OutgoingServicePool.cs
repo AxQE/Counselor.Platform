@@ -1,26 +1,19 @@
-﻿using Counselor.Platform.Utils;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Counselor.Platform.Services
 {
 	public class OutgoingServicePool : IOutgoingServicePool
 	{
-		private readonly IServiceProvider _serviceProvider;
-
 		private readonly ConcurrentDictionary<string, IOutgoingService> _outgoingServices = new ConcurrentDictionary<string, IOutgoingService>();
 
-		public OutgoingServicePool(IServiceProvider serviceProvider)
+		public OutgoingServicePool(IEnumerable<IOutgoingService> outgoingServices)
 		{
-			_serviceProvider = serviceProvider;
-
-			foreach (var serviceType in TypeHelpers.GetTypeImplementations<IOutgoingService>())
+			foreach (var service in outgoingServices)
 			{
-				var service = _serviceProvider.GetService(serviceType) as IOutgoingService;
-
-				if (service != null)
-					_outgoingServices.TryAdd(service.TransportSystemName, service);
-			}
+				_outgoingServices.TryAdd(service.TransportSystemName, service);
+			}			
 		}
 
 		public IOutgoingService Resolve(string transport)

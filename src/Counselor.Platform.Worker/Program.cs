@@ -1,4 +1,5 @@
 using Counselor.Platform.DependencyInjection;
+using Counselor.Platform.Services;
 using Counselor.Platform.Worker.Transport.Discord;
 using Counselor.Platform.Worker.Transport.Telegram;
 using Microsoft.Extensions.Configuration;
@@ -37,8 +38,8 @@ namespace Counselor.Platform.Worker
 		{
 			PlatformInitializer.Initialize(services, hostContext);
 
-			services.AddTransient<TelegramOutgoingService>();
-			services.AddTransient<DiscordOutgoingService>();
+			services.AddTransient<IOutgoingService, TelegramOutgoingService>();
+			services.AddTransient<IOutgoingService, DiscordOutgoingService>();
 		}
 
 		private static void RegistrateHostedServices(IServiceCollection services)
