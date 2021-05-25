@@ -18,9 +18,9 @@ Steps:
       Type: Instruction
       Name: Stop
     Command:
-      Type: Text
-      Name: None
-      Data: None
+      Type: Instruction
+      #Name: None
+      Data: "[MessageContains] Help"
     IsActive: true
     StepType: External
     Condition:

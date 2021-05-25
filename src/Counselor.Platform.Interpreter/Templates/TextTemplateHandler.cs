@@ -22,6 +22,7 @@ namespace Counselor.Platform.Interpreter.Templates
 
 		public async Task<string> InsertEntityParameters(string textTemplate, Dialog dialog, IPlatformDatabase database)
 		{
+			//todo: нужно считать хеш шаблона, хранить его возможно прямо в объекте шага поведения, после кешировать хеш и параметры шаблона
 			var parameters = TemplateRegex.Matches(textTemplate)
 				.OfType<Match>()
 				.Select(x => x.Groups[0].Value)

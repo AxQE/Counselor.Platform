@@ -2,6 +2,6 @@
 {
 	public interface IInstruction
 	{
-		public string Instruction { get; }
+		string Instruction { get; }
 	}
 }

@@ -33,14 +33,14 @@ namespace Counselor.Platform.Core.Behavior
 		{
 			try
 			{
-				if (!(await _interpreter.Interpret(step.Condition, dialog, database)).GetTypedResult<bool>())
-				{
-					return;
-				}
+				//if (!(await _interpreter.Interpret(step.Condition, dialog, database)).GetTypedResult<bool>())
+				//{
+				//	return;
+				//}
 
 				if (step.Command != null)
 				{
-					if (PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
+					if (!string.IsNullOrEmpty(step.Command?.Name) && PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
 					{
 						action?.Invoke();
 					}

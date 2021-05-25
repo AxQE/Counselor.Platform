@@ -1,9 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
+using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter
 {
 	interface IExpression
 	{
-		Task Interpret(IContext context);
+		string Operator { get; }
+		Associativity Associativity { get; }
+		Priority Priority { get; }
+		Task<InterpretationResult> Interpret(IPlatformDatabase database, Dialog dialog);
 	}
 }

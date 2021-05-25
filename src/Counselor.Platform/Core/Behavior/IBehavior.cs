@@ -4,9 +4,9 @@ namespace Counselor.Platform.Core.Behavior
 {
 	interface IBehavior
 	{
-		public string Name { get; }
-		public bool IsActive { get; }
-		public List<BehaviorStep> Steps { get; }
-		public IBehaviorIterator Iterator { get; }
+		string Name { get; }
+		bool IsActive { get; }
+		List<BehaviorStep> Steps { get; }
+		IBehaviorIterator Iterator { get; }
 	}
 }

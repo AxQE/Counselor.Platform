@@ -14,8 +14,10 @@ namespace Counselor.Platform.Interpreter
 		private static readonly TextTemplateHandler _templateHandler = new TextTemplateHandler();
 
 		public async Task<InterpretationResult> Interpret(IInstruction instruction, Dialog dialog, IPlatformDatabase database)
-		{			
-			return new InterpretationResult();
+		{
+			var expression = ExpressionParser.Parse(instruction);
+
+			return await expression.Interpret(database, dialog);
 		}
 
 		public async Task<string> InsertEntityParameters(string message, Dialog dialog, IPlatformDatabase database)
@@ -26,6 +28,6 @@ namespace Counselor.Platform.Interpreter
 		public void Dispose()
 		{
 			//todo: dispose
-		}		
+		}
 	}
 }

@@ -8,12 +8,12 @@ namespace Counselor.Platform.Data.Database
 {
 	public interface IPlatformDatabase : IDisposable
 	{
-		public DbSet<User> Users { get; set; }
-		public DbSet<Transport> Transports { get; set; }
-		public DbSet<UserTransport> UserTransports { get; set; }
-		public DbSet<Dialog> Dialogs { get; set; }
-		public DbSet<Message> Messages { get; set; }
-		public DbSet<ErrorCode> ErrorCodes { get; set; }
+		DbSet<User> Users { get; set; }
+		DbSet<Transport> Transports { get; set; }
+		DbSet<UserTransport> UserTransports { get; set; }
+		DbSet<Dialog> Dialogs { get; set; }
+		DbSet<Message> Messages { get; set; }
+		DbSet<ErrorCode> ErrorCodes { get; set; }
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 		int SaveChanges();
 	}
