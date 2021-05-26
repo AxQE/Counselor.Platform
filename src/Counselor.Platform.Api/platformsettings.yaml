@@ -1,0 +1,8 @@
+﻿Platform:
+  DialogsPath: "Dialogs"
+  Database:
+    Server: localhost
+    Port: 5432
+    UserId: counselor
+    Password: 
+    Database: counselor.platform

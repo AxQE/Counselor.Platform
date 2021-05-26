@@ -1,11 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>1ae46f5a-d8b5-48bc-b6d1-b7d7890baf08</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
@@ -13,11 +15,16 @@
     <Folder Include="Entities\Factories\" />
     <Folder Include="Middleware\" />
     <Folder Include="ActionFilters\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="platformsettings.yaml">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
   </ItemGroup>
 
 </Project>

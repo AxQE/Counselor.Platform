@@ -1,4 +1,5 @@
 ﻿using Counselor.Platform.Api.Entities.Dto;
+using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,16 +13,25 @@ namespace Counselor.Platform.Api.Controllers
 	[ApiController]
 	public class UsersController : ControllerBase
 	{
+		private readonly IUserService _service;
+
+		public UsersController(IUserService service)
+		{
+			_service = service;
+		}
+
 		[HttpPost]
 		public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
 		{
-			throw new NotImplementedException();
+			return await _service.CreateUser(user);
 		}
 
 		[HttpGet("{id}")]		
 		public async Task<ActionResult<UserDto>> GetUser(int id)
 		{
-			throw new NotImplementedException();
+			if (id <= 0) return BadRequest();
+
+			return await _service.GetUser(id);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿Platform:
+  DialogsPath: "Dialogs"
   Database:
     Server: localhost
     Port: 5432
@@ -9,7 +10,6 @@ Telegram:
   IsEnabled: true
   Token:
   SendErrorReport: false
-  DialogName: Sample
 Discord:
   IsEnabled: false
   Token:

@@ -1,3 +1,5 @@
+using Counselor.Platform.Api.Services;
+using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -19,9 +21,16 @@ namespace Counselor.Platform.Api
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
+		public Startup(IWebHostEnvironment env)
 		{
-			Configuration = configuration;
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(env.ContentRootPath)
+				.AddYamlFile("platformsettings.yaml", optional: false, reloadOnChange: true)
+				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
+				.AddEnvironmentVariables()
+				.AddUserSecrets<Startup>();
+
+			Configuration = builder.Build();
 		}
 
 		public IConfiguration Configuration { get; }
@@ -29,7 +38,7 @@ namespace Counselor.Platform.Api
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			DatabaseDI.ConfigureDatabase(services, Configuration);
+			DatabaseDI.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
 
 			services.AddControllers(c =>
 			{
@@ -41,6 +50,8 @@ namespace Counselor.Platform.Api
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Counselor.Platform.Api", Version = "v1" });
 			});
+
+			services.AddScoped<IUserService, UserService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +67,7 @@ namespace Counselor.Platform.Api
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
+			
 
 			app.UseAuthorization();
 
@@ -64,7 +76,7 @@ namespace Counselor.Platform.Api
 				endpoints.MapControllers();
 			});
 
-			ConfigureExceptionHandler(app, logger);
+			//ConfigureExceptionHandler(app, logger);			
 		}
 
 		private static void ConfigureExceptionHandler(IApplicationBuilder app, ILogger<Startup> logger)

@@ -11,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E32106AD-D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2CA7C8B3-88F2-4127-9E7C-8B6F6D8AA7FB}"
 	ProjectSection(SolutionItems) = preProject
+		docker-compose.yaml = docker-compose.yaml
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
 	EndProjectSection
 EndProject
@@ -28,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Interpre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Api", "src\Counselor.Platform.Api\Counselor.Platform.Api.csproj", "{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Counselor.Platform.Interoperation", "src\Counselor.Platform.Interoperation\Counselor.Platform.Interoperation.csproj", "{EE119651-D310-42B5-9980-1AE0BDD8ED07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Interoperation", "src\Counselor.Platform.Interoperation\Counselor.Platform.Interoperation.csproj", "{EE119651-D310-42B5-9980-1AE0BDD8ED07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

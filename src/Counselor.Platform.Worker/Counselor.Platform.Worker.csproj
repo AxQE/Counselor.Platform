@@ -6,15 +6,11 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <Version>0.1.0</Version>
   </PropertyGroup>
-
+	
   <ItemGroup>
-    <None Remove="platformsettings.yaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-	  <Content Include="platformsettings.yaml">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
+	<Content Include="platformsettings.yaml">
+	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>		  
+	</Content>
   </ItemGroup>
 
   <ItemGroup>
