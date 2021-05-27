@@ -23,7 +23,14 @@ namespace Counselor.Platform.Api.Controllers
 		[HttpPost]
 		public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
 		{
-			return await _service.CreateUser(user);
+			if (string.IsNullOrEmpty(user.Username))
+				return UnprocessableEntity();
+
+			var newUser = await _service.CreateUser(user);
+
+			if (newUser == null) return UnprocessableEntity();
+
+			return newUser;
 		}
 
 		[HttpGet("{id}")]		
@@ -31,7 +38,11 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id <= 0) return BadRequest();
 
-			return await _service.GetUser(id);
+			var user = await _service.GetUser(id);
+
+			if (user == null) return NotFound();
+			
+			return user;
 		}
 	}
 }

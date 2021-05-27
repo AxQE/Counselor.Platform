@@ -1,3 +1,4 @@
+using Counselor.Platform.Api.Middleware;
 using Counselor.Platform.Api.Services;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.DependencyInjection;
@@ -76,27 +77,7 @@ namespace Counselor.Platform.Api
 				endpoints.MapControllers();
 			});
 
-			//ConfigureExceptionHandler(app, logger);			
-		}
-
-		private static void ConfigureExceptionHandler(IApplicationBuilder app, ILogger<Startup> logger)
-		{
-			app.UseExceptionHandler(error =>
-			{
-				error.Run(async context =>
-				{
-					context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-					context.Response.ContentType = "application/json";
-
-					var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-
-					if (contextFeature != null)
-					{
-						logger.LogError($"Unhadled error during request: {contextFeature.Error}");
-						//await context.Response.WriteAsync(); todo: error response
-					}
-				});
-			});
-		}
+			app.UseMiddleware<LoggingMiddleware>();
+		}		
 	}
 }
