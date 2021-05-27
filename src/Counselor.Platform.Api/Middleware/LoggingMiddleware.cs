@@ -14,7 +14,7 @@ namespace Counselor.Platform.Api.Middleware
 	{
 		private readonly RequestDelegate _next;
 		private readonly ILogger<LoggingMiddleware> _logger;
-		private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager;
+		private readonly RecyclableMemoryStreamManager _recyclableMemoryStreamManager = new RecyclableMemoryStreamManager();
 
 		public LoggingMiddleware(RequestDelegate next, ILogger<LoggingMiddleware> logger)
 		{

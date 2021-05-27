@@ -67,6 +67,8 @@ namespace Counselor.Platform.Api
 
 			app.UseHttpsRedirection();
 
+			app.UseMiddleware<LoggingMiddleware>();
+
 			app.UseRouting();
 			
 
@@ -75,9 +77,7 @@ namespace Counselor.Platform.Api
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-			});
-
-			app.UseMiddleware<LoggingMiddleware>();
+			});			
 		}		
 	}
 }
