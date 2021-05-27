@@ -1,7 +1,9 @@
+using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Middleware;
 using Counselor.Platform.Api.Services;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.DependencyInjection;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +43,7 @@ namespace Counselor.Platform.Api
 		{
 			DatabaseDI.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
 
+			services.AddCors();
 			services.AddControllers(c =>
 			{
 				c.RespectBrowserAcceptHeader = true;
@@ -51,6 +54,9 @@ namespace Counselor.Platform.Api
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Counselor.Platform.Api", Version = "v1" });
 			});
+
+			services.AddAuthentication("BasicAuthentication")
+				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);				
 
 			services.AddScoped<IUserService, UserService>();
 		}
@@ -70,8 +76,8 @@ namespace Counselor.Platform.Api
 			app.UseMiddleware<LoggingMiddleware>();
 
 			app.UseRouting();
-			
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>

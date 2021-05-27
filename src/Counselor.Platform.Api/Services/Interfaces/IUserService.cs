@@ -1,14 +1,14 @@
 ﻿using Counselor.Platform.Api.Entities.Dto;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services.Interfaces
 {
 	public interface IUserService
 	{
-		Task<UserDto> CreateUser(UserDto user);
-		Task<UserDto> GetUser(int id);		
+		Task<UserDto> Authenticate(AuthDto auth);
+		Task<UserDto> Authenticate(string username, string password);
+		Task<UserDto> CreateUser(AuthDto auth);
+		Task<UserDto> GetUser(ClaimsPrincipal principal);
 	}
 }

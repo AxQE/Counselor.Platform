@@ -1,14 +1,13 @@
 ﻿using Counselor.Platform.Api.Entities.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Controllers
 {
+	[Authorize]
 	[Route("api/[controller]")]
 	[ApiController]
 	public class UsersController : ControllerBase
@@ -20,25 +19,36 @@ namespace Counselor.Platform.Api.Controllers
 			_service = service;
 		}
 
-		[HttpPost]
-		public async Task<ActionResult<UserDto>> CreateUser(UserDto user)
+		[AllowAnonymous]
+		[HttpPost("authenticate")]		
+		public async Task<ActionResult<UserDto>> Authenticate(AuthDto auth)
 		{
-			if (string.IsNullOrEmpty(user.Username))
-				return UnprocessableEntity();
+			if (!ModelState.IsValid) return BadRequest();
 
-			var newUser = await _service.CreateUser(user);
+			var user = await _service.Authenticate(auth);
+
+			if (user == null) return Unauthorized();
+
+			return user;
+		}
+
+		[AllowAnonymous]
+		[HttpPost]
+		public async Task<ActionResult<UserDto>> CreateUser(AuthDto auth)
+		{
+			if (!ModelState.IsValid) return UnprocessableEntity();
+
+			var newUser = await _service.CreateUser(auth);
 
 			if (newUser == null) return UnprocessableEntity();
 
 			return newUser;
 		}
 
-		[HttpGet("{id}")]		
-		public async Task<ActionResult<UserDto>> GetUser(int id)
+		[HttpGet("current")]
+		public async Task<ActionResult<UserDto>> GetUser()
 		{
-			if (id <= 0) return BadRequest();
-
-			var user = await _service.GetUser(id);
+			var user = await _service.GetUser(HttpContext.User);
 
 			if (user == null) return NotFound();
 			
