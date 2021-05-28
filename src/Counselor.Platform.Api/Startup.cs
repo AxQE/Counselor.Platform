@@ -43,7 +43,17 @@ namespace Counselor.Platform.Api
 		{
 			DatabaseDI.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
 
-			services.AddCors();
+			services.AddCors(options =>
+			{
+				options.AddDefaultPolicy(
+					builder =>
+					{
+						builder.AllowAnyOrigin();
+						builder.AllowAnyHeader();
+						builder.AllowAnyMethod();
+					});
+			});
+
 			services.AddControllers(c =>
 			{
 				c.RespectBrowserAcceptHeader = true;
@@ -74,6 +84,8 @@ namespace Counselor.Platform.Api
 			app.UseHttpsRedirection();
 
 			app.UseMiddleware<LoggingMiddleware>();
+
+			app.UseCors();
 
 			app.UseRouting();
 
