@@ -1,3 +1,3 @@
 export const ApiConfig = {
-    BaseUrl: ''
+    BaseUrl: 'https://localhost:44345/api/'
 };

@@ -21,7 +21,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[AllowAnonymous]
 		[HttpPost("authenticate")]		
-		public async Task<ActionResult<UserDto>> Authenticate(AuthDto auth)
+		public async Task<IActionResult> Authenticate(AuthDto auth)
 		{
 			if (!ModelState.IsValid) return BadRequest();
 
@@ -29,30 +29,30 @@ namespace Counselor.Platform.Api.Controllers
 
 			if (user == null) return Unauthorized();
 
-			return user;
+			return Ok(user);
 		}
 
 		[AllowAnonymous]
 		[HttpPost]
-		public async Task<ActionResult> CreateUser(AuthDto auth)
+		public async Task<IActionResult> CreateUser(AuthDto auth)
 		{
 			if (!ModelState.IsValid) return UnprocessableEntity();
 
 			var newUser = await _service.CreateUser(auth);
 
 			if (newUser == null) return UnprocessableEntity();
-
-			return Created();
+			
+			return Created(string.Empty, newUser);
 		}
 
 		[HttpGet("current")]
-		public async Task<ActionResult<UserDto>> GetCurrentUser()
+		public async Task<IActionResult> GetCurrentUser()
 		{
 			var user = await _service.GetCurrentUser(HttpContext.User);
 
 			if (user == null) return NotFound();
 			
-			return user;
+			return Ok(user);
 		}
 	}
 }
