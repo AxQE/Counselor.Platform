@@ -97,7 +97,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<UserDto> GetUser(ClaimsPrincipal principal)
+		public async Task<UserDto> GetCurrentUser(ClaimsPrincipal principal)
 		{
 			try
 			{

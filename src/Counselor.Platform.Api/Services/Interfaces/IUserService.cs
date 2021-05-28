@@ -9,6 +9,6 @@ namespace Counselor.Platform.Api.Services.Interfaces
 		Task<UserDto> Authenticate(AuthDto auth);
 		Task<UserDto> Authenticate(string username, string password);
 		Task<UserDto> CreateUser(AuthDto auth);
-		Task<UserDto> GetUser(ClaimsPrincipal principal);
+		Task<UserDto> GetCurrentUser(ClaimsPrincipal principal);
 	}
 }

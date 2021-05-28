@@ -46,9 +46,9 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("current")]
-		public async Task<ActionResult<UserDto>> GetUser()
+		public async Task<ActionResult<UserDto>> GetCurrentUser()
 		{
-			var user = await _service.GetUser(HttpContext.User);
+			var user = await _service.GetCurrentUser(HttpContext.User);
 
 			if (user == null) return NotFound();
 			
