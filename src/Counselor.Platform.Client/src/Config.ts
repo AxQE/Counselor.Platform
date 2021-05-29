@@ -5,5 +5,8 @@ export const ApiConfig = {
 };
 
 export const LoggingConfig = {
-    Level: LogLevel.Debug
+    Level: LogLevel.Debug,
+    OutputToConsole: true,
+    SendToBackend: false,
+    PackSize: 50
 };
