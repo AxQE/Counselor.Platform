@@ -1,4 +1,5 @@
 import { ApiConfig } from '../Config'
+import Logger from  './Logger'
 
 function authHeader() : Headers {
     // return authorization header with basic auth credentials

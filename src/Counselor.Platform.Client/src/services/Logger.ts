@@ -1,17 +1,17 @@
 import { LogLevel, ILogEntry } from '../types/Logger'
 import { LoggingConfig } from '../Config'
 
-class LoggingService { 
+class Logger { 
     //todo: нужно сделать фоновый обработчик (worker) кторый будет слать логи пачками на бэк
-    private static _instance : LoggingService;
+    private static _instance : Logger;
 
     private constructor() {}
 
-    public static getInstance() : LoggingService {
-        if (!LoggingService._instance)
-            LoggingService._instance = new LoggingService();
+    public static getInstance() : Logger {
+        if (!Logger._instance)
+            Logger._instance = new Logger();
 
-        return LoggingService._instance;
+        return Logger._instance;
     }
 
     LogDebug(message: string, error?: any, userId?: number) {
@@ -121,4 +121,4 @@ class LoggingService {
     }
 }
 
-export default { LoggingService, LogLevel };
+export default { Logger, LogLevel };
