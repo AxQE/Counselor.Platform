@@ -1,5 +1,5 @@
 import React, { FormEventHandler } from 'react'
-import LoggingService from '../../services/LoggingService'
+import Logger from '../../services/Logger'
 import { userService } from '../../services/UserService';
 
 
@@ -14,7 +14,7 @@ interface IState{
 
 class LoginView extends React.Component<IProps, IState> {
 
-    private Logger = LoggingService.LoggingService.getInstance();
+    private _logger = Logger.Logger.getInstance();
 
     constructor(props: IProps) {
         super(props);
@@ -86,9 +86,5 @@ class LoginView extends React.Component<IProps, IState> {
         );
     }
 }
-
-
-
-
 
 export { LoginView }
