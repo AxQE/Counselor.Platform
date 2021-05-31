@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import { PrivateRoute } from './common/PrivateRoute';
 import { HomeView } from './views/home/HomeView';
+import { EditorView } from './views/editor/EditorView';
 import { LoginView } from './views/login/LoginView';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
       <header className="App-header">
         <Router>
           <div>
-            <PrivateRoute exact path="/" component={HomeView} />
+            <PrivateRoute exact path="/" component={EditorView} />
             <Route path="/login" component={LoginView}/>
           </div>
         </Router>        
