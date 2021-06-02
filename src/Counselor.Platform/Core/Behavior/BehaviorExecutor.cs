@@ -1,12 +1,16 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
+using Counselor.Platform.Data.Entities.Enums;
 using Counselor.Platform.Interpreter;
+using Counselor.Platform.Repositories;
 using Counselor.Platform.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Behavior
@@ -15,6 +19,16 @@ namespace Counselor.Platform.Core.Behavior
 	{
 		private readonly IInterpreter _interpreter;
 		private readonly ILogger<BehaviorExecutor> _logger;
+		private readonly IPlatformDatabase _database;
+		private readonly IOutgoingServicePool _outgoingServicePool;
+		private readonly ConnectionsRepository _connectionsRepository;
+		private readonly DialogsRepository _dialogsRepository;
+		private readonly BehaviorRepository _behaviorManager;
+		private readonly SemaphoreSlim _executorSemaphore = new SemaphoreSlim(1, 1);
+
+		private Transport _transport;
+		private Dialog _dialog;
+		private User _user;
 
 		private static readonly Dictionary<string, Action> PredefinedBehaviorCommands = new Dictionary<string, Action>
 		{
@@ -23,13 +37,65 @@ namespace Counselor.Platform.Core.Behavior
 			{ "Stop", null }
 		};
 
-		public BehaviorExecutor(IInterpreter interpreter, ILogger<BehaviorExecutor> logger)
+		public BehaviorExecutor(
+			IInterpreter interpreter, 
+			ILogger<BehaviorExecutor> logger,
+			IPlatformDatabase database,
+			IOutgoingServicePool outgoingServicePool,
+			ConnectionsRepository connectionsRepository,
+			DialogsRepository dialogsRepository,
+			BehaviorRepository behaviorRepository)
 		{
 			_interpreter = interpreter;
 			_logger = logger;
+			_database = database;
+			_outgoingServicePool = outgoingServicePool;
+			_connectionsRepository = connectionsRepository;
+			_dialogsRepository = dialogsRepository;
+			_behaviorManager = behaviorRepository;
 		}
 
-		public async Task RunStep(IPlatformDatabase database, IOutgoingService outgoingService, Dialog dialog, BehaviorStep step)
+		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, string transport, string dialog)
+		{
+			try
+			{
+				await _executorSemaphore.WaitAsync();
+
+				if (_transport == null) 
+					_transport = await _database.Transports.FirstOrDefaultAsync(x => x.Name.Equals(transport));
+
+				if (_user == null)
+					_user = await FindOrCreateUserAsync(connectionId, username);
+
+				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload, MessageDirection.In, dialog);
+
+			}
+			finally
+			{
+				_executorSemaphore.Release();
+			}
+
+
+			if (string.IsNullOrEmpty(_dialog.Name))
+				throw new ArgumentNullException(nameof(_dialog.Name));
+
+			var behaviorIterator = _behaviorManager.GetBehavior(_dialog.Name);
+
+			while (behaviorIterator.Current() != null)
+			{
+				foreach (var step in behaviorIterator.Current())
+				{
+					if (step.IsActive)
+					{
+						await RunStepAsync(_database, _outgoingServicePool.Resolve(transport), _dialog, step);
+					}
+				}
+
+				behaviorIterator.Next();
+			}
+		}
+
+		private async Task RunStepAsync(IPlatformDatabase database, IOutgoingService outgoingService, Dialog dialog, BehaviorStep step)
 		{
 			try
 			{
@@ -59,6 +125,44 @@ namespace Counselor.Platform.Core.Behavior
 				_logger.LogError(ex, $"Behavior step failed. Id: {step.Id}.");
 				throw;
 			}
+		}
+
+		private async Task<User> FindOrCreateUserAsync(string connectionId, string username)
+		{
+			var user =
+				(await _database.UserTransports
+					.Include(x => x.User)
+					.FirstOrDefaultAsync(x => x.TransportUserId.Equals(connectionId)))?.User;
+
+			if (user is null)
+			{
+				user = new User
+				{
+					Username = username
+				};
+
+				_database.UserTransports.Add(
+					new UserTransport
+					{
+						Transport = _transport,
+						User = user,
+						TransportUserId = connectionId
+					});
+
+				_logger.LogInformation($"New user just created. Username: {username}. Transport: {_transport.Name}.");
+			}
+
+			user.LastActivity = DateTime.Now;
+			await _database.SaveChangesAsync();
+
+			_connectionsRepository.AddConnection(user.Id, _transport.Name, connectionId);
+
+			return user;
+		}
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

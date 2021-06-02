@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Counselor.Platform.Core.Behavior
 {
-	class BehaviorIterator : IBehaviorIterator
+	class BehaviorIterator
 	{
 		private readonly IBehavior _behavior;
 		private readonly IReadOnlyCollection<BehaviorStep> _root;

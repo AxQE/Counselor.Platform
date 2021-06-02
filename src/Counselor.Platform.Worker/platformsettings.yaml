@@ -15,4 +15,4 @@ Discord:
   Token:
   SendErrorReport: false
 Cache:
-  UserDataLifetime: 90
+  UserDataLifetime: 300

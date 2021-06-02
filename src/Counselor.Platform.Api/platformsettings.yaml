@@ -6,3 +6,5 @@
     UserId: counselor
     Password: 
     Database: counselor.platform
+Cache:
+  UserDataLifetime: 300

@@ -33,7 +33,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[AllowAnonymous]
-		[HttpPost]
+		[HttpPost]		
 		public async Task<ActionResult<UserDto>> CreateUser(AuthDto auth)
 		{
 			if (!ModelState.IsValid) return UnprocessableEntity();

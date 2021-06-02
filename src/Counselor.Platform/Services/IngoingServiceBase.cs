@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using Counselor.Platform.Core.Pipeline;
+using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Options;
@@ -21,10 +21,10 @@ namespace Counselor.Platform.Services
 		private readonly ILogger<IngoingServiceBase> _logger;
 		private readonly TransportOptions _options;
 		private readonly IServiceProvider _serviceProvider;
-		private readonly ActorSystem _actorSystem; //todo: перевести PipelineExecutor на акторы
+		private readonly ActorSystem _actorSystem; //todo: перевести на акторы
 
 		//todo: нужно время жизни
-		private readonly ConcurrentDictionary<string, IPipelineExecutor> _executors = new ConcurrentDictionary<string, IPipelineExecutor>();
+		private readonly ConcurrentDictionary<string, IBehaviorExecutor> _executors = new ConcurrentDictionary<string, IBehaviorExecutor>();
 
 		public IngoingServiceBase(
 			ILogger<IngoingServiceBase> logger,
@@ -89,29 +89,23 @@ namespace Counselor.Platform.Services
 			{
 				_logger.LogDebug($"Incoming message. Transport: {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 
-				if (!_executors.TryGetValue(connectionId, out var pipelineExecutor))
+				if (!_executors.TryGetValue(connectionId, out var begaviorExecutor))
 				{
-					pipelineExecutor = _serviceProvider.GetRequiredService<IPipelineExecutor>();
-					_executors.TryAdd(connectionId, pipelineExecutor);
+					begaviorExecutor = _serviceProvider.GetRequiredService<IBehaviorExecutor>();
+					_executors.TryAdd(connectionId, begaviorExecutor);
 				}
 
-				var result = await pipelineExecutor.RunAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);
-
-				if (_options.SendErrorReport && !result.SuccessfullyCompleted)
-				{
-					//todo: добавить подробности ошибки (они лежат в результате), возможно делить ошибки на классы и те которые потенциально могут быть исправлены пользователем репортить
-					await SendMessageToTransportAsync(connectionId, "Во время обработки сообщения произошла ошибка. Обратитесь к системному администратору.");
-				}
+				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);				
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Pipeline failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
+				_logger.LogError(ex, $"Behavior failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 			}
 		}
 
 		class ExecutorMeta
 		{
-			public IPipelineExecutor Executor { get; init; }
+			public IBehaviorExecutor Executor { get; init; }
 			public DateTime CreatedOn { get; init; }
 			public DateTime LastExecution { get; set; }
 		}

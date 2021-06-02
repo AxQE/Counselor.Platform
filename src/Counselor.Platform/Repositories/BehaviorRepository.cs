@@ -24,7 +24,7 @@ namespace Counselor.Platform.Repositories
 			FillAvailableDialogs();
 		}
 
-		public IBehaviorIterator GetBehavior(string behaviorName)
+		public BehaviorIterator GetBehavior(string behaviorName)
 		{
 			if (!_availableBehaviors.TryGetValue(behaviorName, out var behavior))
 			{

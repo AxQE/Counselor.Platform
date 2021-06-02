@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -25,6 +26,9 @@ namespace Counselor.Platform.Repositories
 
 			if (!_dialogs.TryGetValue(user.Id, out var dialog))
 			{
+				if (string.IsNullOrEmpty(dialogName))
+					throw new ArgumentNullException(nameof(dialogName), "Dialog cannot be creadted without dialog name.");
+
 				dialog = new Dialog
 				{
 					User = user,
