@@ -2,7 +2,7 @@
 {
 	static class BehaviorValidator
 	{
-		public static bool Validate(BehaviorStep step)
+		public static bool IsValid(BehaviorStep step)
 		{
 			return true;
 		}

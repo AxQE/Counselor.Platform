@@ -53,7 +53,7 @@ namespace Counselor.Platform.Core.Behavior
 			_behaviorManager = behaviorRepository;
 		}
 
-		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, string transport, string dialog)
+		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, string transport, string dialogName)
 		{
 			try
 			{
@@ -65,7 +65,7 @@ namespace Counselor.Platform.Core.Behavior
 				if (_user == null)
 					_user = await FindOrCreateUserAsync(connectionId, username);
 
-				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload, MessageDirection.In, dialog);
+				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload, MessageDirection.In, dialogName);
 
 			}
 			finally
