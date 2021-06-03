@@ -1,12 +1,13 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Exceptions;
+using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Repositories
 {
-	public class ConnectionsRepository
+	public class ConnectionsRepository : IConnectionsRepository
 	{
 		private readonly ConcurrentDictionary<string, string> _connections = new ConcurrentDictionary<string, string>();
 		private readonly IPlatformDatabase _database;

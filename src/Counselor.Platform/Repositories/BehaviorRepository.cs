@@ -1,5 +1,7 @@
 ﻿using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Options;
+using Counselor.Platform.Exceptions;
+using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -8,7 +10,7 @@ using System.IO;
 
 namespace Counselor.Platform.Repositories
 {
-	class BehaviorRepository
+	class BehaviorRepository : IBehaviorRepository
 	{
 		private readonly ILogger<BehaviorRepository> _logger;
 		private readonly PlatformOptions _options;
@@ -28,7 +30,7 @@ namespace Counselor.Platform.Repositories
 		{
 			if (!_availableBehaviors.TryGetValue(behaviorName, out var behavior))
 			{
-				throw new ArgumentOutOfRangeException(nameof(behaviorName), $"Behavior not found by name: {behaviorName}.");
+				throw new EntityNotFoundException($"Behavior not found by name: {behaviorName}.");
 			}
 
 			return behavior.Iterator;

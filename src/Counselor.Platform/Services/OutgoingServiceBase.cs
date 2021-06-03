@@ -1,5 +1,5 @@
 ﻿using Counselor.Platform.Data.Options;
-using Counselor.Platform.Repositories;
+using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,12 +12,12 @@ namespace Counselor.Platform.Services
 		public string TransportSystemName => _options.TransportSystemName;
 		private readonly ILogger<OutgoingServiceBase> _logger;
 		private readonly TransportOptions _options;
-		private readonly ConnectionsRepository _connections;
+		private readonly IConnectionsRepository _connections;
 
 		public OutgoingServiceBase(
 			ILogger<OutgoingServiceBase> logger,
 			IOptions<TransportOptions> options,
-			ConnectionsRepository connections)
+			IConnectionsRepository connections)
 		{
 			_logger = logger;
 			_options = options.Value;

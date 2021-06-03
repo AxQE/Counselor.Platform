@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
+using Counselor.Platform.Repositories.Interfaces;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Repositories
 {
-	public class DialogsRepository
+	public class DialogsRepository : IDialogsRepository
 	{
 		private readonly ConcurrentDictionary<int, Dialog> _dialogs = new ConcurrentDictionary<int, Dialog>();
 

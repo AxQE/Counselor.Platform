@@ -2,14 +2,12 @@
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
 using Counselor.Platform.Interpreter;
-using Counselor.Platform.Repositories;
+using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,9 +19,9 @@ namespace Counselor.Platform.Core.Behavior
 		private readonly ILogger<BehaviorExecutor> _logger;
 		private readonly IPlatformDatabase _database;
 		private readonly IOutgoingServicePool _outgoingServicePool;
-		private readonly ConnectionsRepository _connectionsRepository;
-		private readonly DialogsRepository _dialogsRepository;
-		private readonly BehaviorRepository _behaviorManager;
+		private readonly IConnectionsRepository _connectionsRepository;
+		private readonly IDialogsRepository _dialogsRepository;
+		private readonly IBehaviorRepository _behaviorManager;
 		private readonly SemaphoreSlim _executorSemaphore = new SemaphoreSlim(1, 1);
 
 		private Transport _transport;
@@ -42,9 +40,9 @@ namespace Counselor.Platform.Core.Behavior
 			ILogger<BehaviorExecutor> logger,
 			IPlatformDatabase database,
 			IOutgoingServicePool outgoingServicePool,
-			ConnectionsRepository connectionsRepository,
-			DialogsRepository dialogsRepository,
-			BehaviorRepository behaviorRepository)
+			IConnectionsRepository connectionsRepository,
+			IDialogsRepository dialogsRepository,
+			IBehaviorRepository behaviorRepository)
 		{
 			_interpreter = interpreter;
 			_logger = logger;

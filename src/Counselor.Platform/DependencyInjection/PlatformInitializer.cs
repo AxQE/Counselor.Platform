@@ -3,6 +3,7 @@ using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
 using Counselor.Platform.Repositories;
+using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -26,9 +27,9 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region repositories
-			services.AddSingleton<ConnectionsRepository>();
-			services.AddSingleton<DialogsRepository>();
-			services.AddSingleton<BehaviorRepository>();
+			services.AddSingleton<IConnectionsRepository, ConnectionsRepository>();
+			services.AddSingleton<IDialogsRepository, DialogsRepository>();
+			services.AddSingleton<IBehaviorRepository, BehaviorRepository>();
 			#endregion
 
 			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);

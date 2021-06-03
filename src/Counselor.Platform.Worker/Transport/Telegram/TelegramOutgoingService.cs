@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Repositories;
+﻿using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,7 +17,7 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 		public TelegramOutgoingService(
 			ILogger<TelegramOutgoingService> logger,
 			IOptions<TelegramOptions> options,
-			ConnectionsRepository connections
+			IConnectionsRepository connections
 			)
 			: base(logger, options, connections)
 		{
