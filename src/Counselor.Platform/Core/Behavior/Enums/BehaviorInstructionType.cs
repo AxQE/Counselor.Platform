@@ -1,6 +1,6 @@
 ﻿namespace Counselor.Platform.Core.Behavior.Enums
 {
-	enum BehaviorCommandType
+	enum BehaviorInstructionType
 	{
 		Text,
 		Instruction

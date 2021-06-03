@@ -130,7 +130,7 @@ namespace Counselor.Platform.Core.Behavior
 			var user =
 				(await _database.UserTransports
 					.Include(x => x.User)
-					.FirstOrDefaultAsync(x => x.TransportUserId.Equals(connectionId)))?.User;
+					.FirstOrDefaultAsync(x => x.Id == _transport.Id && x.TransportUserId.Equals(connectionId)))?.User;
 
 			if (user is null)
 			{
