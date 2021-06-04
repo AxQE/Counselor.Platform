@@ -18,10 +18,10 @@ namespace Counselor.Platform.Interpreter.Commands
 			}
 		}
 
-		public virtual ITransportCommand CreateCommand(string identificator)
+		public virtual ITransportCommand CreateCommand(string commandName)
 		{
-			if (!_commandTypes.TryGetValue(identificator, out var type))
-				throw new NotImplementedException($"ITransportCommand: {identificator} was not implemented for {TransportName}.");
+			if (!_commandTypes.TryGetValue(commandName, out var type))
+				throw new NotImplementedException($"ITransportCommand: {commandName} was not implemented for {TransportName}.");
 
 			return Activator.CreateInstance(type) as ITransportCommand;
 		}
