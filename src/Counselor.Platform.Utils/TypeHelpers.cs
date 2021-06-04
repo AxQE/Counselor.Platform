@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Counselor.Platform.Utils
 {
-	static class TypeHelpers
+	public static class TypeHelpers
 	{
 		public static IEnumerable<Type> GetTypeImplementations<TInterface>()
 		{

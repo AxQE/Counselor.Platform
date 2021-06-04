@@ -5,7 +5,6 @@ using Counselor.Platform.Exceptions;
 using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -24,7 +23,7 @@ namespace Counselor.Platform.Repositories
 		public BehaviorRepository(
 			ILogger<BehaviorRepository> logger,
 			IOptions<PlatformOptions> options,
-			IPlatformDatabase database
+			IPlatformDatabase database			
 			)
 		{
 			_logger = logger;

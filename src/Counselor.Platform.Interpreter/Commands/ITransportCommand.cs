@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Interoperation.TransportSystem
+namespace Counselor.Platform.Interpreter.Commands
 {
 	public interface ITransportCommand
 	{
-		Task Execute();
+		Task ExecuteAsync<TTransport>(TTransport transportClient);
 	}
 }

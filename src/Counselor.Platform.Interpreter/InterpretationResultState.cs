@@ -3,6 +3,6 @@
 	public enum InterpretationResultState
 	{
 		Failure,
-		Completed		
+		Completed
 	}
 }
