@@ -1,24 +1,15 @@
 ﻿using Counselor.Platform.Interpreter.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 
 namespace Counselor.Platform.Worker.Transport.Discord.Commands
 {
-	class DiscordCommandFactory : ITransportCommandFactory
+	class DiscordCommandFactory : TransportCommandFactory
 	{
-		public string TransportName => throw new NotImplementedException();
+		public override string TransportName { get; }
 
-		public ITransportCommand CreateCommand(string identificator)
+		public DiscordCommandFactory(IOptions<DiscordOptions> options)
 		{
-			throw new NotImplementedException();
-		}
-
-		public Task<ITransportCommand> CreateCommandAsync(string identificator)
-		{
-			throw new NotImplementedException();
+			TransportName = options.Value.TransportSystemName;
 		}
 	}
 }

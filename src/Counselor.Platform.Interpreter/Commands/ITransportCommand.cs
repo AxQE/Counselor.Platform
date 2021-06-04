@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Commands
 {
 	public interface ITransportCommand
 	{
-		Task ExecuteAsync<TTransport>(TTransport transportClient);
+		Task ExecuteAsync(object transportClient, string connectionId, object commandParameter);
 	}
 }
