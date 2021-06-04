@@ -7,7 +7,7 @@ namespace Counselor.Platform.Interpreter.Commands
 	public abstract class TransportCommandFactory : ITransportCommandFactory
 	{
 		public abstract string TransportName { get; }
-		private readonly Dictionary<string, Type> _commandTypes;
+		private readonly Dictionary<string, Type> _commandTypes = new Dictionary<string, Type>();
 
 		public TransportCommandFactory()
 		{
