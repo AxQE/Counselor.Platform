@@ -11,7 +11,7 @@ namespace Counselor.Platform.Worker.Transport.Discord.Commands
 	{
 		public string TransportName => throw new NotImplementedException();
 
-		public ITransportCommand CreateCommand(string transport, string identificator)
+		public ITransportCommand CreateCommand(string identificator)
 		{
 			throw new NotImplementedException();
 		}

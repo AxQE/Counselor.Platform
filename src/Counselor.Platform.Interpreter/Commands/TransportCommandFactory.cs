@@ -1,7 +1,6 @@
 ﻿using Counselor.Platform.Utils;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Commands
 {
@@ -19,17 +18,12 @@ namespace Counselor.Platform.Interpreter.Commands
 			}
 		}
 
-		public virtual ITransportCommand CreateCommand(string transport, string identificator)
+		public virtual ITransportCommand CreateCommand(string identificator)
 		{
 			if (!_commandTypes.TryGetValue(identificator, out var type))
 				throw new NotImplementedException($"ITransportCommand: {identificator} was not implemented for {TransportName}.");
 
 			return Activator.CreateInstance(type) as ITransportCommand;
-		}
-
-		public virtual Task<ITransportCommand> CreateCommandAsync(string identificator)
-		{
-			throw new NotImplementedException();
 		}
 	}
 }
