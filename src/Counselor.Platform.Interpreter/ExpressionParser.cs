@@ -1,11 +1,23 @@
 ﻿using Counselor.Platform.Interpreter.Exceptions;
 using Counselor.Platform.Interpreter.Expressions;
+using Counselor.Platform.Utils;
 using System;
+using System.Collections.Generic;
 
 namespace Counselor.Platform.Interpreter
 {
 	static class ExpressionParser
 	{
+		private static readonly Dictionary<string, Type> _expressionTypes = new Dictionary<string, Type>();
+
+		static ExpressionParser()
+		{
+			foreach (var type in TypeHelpers.GetTypeImplementations<IExpression>())
+			{
+				_expressionTypes.Add(type.Name, type);
+			}			
+		}
+
 		public static IExpression Parse(IInstruction instruction)
 		{			
 			var operatorOpen = instruction?.Instruction?.IndexOf('[') ?? -1;
@@ -22,17 +34,10 @@ namespace Counselor.Platform.Interpreter
 
 		private static IExpression ExpressionFactory(string @operator, string parameters)
 		{
-			switch (@operator)
-			{
-				case "MessageContains":
-					return new MessageConstains(parameters);
+			if (!_expressionTypes.TryGetValue(@operator, out var type))
+				throw new NotImplementedException($"Interpreter operator named {@operator} not implemented.");
 
-				case "HistoryContains":
-					return new HistoryConstains(parameters);
-
-				default:
-					throw new NotImplementedException($"Interpretor operator named {@operator} not implemented.");
-			}			
+			return Activator.CreateInstance(type, parameters) as IExpression;
 		}
 	}
 }

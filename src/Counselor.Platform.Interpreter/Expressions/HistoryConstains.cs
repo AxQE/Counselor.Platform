@@ -12,11 +12,7 @@ namespace Counselor.Platform.Interpreter.Expressions
 	{
 		private readonly string _parameters;
 
-		public string Operator => throw new NotImplementedException();
-
-		public Associativity Associativity => throw new NotImplementedException();
-
-		public Priority Priority => throw new NotImplementedException();
+		public string Operator => nameof(HistoryConstains);
 
 		public HistoryConstains(string parameters)
 		{
