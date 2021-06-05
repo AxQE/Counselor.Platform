@@ -72,6 +72,7 @@ namespace Counselor.Platform.Api
 				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);				
 
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<ITransportService, TransportService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
