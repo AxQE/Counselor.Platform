@@ -19,8 +19,7 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 		public TelegramWorker(
 			ILogger<TelegramWorker> logger,
 			IOptions<TelegramOptions> options,
-			IServiceProvider serviceProvider,
-			IEnumerable<ITransportCommandFactory> factories
+			IServiceProvider serviceProvider
 			)
 			: base(logger, options, serviceProvider)
 		{
