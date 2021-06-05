@@ -4,6 +4,8 @@ namespace Counselor.Platform.Interpreter.Commands
 {
 	public interface ITransportCommand
 	{
-		Task ExecuteAsync(object transportClient, string connectionId, object commandParameter);
+		object Parameter { get; set; }
+		string ConnectionId { get; set; }
+		Task ExecuteAsync(object transportClient);
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Repositories.Interfaces;
+﻿using Counselor.Platform.Interpreter.Commands;
+using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -21,6 +22,11 @@ namespace Counselor.Platform.Worker.Transport.Discord
 		{
 			_logger = logger;
 			_options = options.Value;
+		}
+
+		public override Task SendAsync(ITransportCommand command)
+		{
+			throw new NotImplementedException();
 		}
 
 		protected override async Task SendMessageToTransportAsync(string connection, string message)

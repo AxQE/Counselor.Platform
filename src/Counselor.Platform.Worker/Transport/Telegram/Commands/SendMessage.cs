@@ -7,17 +7,20 @@ namespace Counselor.Platform.Worker.Transport.Telegram.Commands
 {
 	class SendMessage : ITransportCommand
 	{
-		public async Task ExecuteAsync(object transportClient, string connectionId, object commandParameter)
+		public object Parameter { get; set; }
+		public string ConnectionId { get; set; }
+
+		public async Task ExecuteAsync(object transportClient)
 		{
 			var client = transportClient as TelegramBotClient;
 			if (client == null)
 				throw new InvalidCastException($"The type {transportClient.GetType()} is not compatible with TelegramBotClient.");
 
-			var message = commandParameter as string;
+			var message = Parameter as string;
 			if (string.IsNullOrEmpty(message))
-				throw new ArgumentException("Command parameter must be non null string.");
+				throw new InvalidCastException("Command parameter must be non null string.");
 
-			await client.SendTextMessageAsync(long.Parse(connectionId), message);
+			await client.SendTextMessageAsync(long.Parse(ConnectionId), message);
 		}
 	}
 }

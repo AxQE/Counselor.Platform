@@ -1,4 +1,5 @@
 ﻿using Counselor.Platform.Data.Options;
+using Counselor.Platform.Interpreter.Commands;
 using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace Counselor.Platform.Services
 		}
 
 		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload);
-
+		public abstract Task SendAsync(ITransportCommand command);
 		public async Task SendAsync(string payload, int userId)
 		{
 			try
@@ -39,6 +40,6 @@ namespace Counselor.Platform.Services
 			{
 				_logger.LogError(ex, $"Send message to {TransportSystemName} failed. Message: {payload}. User: {userId}.");
 			}
-		}
+		}				
 	}
 }

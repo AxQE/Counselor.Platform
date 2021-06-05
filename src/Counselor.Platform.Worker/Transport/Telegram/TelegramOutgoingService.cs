@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Repositories.Interfaces;
+﻿using Counselor.Platform.Interpreter.Commands;
+using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,6 +26,11 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 			_options = options.Value;
 
 			_client = new TelegramBotClient(_options.Token);
+		}
+
+		public override async Task SendAsync(ITransportCommand command)
+		{
+			await command.ExecuteAsync(_client);
 		}
 
 		protected override async Task SendMessageToTransportAsync(string connectionId, string message)
