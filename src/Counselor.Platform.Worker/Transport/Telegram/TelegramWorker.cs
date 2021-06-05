@@ -1,9 +1,7 @@
-﻿using Counselor.Platform.Interpreter.Commands;
-using Counselor.Platform.Services;
+﻿using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;

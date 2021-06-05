@@ -6,11 +6,13 @@ namespace Counselor.Platform.Interpreter.Commands
 {
 	public abstract class TransportCommandFactory : ITransportCommandFactory
 	{
-		public abstract string TransportName { get; }
+		public string TransportName { get; }
 		private readonly Dictionary<string, Type> _commandTypes = new Dictionary<string, Type>();
 
-		public TransportCommandFactory()
+		public TransportCommandFactory(string transportName)
 		{
+			TransportName = transportName;
+
 			foreach (var command in TypeHelpers.GetTypeImplementations<ITransportCommand>())
 			{
 				if (command.FullName.Contains(TransportName))

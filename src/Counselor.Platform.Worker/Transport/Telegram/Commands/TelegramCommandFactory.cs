@@ -5,11 +5,9 @@ namespace Counselor.Platform.Worker.Transport.Telegram.Commands
 {
 	class TelegramCommandFactory : TransportCommandFactory
 	{
-		public override string TransportName { get; }
-
-		public TelegramCommandFactory(IOptions<TelegramOptions> options)
-		{
-			TransportName = options.Value.TransportSystemName;			
+		public TelegramCommandFactory(IOptions<TelegramOptions> options) 
+			: base(options.Value.TransportSystemName)
+		{			
 		}
 	}
 }
