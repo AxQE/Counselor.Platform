@@ -73,6 +73,7 @@ namespace Counselor.Platform.Api
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ITransportService, TransportService>();
+			services.AddScoped<IEntitiesService, EntitiesService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
