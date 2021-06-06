@@ -24,7 +24,7 @@ Steps:
     IsActive: true
     StepType: External
     Condition:
-      Data: None
+      Data: "[Boolean] {user:username} not equal {null}"
 
   - Id: Child1
     Response: Child1

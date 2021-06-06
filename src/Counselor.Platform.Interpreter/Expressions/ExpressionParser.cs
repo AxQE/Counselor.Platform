@@ -1,10 +1,10 @@
-﻿using Counselor.Platform.Interpreter.Exceptions;
-using Counselor.Platform.Interpreter.Expressions;
+﻿using Counselor.Platform.Interpreter.Expressions.Boolean;
+using Counselor.Platform.Interpreter.Exceptions;
 using Counselor.Platform.Utils;
 using System;
 using System.Collections.Generic;
 
-namespace Counselor.Platform.Interpreter
+namespace Counselor.Platform.Interpreter.Expressions
 {
 	static class ExpressionParser
 	{
@@ -30,6 +30,11 @@ namespace Counselor.Platform.Interpreter
 			var parameters = instruction.Instruction.Substring(operatorClose + 1).Trim();
 
 			return ExpressionFactory(@operator, parameters);
+		}
+
+		public static ILogicalExpression ParseLogical(IInstruction instruction)
+		{
+			return null;
 		}
 
 		private static IExpression ExpressionFactory(string @operator, string parameters)

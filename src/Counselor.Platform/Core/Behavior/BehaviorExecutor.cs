@@ -97,10 +97,10 @@ namespace Counselor.Platform.Core.Behavior
 		{
 			try
 			{
-				//if (!(await _interpreter.Interpret(step.Condition, dialog, database)).GetTypedResult<bool>())
-				//{
-				//	return;
-				//}
+				if (!(await _interpreter.InterpretLogical(step.Condition, dialog, database)))
+				{
+					return;
+				}
 
 				if (step.Command != null)
 				{

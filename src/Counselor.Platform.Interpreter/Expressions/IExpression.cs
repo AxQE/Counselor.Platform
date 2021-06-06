@@ -2,7 +2,7 @@
 using Counselor.Platform.Data.Entities;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Interpreter
+namespace Counselor.Platform.Interpreter.Expressions
 {
 	interface IExpression
 	{

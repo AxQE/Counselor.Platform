@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Interpreter.Expressions
+namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
 	class HistoryConstains : IExpression
 	{

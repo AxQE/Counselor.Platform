@@ -4,7 +4,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Interpreter.Expressions
+namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
 	class MessageContains : IExpression
 	{

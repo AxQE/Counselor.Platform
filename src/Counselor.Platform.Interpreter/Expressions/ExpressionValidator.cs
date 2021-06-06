@@ -1,4 +1,4 @@
-﻿namespace Counselor.Platform.Interpreter
+﻿namespace Counselor.Platform.Interpreter.Expressions
 {
 	class ExpressionValidator
 	{
