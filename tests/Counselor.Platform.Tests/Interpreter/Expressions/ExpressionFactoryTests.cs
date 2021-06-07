@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Counselor.Platform.Tests.Interpreter.Expressions
 {
 	[TestClass]
-	public class ExpressionParserTests
+	public class ExpressionFactoryTests
 	{
 		private const string Transport = "transport";
 		private readonly Fixture _fixture = new Fixture();
@@ -21,7 +21,7 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 			var expressionOperator = _fixture.Create<string>();
 			var expressionParameter = _fixture.Create<string>();
 			
-			var result = ExpressionParser.ParseExpression($"[{expressionOperator}] {expressionParameter}");
+			var result = ExpressionFactory.ParseExpression($"[{expressionOperator}] {expressionParameter}");
 
 			Assert.IsNotNull(result);
 			Assert.IsNotNull(result.@operator);
@@ -31,19 +31,19 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 		}
 
 		[TestMethod]
-		public void ParseExpression_GetInternalOperator()
+		public void CreateExpression_GetInternalOperator()
 		{
 			var expressionOperator = "MessageContains";
-			var expressionParser = new ExpressionParser(new List<ITransportCommandFactory>());
+			var expressionFactory = new ExpressionFactory(new List<ITransportCommandFactory>());
 
-			var result = expressionParser.Parse($"[{expressionOperator}] text", Transport);
+			var result = expressionFactory.CreateExpression($"[{expressionOperator}] text", Transport);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(expressionOperator, result.Operator);
 		}
 
 		[TestMethod]
-		public void ParseExpression_GetExternalOperator()
+		public void CreateExpression_GetExternalOperator()
 		{
 			var internalOperator = "ExternalCommand";
 			var externalOperator = "SendMessage";
@@ -52,9 +52,9 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 			commandFactory.Setup(x => x.TransportName).Returns(Transport);
 			commandFactory.Setup(x => x.CreateCommand(It.IsAny<string>()))
 				.Returns(new Mock<ITransportCommand>().Object);
-			var expressionParser = new ExpressionParser(new List<ITransportCommandFactory> { commandFactory.Object });
+			var expressionFactory = new ExpressionFactory(new List<ITransportCommandFactory> { commandFactory.Object });
 
-			var result = expressionParser.Parse($"[{internalOperator}] [{externalOperator}] text", Transport);
+			var result = expressionFactory.CreateExpression($"[{internalOperator}] [{externalOperator}] text", Transport);
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(internalOperator, result.Operator);
@@ -62,22 +62,19 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 
 		[TestMethod]
 		[ExpectedException(typeof(InvalidExpressionSyntaxException))]
-		public void ParseExpression_ExpressionNameDoesNotExist()
+		public void CreateExpression_ExpressionNameDoesNotExist()
 		{
-			var expressionOperator = "SomeOperator";
-			var expressionParameter = "Parameters";
-
-			ExpressionParser.ParseExpression($"{expressionOperator} {expressionParameter}");
+			ExpressionFactory.ParseExpression($"{_fixture.Create<string>()}");
 		}
 
 		[TestMethod]
 		[ExpectedException(typeof(NotImplementedException))]
-		public void ParseExpression_ExpressionNotImplemented()
+		public void CreateExpression_ExpressionNotImplemented()
 		{
 			var expressionOperator = _fixture.Create<string>();
-			var expressionParser = new ExpressionParser(new List<ITransportCommandFactory>());
+			var expressionFactory = new ExpressionFactory(new List<ITransportCommandFactory>());
 
-			expressionParser.Parse($"[{expressionOperator}] text", Transport);
+			expressionFactory.CreateExpression($"[{expressionOperator}] text", Transport);
 		}
 	}
 }

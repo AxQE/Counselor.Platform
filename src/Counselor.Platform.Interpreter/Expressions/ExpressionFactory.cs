@@ -7,12 +7,12 @@ using System.Collections.Generic;
 
 namespace Counselor.Platform.Interpreter.Expressions
 {
-	public class ExpressionParser : IExpressionParser
+	public class ExpressionFactory : IExpressionFactory
 	{
 		private readonly Dictionary<string, Type> _expressionTypes = new Dictionary<string, Type>();
 		private readonly Dictionary<string, ITransportCommandFactory> _externalCommandFactories = new Dictionary<string, ITransportCommandFactory>();
 
-		public ExpressionParser(IEnumerable<ITransportCommandFactory> commandFactories)
+		public ExpressionFactory(IEnumerable<ITransportCommandFactory> commandFactories)
 		{
 			foreach (var type in TypeHelpers.GetTypeImplementations<IExpression>())
 			{
@@ -25,10 +25,17 @@ namespace Counselor.Platform.Interpreter.Expressions
 			}
 		}
 
-		public IExpression Parse(string instruction, string transport)
+		public IExpression CreateExpression(string instruction, string transport)
 		{
 			var expression = ParseExpression(instruction);
-			return ExpressionFactory(expression.@operator, expression.parameters, transport);
+
+			if (!_expressionTypes.TryGetValue(expression.@operator, out var type))
+				throw new NotImplementedException($"Interpreter operator named {expression.@operator} not implemented.");
+
+			if (expression.@operator.Equals(nameof(ExternalCommand)))
+				return new ExternalCommand(_externalCommandFactories[transport], expression.parameters);
+
+			return Activator.CreateInstance(type, expression.parameters) as IExpression;			
 		}
 
 		public static (string @operator, string parameters) ParseExpression(string instruction)
@@ -43,17 +50,6 @@ namespace Counselor.Platform.Interpreter.Expressions
 			var parameters = instruction.Substring(operatorClose + 1).Trim();
 
 			return (@operator, parameters);
-		}
-
-		private IExpression ExpressionFactory(string @operator, string parameters, string transport)
-		{
-			if (!_expressionTypes.TryGetValue(@operator, out var type))
-				throw new NotImplementedException($"Interpreter operator named {@operator} not implemented.");
-
-			if (@operator.Equals(nameof(ExternalCommand)))
-				return new ExternalCommand(_externalCommandFactories[transport], parameters);
-
-			return Activator.CreateInstance(type, parameters) as IExpression;
 		}
 	}
 }

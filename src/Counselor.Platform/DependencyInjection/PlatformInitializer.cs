@@ -29,7 +29,7 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			#region interpreter
-			services.AddSingleton<IExpressionParser, ExpressionParser>();
+			services.AddSingleton<IExpressionFactory, ExpressionFactory>();
 			#endregion
 
 			#region repositories

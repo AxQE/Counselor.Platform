@@ -11,15 +11,15 @@ namespace Counselor.Platform.Interpreter
 	public class InterpreterRuntime : IInterpreter
 	{
 		private readonly ILogger<InterpreterRuntime> _logger;
-		private readonly IExpressionParser _expressionParser;
+		private readonly IExpressionFactory _expressionFactory;
 
 		public InterpreterRuntime(
 			ILogger<InterpreterRuntime> logger,
-			IExpressionParser expressionParser
+			IExpressionFactory expressionFactory
 			)
 		{
 			_logger = logger;
-			_expressionParser = expressionParser;
+			_expressionFactory = expressionFactory;
 		}
 
 		public async Task<InterpretationResult> Interpret(IInstruction instruction, Dialog dialog, IPlatformDatabase database, string transport)
@@ -27,7 +27,7 @@ namespace Counselor.Platform.Interpreter
 			try
 			{
 				var enrichedInstruction = await InsertEntityParameters(instruction.Instruction, dialog, database);
-				var expression = _expressionParser.Parse(enrichedInstruction, transport);
+				var expression = _expressionFactory.CreateExpression(enrichedInstruction, transport);
 				return await expression.InterpretAsync(database, dialog);
 			}
 			catch (Exception ex)
