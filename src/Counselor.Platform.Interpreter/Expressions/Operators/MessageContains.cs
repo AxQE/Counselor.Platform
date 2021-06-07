@@ -9,7 +9,6 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 	class MessageContains : IExpression
 	{
 		private readonly string _parameters;
-
 		public string Operator => nameof(MessageContains);
 
 		public MessageContains(string parameters)
@@ -17,13 +16,13 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 			_parameters = parameters;
 		}
 
-		public async Task<InterpretationResult> Interpret(IPlatformDatabase database, Dialog dialog)
+		public async Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
 		{
 			var parameters = _parameters.Split(' ').Select(x => x.Trim());
 
 			var result = new InterpretationResult
 			{
-				ResultType = InterpretationResultType.InternalCommand
+				ResultType = ExpressionResultType.Boolean				
 			};
 
 			foreach (var p in parameters)

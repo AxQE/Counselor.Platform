@@ -20,7 +20,7 @@ Steps:
     Command:
       Type: Instruction
       #Name: None
-      Data: "[MessageContains] Help"
+      Data: "[ExternalCommand] [SendMessage] Hello, {user:username}!"
     IsActive: true
     StepType: External
     Condition:

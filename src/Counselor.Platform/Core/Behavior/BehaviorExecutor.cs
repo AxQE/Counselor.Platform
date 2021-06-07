@@ -27,6 +27,7 @@ namespace Counselor.Platform.Core.Behavior
 		private Transport _transport;
 		private Dialog _dialog;
 		private User _user;
+		private string _connectionId;
 
 		private static readonly Dictionary<string, Action> PredefinedBehaviorCommands = new Dictionary<string, Action>
 		{
@@ -58,6 +59,8 @@ namespace Counselor.Platform.Core.Behavior
 			try
 			{
 				await _executorSemaphore.WaitAsync();
+
+				_connectionId = connectionId;
 
 				if (_transport == null) 
 					_transport = await _database.Transports.FirstOrDefaultAsync(x => x.Name.Equals(transport));
@@ -97,7 +100,7 @@ namespace Counselor.Platform.Core.Behavior
 		{
 			try
 			{
-				if (!(await _interpreter.InterpretLogical(step.Condition, dialog, database)))
+				if (!(await _interpreter.Interpret(step.Condition, dialog, database, _transport.Name)).GetTypedResult<bool>())
 				{
 					return;
 				}
@@ -109,19 +112,33 @@ namespace Counselor.Platform.Core.Behavior
 						action?.Invoke();
 					}
 					else
-					{
-						var result = await _interpreter.Interpret(step.Command, dialog, database);
+					{						
+						await HandleInterpretationResult(await _interpreter.Interpret(step.Command, dialog, database, _transport.Name));
 					}
 				}
 
-				var response = await _interpreter.InsertEntityParameters(step.Response, dialog, database);
-
-				await outgoingService.SendAsync(response, dialog.User.Id);
+				if (!string.IsNullOrEmpty(step.Response))
+				{
+					var response = await _interpreter.InsertEntityParameters(step.Response, dialog, database);
+					await outgoingService.SendAsync(response, dialog.User.Id);
+				}				
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Behavior step failed. Id: {step.Id}.");
 				throw;
+			}
+		}
+
+		private async Task HandleInterpretationResult(InterpretationResult result)
+		{
+			if (result.State == InterpretationResultState.Failed)
+				await _outgoingServicePool.Resolve(_transport.Name).SendAsync("Невозможно выполнить команду. Обратитесь к системному администратору.", _user.Id); //todo: обработка ошибки интерпретации
+
+			if (result.ResultType == Interpreter.Expressions.ExpressionResultType.TransportCommand)
+			{
+				result.Command.ConnectionId = _connectionId;				
+				await _outgoingServicePool.Resolve(_transport.Name).SendAsync(result.Command);
 			}
 		}
 

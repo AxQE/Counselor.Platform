@@ -8,19 +8,25 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
-	class HistoryConstains : IExpression
+	class Boolean : IExpression
 	{
-		private readonly string _parameters;
-		public string Operator => nameof(HistoryConstains);
+		private readonly string _parameter;
 
-		public HistoryConstains(string parameters)
+		public string Operator => nameof(Boolean);
+		public ExpressionResultType ResultType => ExpressionResultType.Boolean;
+
+		public Boolean(string parameter)
 		{
-			_parameters = parameters;
+			_parameter = parameter;
 		}
 
 		public async Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
 		{
-			throw new NotImplementedException();
+			return await Task.FromResult(new InterpretationResult
+			{
+				ResultType = ExpressionResultType.Boolean,
+				Result = true
+			});
 		}
 	}
 }

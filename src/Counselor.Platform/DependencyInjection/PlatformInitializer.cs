@@ -2,6 +2,8 @@
 using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
+using Counselor.Platform.Interpreter.Expressions;
+using Counselor.Platform.Interpreter.Templates;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
@@ -24,6 +26,10 @@ namespace Counselor.Platform.DependencyInjection
 			#region behavior
 			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
 			services.AddTransient<IInterpreter, InterpreterRuntime>();
+			#endregion
+
+			#region interpreter
+			services.AddSingleton<IExpressionParser, ExpressionParser>();
 			#endregion
 
 			#region repositories

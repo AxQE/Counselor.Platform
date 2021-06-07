@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Expressions
 {
-	interface IExpression
+	public interface IExpression
 	{
 		string Operator { get; }
-		Task<InterpretationResult> Interpret(IPlatformDatabase database, Dialog dialog);
+		Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog);
 	}
 }
