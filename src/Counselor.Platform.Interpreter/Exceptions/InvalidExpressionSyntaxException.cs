@@ -2,7 +2,7 @@
 
 namespace Counselor.Platform.Interpreter.Exceptions
 {
-	class InvalidExpressionSyntaxException : Exception
+	public class InvalidExpressionSyntaxException : Exception
 	{
 		public InvalidExpressionSyntaxException()
 		{

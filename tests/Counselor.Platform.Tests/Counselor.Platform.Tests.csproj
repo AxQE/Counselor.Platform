@@ -21,8 +21,4 @@
     <ProjectReference Include="..\..\src\Counselor.Platform\Counselor.Platform.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interpreter\" />
-  </ItemGroup>
-
 </Project>

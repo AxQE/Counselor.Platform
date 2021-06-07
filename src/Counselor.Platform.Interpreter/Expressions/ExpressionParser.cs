@@ -9,8 +9,8 @@ namespace Counselor.Platform.Interpreter.Expressions
 {
 	public class ExpressionParser : IExpressionParser
 	{
-		private static readonly Dictionary<string, Type> _expressionTypes = new Dictionary<string, Type>();
-		private static readonly Dictionary<string, ITransportCommandFactory> _externalCommandFactories = new Dictionary<string, ITransportCommandFactory>();
+		private readonly Dictionary<string, Type> _expressionTypes = new Dictionary<string, Type>();
+		private readonly Dictionary<string, ITransportCommandFactory> _externalCommandFactories = new Dictionary<string, ITransportCommandFactory>();
 
 		public ExpressionParser(IEnumerable<ITransportCommandFactory> commandFactories)
 		{
@@ -27,17 +27,17 @@ namespace Counselor.Platform.Interpreter.Expressions
 
 		public IExpression Parse(string instruction, string transport)
 		{
-			var expression = ParseExpressionName(instruction);
+			var expression = ParseExpression(instruction);
 			return ExpressionFactory(expression.@operator, expression.parameters, transport);
 		}
 
-		public static (string @operator, string parameters) ParseExpressionName(string instruction)
+		public static (string @operator, string parameters) ParseExpression(string instruction)
 		{
 			var operatorOpen = instruction?.IndexOf('[') ?? -1;
 			var operatorClose = instruction?.IndexOf(']') ?? -1;
 
 			if (operatorOpen == -1 || operatorClose == -1)
-				throw new InvalidExpressionSyntaxException();
+				throw new InvalidExpressionSyntaxException("Instruction does not contain expression operator.");
 
 			var @operator = instruction.Substring(1, operatorClose - 1);
 			var parameters = instruction.Substring(operatorClose + 1).Trim();
@@ -45,7 +45,7 @@ namespace Counselor.Platform.Interpreter.Expressions
 			return (@operator, parameters);
 		}
 
-		private static IExpression ExpressionFactory(string @operator, string parameters, string transport)
+		private IExpression ExpressionFactory(string @operator, string parameters, string transport)
 		{
 			if (!_expressionTypes.TryGetValue(@operator, out var type))
 				throw new NotImplementedException($"Interpreter operator named {@operator} not implemented.");

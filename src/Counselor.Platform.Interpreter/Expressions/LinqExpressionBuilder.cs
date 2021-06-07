@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Counselor.Platform.Interpreter.Expressions
 {
-	static class ExpressionBuilder
+	static class LinqExpressionBuilder
 	{
 		public static Expression BuildLogicalNot(ExpressionType type, Expression expression)
 		{

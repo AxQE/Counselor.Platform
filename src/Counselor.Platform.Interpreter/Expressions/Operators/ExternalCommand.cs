@@ -20,7 +20,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 
 		public async Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
 		{
-			var expression = ExpressionParser.ParseExpressionName(_parameters);
+			var expression = ExpressionParser.ParseExpression(_parameters);
 
 			var command = _commandFactory.CreateCommand(expression.@operator);
 			command.Parameter = expression.parameters;
