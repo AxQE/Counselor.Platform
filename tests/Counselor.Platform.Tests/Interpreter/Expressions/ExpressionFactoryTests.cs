@@ -31,6 +31,13 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 		}
 
 		[TestMethod]
+		[ExpectedException(typeof(InvalidExpressionSyntaxException))]
+		public void ParseExpression_InvalidSyntax()
+		{
+			ExpressionFactory.ParseExpression($"{_fixture.Create<string>()}");
+		}
+
+		[TestMethod]
 		public void CreateExpression_GetInternalOperator()
 		{
 			var expressionOperator = "MessageContains";
@@ -58,14 +65,7 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(internalOperator, result.Operator);
-		}
-
-		[TestMethod]
-		[ExpectedException(typeof(InvalidExpressionSyntaxException))]
-		public void CreateExpression_ExpressionNameDoesNotExist()
-		{
-			ExpressionFactory.ParseExpression($"{_fixture.Create<string>()}");
-		}
+		}		
 
 		[TestMethod]
 		[ExpectedException(typeof(NotImplementedException))]
