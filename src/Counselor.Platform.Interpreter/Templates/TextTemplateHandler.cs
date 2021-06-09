@@ -1,10 +1,8 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -39,7 +37,8 @@ namespace Counselor.Platform.Interpreter.Templates
 					var value = dialog.User.GetType()
 						.GetProperties()
 						.FirstOrDefault(x => x.Name.Equals(entityParameter[1], StringComparison.OrdinalIgnoreCase))
-						.GetValue(dialog.User).ToString();
+						.GetValue(dialog.User)
+						?.ToString() ?? "null";
 
 					resultString.Replace(parameters[p], value);
 				}
