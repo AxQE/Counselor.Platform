@@ -8,7 +8,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
 	class MessageContains : IExpression
 	{
-		private readonly string _parameters;
+		private readonly string _parameters;		
 		public string Operator => nameof(MessageContains);
 
 		public MessageContains(string parameters)

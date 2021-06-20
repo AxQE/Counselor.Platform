@@ -25,10 +25,10 @@ namespace Counselor.Platform.DependencyInjection
 
 			#region behavior
 			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
-			services.AddTransient<IInterpreter, InterpreterRuntime>();
 			#endregion
 
 			#region interpreter
+			services.AddTransient<IInterpreter, InterpreterRuntime>();
 			services.AddSingleton<IExpressionFactory, ExpressionFactory>();
 			#endregion
 

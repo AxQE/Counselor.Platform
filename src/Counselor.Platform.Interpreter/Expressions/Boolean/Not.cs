@@ -16,7 +16,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Boolean
 
 		public Expression GetExpression()
 		{
-			throw new System.NotImplementedException();
+			return ExpressionDynamicBuilder.BuildUnaryOperation(ExpressionType.Not, null);
 		}
 	}
 }

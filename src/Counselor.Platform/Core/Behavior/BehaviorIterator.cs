@@ -46,13 +46,13 @@ namespace Counselor.Platform.Core.Behavior
 			}
 			else
 			{
-				var nextStepIds = _current
+				var availableTransitions = _current
 					?.Where(s => s?.Transitions?.Any() ?? false)
 					?.SelectMany(x => x.Transitions)?.ToList();
 
-				if (nextStepIds?.Any() ?? false)
+				if (availableTransitions?.Any() ?? false)
 				{
-					var next = _behavior.Steps.Where(x => nextStepIds.Contains(x.Id));
+					var next = _behavior.Steps.Where(x => availableTransitions.Contains(x.Id));
 					if (next.Any())
 						_current = next.ToList();
 					else

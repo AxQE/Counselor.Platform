@@ -95,7 +95,7 @@ namespace Counselor.Platform.Services
 					_executors.TryAdd(connectionId, begaviorExecutor);
 				}
 
-				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);				
+				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);
 			}
 			catch (Exception ex)
 			{
