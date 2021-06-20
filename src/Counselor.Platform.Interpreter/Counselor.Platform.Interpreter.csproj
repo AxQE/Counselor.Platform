@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Counselor.Platform.Data\Counselor.Platform.Data.csproj" />
+    <ProjectReference Include="..\Counselor.Platform.Utils\Counselor.Platform.Utils.csproj" />
   </ItemGroup>
 
 </Project>

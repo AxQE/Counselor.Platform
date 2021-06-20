@@ -2,7 +2,7 @@
 {
 	public enum InterpretationResultState
 	{
-		Failure,
-		Completed		
+		Failed,
+		Completed
 	}
 }

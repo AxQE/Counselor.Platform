@@ -42,6 +42,7 @@ namespace Counselor.Platform.Api
 		public void ConfigureServices(IServiceCollection services)
 		{
 			DatabaseDI.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
+			services.AddMemoryCache();
 
 			services.AddCors(options =>
 			{
@@ -65,10 +66,14 @@ namespace Counselor.Platform.Api
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Counselor.Platform.Api", Version = "v1" });
 			});
 
+			services.AddResponseCaching();
+
 			services.AddAuthentication("BasicAuthentication")
 				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);				
 
 			services.AddScoped<IUserService, UserService>();
+			services.AddScoped<ITransportService, TransportService>();
+			services.AddScoped<IEntitiesService, EntitiesService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,6 +92,7 @@ namespace Counselor.Platform.Api
 
 			app.UseCors();
 
+			app.UseResponseCaching();
 			app.UseRouting();
 
 			app.UseAuthentication();

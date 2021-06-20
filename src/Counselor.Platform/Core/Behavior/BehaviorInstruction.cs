@@ -6,8 +6,8 @@ namespace Counselor.Platform.Core.Behavior
 	class BehaviorInstruction : IInstruction
 	{
 		public string Name { get; set; }
-		public BehaviorCommandType Type { get; set; } = BehaviorCommandType.Instruction;
+		public BehaviorInstructionType Type { get; set; } = BehaviorInstructionType.Instruction;
 		public string Data { get; set; }
-		public string Instruction => Type == BehaviorCommandType.Instruction ? Data : null;
+		public string Instruction => Type == BehaviorInstructionType.Instruction ? Data : null;
 	}
 }

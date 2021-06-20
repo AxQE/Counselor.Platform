@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Counselor.Platform.Interpreter.Commands;
+using System.Threading.Tasks;
 
 namespace Counselor.Platform.Services
 {
@@ -6,5 +7,6 @@ namespace Counselor.Platform.Services
 	{
 		string TransportSystemName { get; }
 		Task SendAsync(string payload, int userId);
+		Task SendAsync(ITransportCommand command);
 	}
 }

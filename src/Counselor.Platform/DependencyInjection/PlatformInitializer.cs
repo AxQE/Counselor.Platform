@@ -1,10 +1,11 @@
 ﻿using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Core.Pipeline;
-using Counselor.Platform.Core.Pipeline.Steps;
 using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
+using Counselor.Platform.Interpreter.Expressions;
+using Counselor.Platform.Interpreter.Templates;
 using Counselor.Platform.Repositories;
+using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,18 +25,17 @@ namespace Counselor.Platform.DependencyInjection
 
 			#region behavior
 			services.AddTransient<IBehaviorExecutor, BehaviorExecutor>();
+			#endregion
+
+			#region interpreter
 			services.AddTransient<IInterpreter, InterpreterRuntime>();
+			services.AddSingleton<IExpressionFactory, ExpressionFactory>();
 			#endregion
 
 			#region repositories
-			services.AddSingleton<ConnectionsRepository>();
-			services.AddSingleton<DialogsRepository>();
-			services.AddSingleton<BehaviorRepository>();
-			#endregion
-
-			#region pipeline
-			services.AddTransient<IPipelineExecutor, PipelineExecutor>();
-			services.AddTransient<IPipelineStep, PipelineBehaviorStep>();
+			services.AddSingleton<IConnectionsRepository, ConnectionsRepository>();
+			services.AddSingleton<IDialogsRepository, DialogsRepository>();
+			services.AddSingleton<IBehaviorRepository, BehaviorRepository>();
 			#endregion
 
 			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);

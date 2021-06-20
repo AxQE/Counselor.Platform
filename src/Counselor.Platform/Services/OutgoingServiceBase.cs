@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Data.Options;
-using Counselor.Platform.Repositories;
+using Counselor.Platform.Interpreter.Commands;
+using Counselor.Platform.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -12,12 +13,12 @@ namespace Counselor.Platform.Services
 		public string TransportSystemName => _options.TransportSystemName;
 		private readonly ILogger<OutgoingServiceBase> _logger;
 		private readonly TransportOptions _options;
-		private readonly ConnectionsRepository _connections;
+		private readonly IConnectionsRepository _connections;
 
 		public OutgoingServiceBase(
 			ILogger<OutgoingServiceBase> logger,
 			IOptions<TransportOptions> options,
-			ConnectionsRepository connections)
+			IConnectionsRepository connections)
 		{
 			_logger = logger;
 			_options = options.Value;
@@ -25,7 +26,7 @@ namespace Counselor.Platform.Services
 		}
 
 		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload);
-
+		public abstract Task SendAsync(ITransportCommand command);
 		public async Task SendAsync(string payload, int userId)
 		{
 			try
@@ -39,6 +40,6 @@ namespace Counselor.Platform.Services
 			{
 				_logger.LogError(ex, $"Send message to {TransportSystemName} failed. Message: {payload}. User: {userId}.");
 			}
-		}
+		}				
 	}
 }

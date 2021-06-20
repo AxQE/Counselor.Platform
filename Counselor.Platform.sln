@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Interpre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Api", "src\Counselor.Platform.Api\Counselor.Platform.Api.csproj", "{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Interoperation", "src\Counselor.Platform.Interoperation\Counselor.Platform.Interoperation.csproj", "{EE119651-D310-42B5-9980-1AE0BDD8ED07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Counselor.Platform.Utils", "src\Counselor.Platform.Utils\Counselor.Platform.Utils.csproj", "{2874A1BB-7585-4607-BA90-B3374DBF0D6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,10 +65,10 @@ Global
 		{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE119651-D310-42B5-9980-1AE0BDD8ED07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE119651-D310-42B5-9980-1AE0BDD8ED07}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE119651-D310-42B5-9980-1AE0BDD8ED07}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE119651-D310-42B5-9980-1AE0BDD8ED07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2874A1BB-7585-4607-BA90-B3374DBF0D6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2874A1BB-7585-4607-BA90-B3374DBF0D6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2874A1BB-7585-4607-BA90-B3374DBF0D6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2874A1BB-7585-4607-BA90-B3374DBF0D6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,7 +81,7 @@ Global
 		{A59B5BAB-5AC8-4090-BDAC-78064E0D3A0B} = {3CD7FDA8-F78E-45A4-871B-B84E200E0092}
 		{824058C9-11F3-4BCE-9216-27FCD62BFA18} = {3CD7FDA8-F78E-45A4-871B-B84E200E0092}
 		{AC8AA77F-5026-43DB-BC9F-288AEC20FF28} = {3CD7FDA8-F78E-45A4-871B-B84E200E0092}
-		{EE119651-D310-42B5-9980-1AE0BDD8ED07} = {3CD7FDA8-F78E-45A4-871B-B84E200E0092}
+		{2874A1BB-7585-4607-BA90-B3374DBF0D6E} = {3CD7FDA8-F78E-45A4-871B-B84E200E0092}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A7D549B7-71EF-410D-A8D3-11DA5D93B72F}

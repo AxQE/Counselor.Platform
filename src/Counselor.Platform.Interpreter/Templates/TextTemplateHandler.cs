@@ -1,26 +1,19 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Templates
 {
-	class TextTemplateHandler
+	static class TextTemplateHandler
 	{
-		private static readonly Regex TemplateRegex = new Regex("{(.+?)}", RegexOptions.Compiled);		
+		private static readonly Regex TemplateRegex = new Regex("{(.+?)}", RegexOptions.Compiled);
 
-		public TextTemplateHandler()
-		{
-
-		}
-
-		public async Task<string> InsertEntityParameters(string textTemplate, Dialog dialog, IPlatformDatabase database)
+		public static async Task<string> InsertEntityParameters(string textTemplate, Dialog dialog, IPlatformDatabase database)
 		{
 			//todo: нужно считать хеш шаблона, хранить его возможно прямо в объекте шага поведения, после кешировать хеш и параметры шаблона
 			var parameters = TemplateRegex.Matches(textTemplate)
@@ -44,9 +37,10 @@ namespace Counselor.Platform.Interpreter.Templates
 					var value = dialog.User.GetType()
 						.GetProperties()
 						.FirstOrDefault(x => x.Name.Equals(entityParameter[1], StringComparison.OrdinalIgnoreCase))
-						.GetValue(dialog.User).ToString();
+						.GetValue(dialog.User)
+						?.ToString() ?? "null";
 
-					resultString.Replace(parameters[p], value);					
+					resultString.Replace(parameters[p], value);
 				}
 				else
 				{
@@ -57,7 +51,7 @@ namespace Counselor.Platform.Interpreter.Templates
 			return resultString.ToString();
 		}
 
-		private bool EntityNameIsValid(string entityName)
+		private static bool EntityNameIsValid(string entityName)
 		{
 			return true;
 		}
