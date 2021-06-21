@@ -1,9 +1,9 @@
 ﻿namespace Counselor.Platform.Data.Entities
 {
-	public class DialogScript : EntityBase
+	public class Script : EntityBase
 	{
 		public string Name { get; set; }
 		public bool IsActive { get; set; }
-		public string Script { get; set; }
+		public string Data { get; set; }
 	}
 }

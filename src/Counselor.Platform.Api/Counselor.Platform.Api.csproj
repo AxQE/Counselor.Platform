@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Entities\Factories\" />
     <Folder Include="ActionFilters\" />
+    <Folder Include="Entities\Mapping\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="platformsettings.yaml">
+    <Content Include="apisettings.yaml">
 	  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
   </ItemGroup>

@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 [assembly: InternalsVisibleTo("Counselor.Platform.Tests")]
-
 namespace Counselor.Platform.Repositories
 {
 	class BehaviorRepository : IBehaviorRepository
@@ -23,7 +22,7 @@ namespace Counselor.Platform.Repositories
 		public BehaviorRepository(
 			ILogger<BehaviorRepository> logger,
 			IOptions<PlatformOptions> options,
-			IPlatformDatabase database			
+			IPlatformDatabase database
 			)
 		{
 			_logger = logger;
@@ -46,16 +45,16 @@ namespace Counselor.Platform.Repositories
 			var dialogsPath = _options.DialogsPath;
 			var deserializer = new YamlDotNet.Serialization.Deserializer();
 
-			foreach (var script in database.DialogScripts)
+			foreach (var script in database.Scripts)
 			{
-				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Script)))
+				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Data)))
 				using (var reader = new StreamReader(stream))
 				{
 					var dialog = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
-					_availableBehaviors.Add(dialog.Name, dialog);					
+					_availableBehaviors.Add(dialog.Name, dialog);
 				}
 			}
-						
+
 			if (Directory.Exists(dialogsPath))
 			{
 				foreach (var dialogFile in Directory.GetFiles(dialogsPath, "*.yaml", SearchOption.AllDirectories))

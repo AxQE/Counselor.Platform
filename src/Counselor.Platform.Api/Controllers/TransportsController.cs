@@ -23,7 +23,7 @@ namespace Counselor.Platform.Api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetAllTransports()
 		{
-			throw new NotImplementedException();
+			return Ok(await _service.GetAllTransports());
 		}
 	}
 }

@@ -5,20 +5,12 @@ using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.DependencyInjection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api
 {
@@ -28,7 +20,7 @@ namespace Counselor.Platform.Api
 		{
 			var builder = new ConfigurationBuilder()
 				.SetBasePath(env.ContentRootPath)
-				.AddYamlFile("platformsettings.yaml", optional: false, reloadOnChange: true)
+				.AddYamlFile("apisettings.yaml", optional: false, reloadOnChange: true)
 				.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: false, reloadOnChange: true)
 				.AddEnvironmentVariables()
 				.AddUserSecrets<Startup>();
@@ -74,6 +66,8 @@ namespace Counselor.Platform.Api
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ITransportService, TransportService>();
 			services.AddScoped<IEntitiesService, EntitiesService>();
+			services.AddScoped<IDialogService, DialogService>();
+			services.AddScoped<IScriptService, ScriptService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

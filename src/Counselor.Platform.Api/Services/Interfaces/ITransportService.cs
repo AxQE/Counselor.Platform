@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Counselor.Platform.Api.Entities.Dto;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services.Interfaces
 {
 	public interface ITransportService
 	{
+		Task<IEnumerable<TransportDto>> GetAllTransports();
 	}
 }
