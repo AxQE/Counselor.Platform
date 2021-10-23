@@ -38,7 +38,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ScriptDto>))]
+		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ScriptHeaderDto>))]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllScripts()
 		{

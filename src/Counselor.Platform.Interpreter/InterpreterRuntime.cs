@@ -42,9 +42,9 @@ namespace Counselor.Platform.Interpreter
 			}
 		}
 
-		public async Task<string> InsertEntityParameters(string message, Dialog dialog, IPlatformDatabase database)
+		public Task<string> InsertEntityParameters(string message, Dialog dialog, IPlatformDatabase database)
 		{
-			return await TextTemplateHandler.InsertEntityParameters(message, dialog, database);
+			return TextTemplateHandler.InsertEntityParameters(message, dialog, database);
 		}
 
 		public void Dispose()

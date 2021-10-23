@@ -7,5 +7,6 @@ namespace Counselor.Platform.Api.Services.Interfaces
 	public interface ITransportService
 	{
 		Task<IEnumerable<TransportDto>> GetAllTransports();
+		Task<TransportDto> GetTransportById(int transportId);
 	}
 }

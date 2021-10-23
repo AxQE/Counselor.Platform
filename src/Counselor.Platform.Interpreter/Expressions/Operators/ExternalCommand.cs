@@ -18,19 +18,19 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 			_parameters = parameters;
 		}
 
-		public async Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
+		public Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
 		{
 			var expression = ExpressionFactory.ParseExpression(_parameters);
 
 			var command = _commandFactory.CreateCommand(expression.@operator);
 			command.Parameter = expression.parameters;
 
-			return new InterpretationResult
+			return Task.FromResult(new InterpretationResult
 			{
 				Command = command,
 				ResultType = ExpressionResultType.TransportCommand,
 				State = InterpretationResultState.Completed
-			};
+			});
 		}
 	}
 }

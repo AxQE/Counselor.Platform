@@ -1,16 +1,7 @@
-import { ApiConfig } from '../Config'
-import Logger from  './Logger'
-
-function authHeader() : Headers {
-    // return authorization header with basic auth credentials
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const headers = new Headers();
-
-    if (user && user.authdata)
-        headers.append('Authorization', 'Basic ' + user.authdata);
-
-    return headers;
-}
+import { ApiConfig } from '../Config';
+import { authHeader } from './AuthHelper';
+import { serviceBase } from './ServiceBase';
+import Logger from  './Logger';
 
 export const userService = {
     login,
@@ -20,25 +11,17 @@ export const userService = {
 };
 
 function login(username : string, password : string) {
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    };
 
-    return fetch(`${ApiConfig.BaseUrl}/users/authenticate`, requestOptions)
-        .then(handleResponse)
-        .then(user => {
-            // login successful if there's a user in the response
-            if (user) {
-                // store user details and basic auth credentials in local storage 
-                // to keep user logged in between page refreshes
-                user.authdata = window.btoa(username + ':' + password);
-                localStorage.setItem('user', JSON.stringify(user));
-            }
+    const user = serviceBase.POST(`${ApiConfig.BaseUrl}/users/authenticate`, JSON.stringify({ username, password }), { 'Content-Type': 'application/json' });
 
-            return user;
-        });
+    if (user) {
+        // store user details and basic auth credentials in local storage 
+        // to keep user logged in between page refreshes
+        user.authdata = window.btoa(username + ':' + password);
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    return user;
 }
 
 function logout() {
@@ -47,12 +30,7 @@ function logout() {
 }
 
 function getCurrent() {
-    const params: RequestInit = {
-        method: 'GET',        
-        headers: authHeader()
-    };
-
-    return fetch(`${ApiConfig.BaseUrl}/users/current`, params).then(handleResponse);
+    return serviceBase.GET(`${ApiConfig.BaseUrl}/users/current`);    
 }
 
 function createUser(username: string, password: string) {

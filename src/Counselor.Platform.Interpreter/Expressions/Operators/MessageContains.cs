@@ -1,14 +1,16 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
+using Counselor.Platform.Interpreter.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
+	[InterpreterCommand(null, typeof(string))]
 	class MessageContains : IExpression
 	{
-		private readonly string _parameters;		
+		private readonly string _parameters;
 		public string Operator => nameof(MessageContains);
 
 		public MessageContains(string parameters)
@@ -22,7 +24,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 
 			var result = new InterpretationResult
 			{
-				ResultType = ExpressionResultType.Boolean				
+				ResultType = ExpressionResultType.Boolean
 			};
 
 			foreach (var p in parameters)
@@ -32,6 +34,6 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 			}
 
 			return result;
-		}		
+		}
 	}
 }

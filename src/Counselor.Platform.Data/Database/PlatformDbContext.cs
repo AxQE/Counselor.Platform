@@ -23,10 +23,10 @@ namespace Counselor.Platform.Database
 			base.Database.EnsureCreated();
 		}
 
-		public async override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+		public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
 		{
 			SetModificationTime();
-			return await base.SaveChangesAsync(cancellationToken);
+			return base.SaveChangesAsync(cancellationToken);
 		}
 
 		public override int SaveChanges()

@@ -28,9 +28,9 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public async Task<UserDto> Authenticate(AuthDto auth)
+		public Task<UserDto> Authenticate(AuthDto auth)
 		{
-			return await Authenticate(auth.Username, auth.Password);
+			return Authenticate(auth.Username, auth.Password);
 		}
 
 		public async Task<UserDto> Authenticate(string username, string password)

@@ -5,6 +5,7 @@ using Telegram.Bot;
 
 namespace Counselor.Platform.Worker.Transport.Telegram.Commands
 {
+	[InterpreterCommand(nameof(Parameter), typeof(string))]
 	class SendMessage : ITransportCommand
 	{
 		public object Parameter { get; set; }

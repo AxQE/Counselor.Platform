@@ -1,11 +1,15 @@
 import { LogLevel, ILogEntry } from '../types/Logger'
 import { LoggingConfig } from '../Config'
+import { userData } from './AuthHelper'
 
 class Logger { 
     //todo: нужно сделать фоновый обработчик (worker) кторый будет слать логи пачками на бэк
     private static _instance : Logger;
+    private _userId : number;
 
-    private constructor() {}
+    private constructor() {
+        this._userId = userData().id;
+    }
 
     public static getInstance() : Logger {
         if (!Logger._instance)
@@ -14,7 +18,7 @@ class Logger {
         return Logger._instance;
     }
 
-    LogDebug(message: string, error?: any, userId?: number) {
+    LogDebug(message: string, error?: any) {
         if (LoggingConfig.Level >= LogLevel.Debug){
             if (LoggingConfig.OutputToConsole){
                 console.log(message, error);
@@ -25,7 +29,7 @@ class Logger {
                     OccurredOn: new Date(),
                     Level: LogLevel.Debug,
                     Message: message,
-                    UserId: userId,
+                    UserId: this._userId,
                     StackTrack: error
                 }
     
@@ -34,7 +38,7 @@ class Logger {
         }            
     }
 
-    LogTrace(message: string, error?: any, userId?: number) {
+    LogTrace(message: string, error?: any) {
         if (LoggingConfig.Level >= LogLevel.Trace) {
             if (LoggingConfig.OutputToConsole){
                 console.log(message, error);
@@ -45,7 +49,7 @@ class Logger {
                     OccurredOn: new Date(),
                     Level: LogLevel.Trace,
                     Message: message,
-                    UserId: userId,
+                    UserId: this._userId,
                     StackTrack: error
                 }
     
@@ -55,7 +59,7 @@ class Logger {
             
     }
 
-    LogInfo(message: string, error?: any, userId?: number) {
+    LogInfo(message: string, error?: any) {
         if (LoggingConfig.Level >= LogLevel.Information) {
             if (LoggingConfig.OutputToConsole){
                 console.log(message, error);
@@ -66,7 +70,7 @@ class Logger {
                     OccurredOn: new Date(),
                     Level: LogLevel.Information,
                     Message: message,
-                    UserId: userId,
+                    UserId: this._userId,
                     StackTrack: error
                 }
     
@@ -75,7 +79,7 @@ class Logger {
         }            
     }
 
-    LogError(message: string, error?: any, userId?: number) {
+    LogError(message: string, error?: any) {
         if (LoggingConfig.Level >= LogLevel.Error) {
             if (LoggingConfig.OutputToConsole){
                 console.error(message, error);
@@ -86,7 +90,7 @@ class Logger {
                     OccurredOn: new Date(),
                     Level: LogLevel.Error,
                     Message: message,
-                    UserId: userId,
+                    UserId: this._userId,
                     StackTrack: error
                 }
     
@@ -95,7 +99,7 @@ class Logger {
         }            
     }
 
-    LogCritical(message: string, error?: any, userId?: number) {
+    LogCritical(message: string, error?: any) {
         if (LoggingConfig.Level >= LogLevel.Critical) {
             if (LoggingConfig.OutputToConsole){
                 console.error(message, error);
@@ -106,7 +110,7 @@ class Logger {
                     OccurredOn: new Date(),
                     Level: LogLevel.Critical,
                     Message: message,
-                    UserId: userId,
+                    UserId: this._userId,
                     StackTrack: error
                 }
     

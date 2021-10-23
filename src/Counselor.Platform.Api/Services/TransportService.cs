@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services
@@ -17,7 +16,7 @@ namespace Counselor.Platform.Api.Services
 		private readonly ILogger<TransportService> _logger;
 
 		public TransportService(
-			IPlatformDatabase database, 
+			IPlatformDatabase database,
 			ILogger<TransportService> logger
 			)
 		{
@@ -29,6 +28,17 @@ namespace Counselor.Platform.Api.Services
 		{
 			var transports = await _database.Transports.ToListAsync();
 			return transports.Adapt<IEnumerable<TransportDto>>();
+		}
+
+		public async Task<TransportDto> GetTransportById(int transportId)
+		{
+			var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == transportId);
+			return transport.Adapt<TransportDto>();
+		}
+
+		public async Task<IEnumerable<InterpreterCommandDto>> GetTranposportCommands(int tranportId)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
