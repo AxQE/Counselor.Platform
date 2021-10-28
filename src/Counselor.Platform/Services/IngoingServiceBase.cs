@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Services
 {
-	public abstract class IngoingServiceBase : BackgroundService
+	public abstract class IngoingServiceBase
 	{
 		private readonly ILogger<IngoingServiceBase> _logger;
 		private readonly TransportOptions _options;
@@ -55,11 +55,12 @@ namespace Counselor.Platform.Services
 		}
 
 		protected abstract Task StartTransportServiceAsync(CancellationToken cancellationToken);
+		protected abstract Task StopTransportServiceAsync(CancellationToken cancellationToken);
 
 		//todo: нужно посмотреть насколько этот метод вообще нужен, можно заинжектить outgoingservice и слать сообщения через него
 		protected abstract Task SendMessageToTransportAsync(string connectionId, string payload, CancellationToken cancellationToken = default);
 
-		protected override sealed async Task ExecuteAsync(CancellationToken stoppingToken)
+		protected async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			if (_options.IsEnabled)
 			{
@@ -101,6 +102,34 @@ namespace Counselor.Platform.Services
 			{
 				_logger.LogError(ex, $"Behavior failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 			}
+		}
+
+		public async Task StartAsync(CancellationToken token)
+		{
+			if (_options.IsEnabled)
+			{
+				try
+				{
+					_logger.LogInformation($"{_options.TransportSystemName} service worker is starting.");
+					while (!token.IsCancellationRequested)
+					{
+						await StartTransportServiceAsync(token);						
+					}
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, $"{_options.TransportSystemName} service worker got unprocessed error.");
+				}
+			}
+			else
+			{
+				_logger.LogInformation($"{_options.TransportSystemName} service worker is disabled.");
+			}
+		}
+
+		public Task StopAsync()
+		{
+			return StopTransportServiceAsync(CancellationToken.None);
 		}
 
 		class ExecutorMeta

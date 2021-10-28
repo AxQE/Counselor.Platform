@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Services;
+﻿using Counselor.Platform.Data.Entities;
+using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -8,21 +9,24 @@ using Telegram.Bot;
 
 namespace Counselor.Platform.Worker.Transport.Telegram
 {
-	class TelegramWorker : IngoingServiceBase
+	class TelegramService : IngoingServiceBase
 	{
-		private readonly ILogger<TelegramWorker> _logger;
+		private readonly ILogger<TelegramService> _logger;
 		private readonly TelegramOptions _options;
 		private readonly TelegramBotClient _client;
+		private readonly Bot _bot;
 
-		public TelegramWorker(
-			ILogger<TelegramWorker> logger,
+		public TelegramService(
+			ILogger<TelegramService> logger,
 			IOptions<TelegramOptions> options,
-			IServiceProvider serviceProvider
+			IServiceProvider serviceProvider,
+			Bot bot
 			)
 			: base(logger, options, serviceProvider)
 		{
 			_logger = logger;
 			_options = options.Value;
+			_bot = bot;
 
 			_client = new TelegramBotClient(_options.Token);
 			_client.OnMessage += OnMessageAsync;
@@ -42,14 +46,20 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 			}
 		}
 
-		protected override async Task StartTransportServiceAsync(CancellationToken cancellationToken)
+		protected override Task StartTransportServiceAsync(CancellationToken cancellationToken)
 		{
 			_client.StartReceiving(cancellationToken: cancellationToken);
+			return Task.CompletedTask;
 		}
 
 		protected override Task SendMessageToTransportAsync(string connectionId, string payload, CancellationToken cancellationToken = default)
 		{
 			return _client.SendTextMessageAsync(long.Parse(connectionId), payload, cancellationToken: cancellationToken);
+		}
+
+		protected override Task StopTransportServiceAsync(CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

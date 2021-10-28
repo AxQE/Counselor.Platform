@@ -28,9 +28,9 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 			_client = new TelegramBotClient(_options.Token);
 		}
 
-		public override async Task SendAsync(ITransportCommand command)
+		public override Task SendAsync(ITransportCommand command)
 		{
-			await command.ExecuteAsync(_client);
+			return command.ExecuteAsync(_client);
 		}
 
 		protected override async Task SendMessageToTransportAsync(string connectionId, string message)

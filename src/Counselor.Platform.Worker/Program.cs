@@ -1,6 +1,7 @@
 using Counselor.Platform.DependencyInjection;
 using Counselor.Platform.Interpreter.Commands;
 using Counselor.Platform.Services;
+using Counselor.Platform.Worker.Transport;
 using Counselor.Platform.Worker.Transport.Discord;
 using Counselor.Platform.Worker.Transport.Discord.Commands;
 using Counselor.Platform.Worker.Transport.Telegram;
@@ -50,8 +51,7 @@ namespace Counselor.Platform.Worker
 
 		private static void RegistrateHostedServices(IServiceCollection services)
 		{
-			services.AddHostedService<TelegramWorker>();
-			services.AddHostedService<DiscordWorker>();
+			services.AddHostedService<TransportService>();
 		}
 
 		private static void CreateConfigurations(HostBuilderContext hostContext, IServiceCollection services)

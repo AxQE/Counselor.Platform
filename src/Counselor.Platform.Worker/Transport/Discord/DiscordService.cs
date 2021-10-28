@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Counselor.Platform.Worker.Transport.Discord
 {
-	class DiscordWorker : IngoingServiceBase
+	class DiscordService : IngoingServiceBase
 	{
-		private readonly ILogger<DiscordWorker> _logger;
+		private readonly ILogger<DiscordService> _logger;
 		private readonly DiscordOptions _options;
 
-		public DiscordWorker(
-			ILogger<DiscordWorker> logger,
+		public DiscordService(
+			ILogger<DiscordService> logger,
 			IOptions<DiscordOptions> options,
 			IServiceProvider serviceProvider
 			)
@@ -29,6 +29,11 @@ namespace Counselor.Platform.Worker.Transport.Discord
 		}
 
 		protected override Task StartTransportServiceAsync(CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override Task StopTransportServiceAsync(CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
