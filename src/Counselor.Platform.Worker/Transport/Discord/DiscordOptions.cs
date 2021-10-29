@@ -8,6 +8,6 @@ namespace Counselor.Platform.Worker.Transport.Discord
 		public override bool IsEnabled { get; set; }
 		public override bool SendErrorReport { get; set; }
 		public override string DialogName { get; set; }
-		public override string TransportSystemName => SectionName;
+		public override string SystemName => SectionName;
 	}
 }

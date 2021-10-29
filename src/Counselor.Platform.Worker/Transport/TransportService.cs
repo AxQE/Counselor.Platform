@@ -1,7 +1,10 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
+using Counselor.Platform.Data.Options;
+using Counselor.Platform.Interpreter.Commands;
 using Counselor.Platform.Services;
+using Counselor.Platform.Utils;
 using Counselor.Platform.Worker.Transport.Telegram;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,41 +14,46 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Worker.Transport
 {
-	class TransportService : BackgroundService, IDisposable
+	//todo: большая часть логики относится больше к ядру, чем к транспортной части, всё за исключением фабричного метода  можно перенести в Counselor.Platform.
+	public class TransportService : BackgroundService, IDisposable
 	{
 		private readonly ILogger<TransportService> _logger;
 		private readonly IPlatformDatabase _database;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly TransportServiceOptions _options;
+
 		private readonly HashSet<TransportData> _runningBots = new HashSet<TransportData>();
-		private const int ServiceBotIntervalMs = 60000;
 
 		public TransportService(
 			ILogger<TransportService> logger,
 			IPlatformDatabase database,
-			IServiceProvider serviceProvider
+			IServiceProvider serviceProvider,
+			IOptions<TransportServiceOptions> options
 			)
 		{
 			_logger = logger;
 			_database = database;
 			_serviceProvider = serviceProvider;
+			_options = options.Value;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken token)
 		{
+			await InitializeTransportsAsync();
+
 			while (!token.IsCancellationRequested)
 			{
 				try
 				{
 					await StartBotsAsync();
 					await StopBotsAsync();
-					await Task.Delay(ServiceBotIntervalMs, token);
+					await Task.Delay(_options.ServiceIntervalMs, token);
 				}
 				catch (Exception ex)
 				{
@@ -54,9 +62,92 @@ namespace Counselor.Platform.Worker.Transport
 			}
 		}
 
-		private async Task StartBotsAsync()
+		//todo: этого тут не должно быть, нужо перенести в Counselor.Platform
+		private async Task InitializeTransportsAsync()
 		{
-			var bots = await _database.Bots
+			var dbTransports = new List<Data.Entities.Transport>();
+
+			foreach (var transport in _options.Transports)
+			{
+				if (string.IsNullOrEmpty(transport.SystemName)) continue;
+
+				var dbTransport = await _database
+					.Transports					
+					.FirstOrDefaultAsync(x => x.Name.Equals(transport.SystemName)); //todo: нужно приводить в один регистр имя системы
+
+				if (dbTransport == null)
+				{
+					await _database.Transports.AddAsync(
+						new Data.Entities.Transport
+						{
+							Name = transport.SystemName,
+							IsActive = transport.IsEnabled
+						});
+
+					await _database.SaveChangesAsync();
+				}
+				else
+				{
+					if (dbTransport.IsActive != transport.IsEnabled)
+					{
+						dbTransport.IsActive = transport.IsEnabled;
+						_database.Transports.Update(dbTransport);
+						await _database.SaveChangesAsync();
+					}
+				}
+
+				dbTransports.Add(dbTransport);
+			}
+
+			var dbCommands = await _database.Commands
+				.Include(x => x.Transport)
+				.ToListAsync();			
+
+			foreach (var type in TypeHelpers.GetTypesWithAttribute<InterpreterCommandAttribute>())
+			{
+				var transport = dbTransports.FirstOrDefault(x => type.FullName.Contains(x?.Name));
+
+				if (!dbCommands.Exists(x => x.Name.Equals(type.Name) && transport?.Id == x.Transport?.Id))
+				{
+					var (isActive, parameters) = MergeAttributes(TypeHelpers.GetAppliedAttributes<InterpreterCommandAttribute>(type));
+
+					await _database.Commands.AddAsync(
+						new Command
+						{
+							Name = type.Name,
+							IsActive = isActive,
+							Paramaters = parameters
+								.Select(x =>
+									new CommandParameter
+									{
+										Name = x.Item1,
+										Type = x.Item2
+									}).ToList(),
+							Transport = transport
+						});
+				}
+			}
+
+			await _database.SaveChangesAsync();
+		}
+
+		private static (bool isActive, IEnumerable<(string, string)> parameters) MergeAttributes(IEnumerable<InterpreterCommandAttribute> attributes)
+		{
+			bool isActive = true;
+			var parameters = new List<(string, string)>();
+
+			foreach (var attribute in attributes)
+			{
+				if (!attribute.IsActive) isActive = false;
+				parameters.Add((attribute.ParameterName, attribute.ParameterType.Name));
+			}
+
+			return (isActive, parameters);
+		}
+
+		public async Task StartBotsAsync()
+		{
+			var bots = await _database.Bots				
 				.Where(x => x.BotState == BotState.Pending || x.BotState == BotState.Started)
 				.Include(x => x.Transport)
 				.Include(x => x.Owner)
@@ -67,13 +158,15 @@ namespace Counselor.Platform.Worker.Transport
 			{
 				foreach (var bot in bots)
 				{
+					if (_runningBots.Any(x => x.Bot.Id == bot.Id)) continue;
+
 					try
 					{
 						EnsureValidity(bot);
 
 						var transportData = CreateTransport(bot);
-						await transportData.Transport.StartAsync(transportData.CancellationToken);
-
+						_runningBots.Add(transportData);
+						await transportData.Transport.StartAsync(transportData.CancellationToken);						
 						bot.BotState = BotState.Started;
 					}
 					catch (Exception ex)
@@ -85,14 +178,17 @@ namespace Counselor.Platform.Worker.Transport
 					_database.Bots.Update(bot);
 				}
 
-				await _database.SaveChangesAsync(); 
+				await _database.SaveChangesAsync();
 			}
 		}
 
-		private async Task StopBotsAsync()
+		public async Task StopBotsAsync()
 		{
+			var lastExecution = DateTime.Now.AddMilliseconds(-1 * _options.ServiceIntervalMs);
+
 			var stoppedBots = await _database.Bots
-				.Where(x => x.BotState == BotState.Stopped && x.ModifiedOn > DateTime.Now.AddMilliseconds(-1 * ServiceBotIntervalMs))
+				.AsNoTracking()
+				.Where(x => x.BotState == BotState.Stopped && x.ModifiedOn > lastExecution)
 				.ToListAsync();
 
 			var transportsData = _runningBots.Where(x => stoppedBots.Contains(x.Bot));
@@ -108,7 +204,7 @@ namespace Counselor.Platform.Worker.Transport
 			}
 		}
 
-		private void EnsureValidity(Bot bot)
+		public void EnsureValidity(Bot bot)
 		{
 			string invalidParameter = string.Empty;
 
@@ -124,9 +220,13 @@ namespace Counselor.Platform.Worker.Transport
 			{
 				invalidParameter = nameof(bot.Owner);
 			}
+			else if (string.IsNullOrEmpty(bot.Configuration))
+			{
+				invalidParameter = nameof(bot.Configuration);
+			}
 
 			if (!string.IsNullOrEmpty(invalidParameter))
-				throw new ArgumentException($"Bot is not valid. Invalid paramater: {invalidParameter}. BotId {bot.Id}.");
+				throw new ArgumentException($"Bot is not valid. Invalid paramater: {invalidParameter}. BotId: {bot.Id}.");
 		}
 
 		private TransportData CreateTransport(Bot bot) => bot.Transport.Name switch

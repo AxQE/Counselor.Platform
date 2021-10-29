@@ -1,16 +1,11 @@
 ﻿using Akka.Actor;
 using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Data.Database;
-using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Options;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,23 +30,6 @@ namespace Counselor.Platform.Services
 			_logger = logger;
 			_options = options.Value;
 			_serviceProvider = serviceProvider;
-
-			var database = _serviceProvider.GetRequiredService<IPlatformDatabase>();
-			var transport = database
-				.Transports
-				.AsNoTracking()
-				.FirstOrDefault(x => x.Name.Equals(_options.TransportSystemName)); //todo: нужно приводить в один регистр имя системы
-
-			if (transport is null)
-			{
-				transport = new Transport
-				{
-					Name = _options.TransportSystemName
-				};
-
-				database.Transports.Add(transport);
-				database.SaveChanges();
-			}
 		}
 
 		protected abstract Task StartTransportServiceAsync(CancellationToken cancellationToken);
@@ -66,7 +44,7 @@ namespace Counselor.Platform.Services
 			{
 				try
 				{
-					_logger.LogInformation($"{_options.TransportSystemName} service worker is starting.");
+					_logger.LogInformation($"{_options.SystemName} service worker is starting.");
 					while (!stoppingToken.IsCancellationRequested)
 					{
 						await StartTransportServiceAsync(stoppingToken);
@@ -75,12 +53,12 @@ namespace Counselor.Platform.Services
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, $"{_options.TransportSystemName} service worker got unprocessed error.");
+					_logger.LogError(ex, $"{_options.SystemName} service worker got unprocessed error.");
 				}
 			}
 			else
 			{
-				_logger.LogInformation($"{_options.TransportSystemName} service worker is disabled.");
+				_logger.LogInformation($"{_options.SystemName} service worker is disabled.");
 			}
 		}
 
@@ -88,7 +66,7 @@ namespace Counselor.Platform.Services
 		{
 			try
 			{
-				_logger.LogDebug($"Incoming message. Transport: {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
+				_logger.LogDebug($"Incoming message. Transport: {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 
 				if (!_executors.TryGetValue(connectionId, out var begaviorExecutor))
 				{
@@ -96,11 +74,11 @@ namespace Counselor.Platform.Services
 					_executors.TryAdd(connectionId, begaviorExecutor);
 				}
 
-				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.TransportSystemName, _options.DialogName);
+				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.SystemName, _options.DialogName);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Behavior failed for {_options.TransportSystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
+				_logger.LogError(ex, $"Behavior failed for {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
 			}
 		}
 
@@ -110,20 +88,17 @@ namespace Counselor.Platform.Services
 			{
 				try
 				{
-					_logger.LogInformation($"{_options.TransportSystemName} service worker is starting.");
-					while (!token.IsCancellationRequested)
-					{
-						await StartTransportServiceAsync(token);						
-					}
+					_logger.LogInformation($"{_options.SystemName} service worker is starting.");
+					await StartTransportServiceAsync(token);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, $"{_options.TransportSystemName} service worker got unprocessed error.");
+					_logger.LogError(ex, $"{_options.SystemName} service worker got unprocessed error.");
 				}
 			}
 			else
 			{
-				_logger.LogInformation($"{_options.TransportSystemName} service worker is disabled.");
+				_logger.LogInformation($"{_options.SystemName} service worker is disabled.");
 			}
 		}
 

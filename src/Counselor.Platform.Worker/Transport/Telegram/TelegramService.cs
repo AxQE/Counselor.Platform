@@ -9,7 +9,7 @@ using Telegram.Bot;
 
 namespace Counselor.Platform.Worker.Transport.Telegram
 {
-	class TelegramService : IngoingServiceBase
+	public class TelegramService : IngoingServiceBase
 	{
 		private readonly ILogger<TelegramService> _logger;
 		private readonly TelegramOptions _options;
@@ -30,12 +30,12 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 
 			_client = new TelegramBotClient(_options.Token);
 			_client.OnMessage += OnMessageAsync;
-			_client.OnReceiveError += OnReceiveErrorAsync;
+			_client.OnReceiveError += OnReceiveError;
 		}
 
-		private async void OnReceiveErrorAsync(object sender, global::Telegram.Bot.Args.ReceiveErrorEventArgs e)
+		private void OnReceiveError(object sender, global::Telegram.Bot.Args.ReceiveErrorEventArgs e)
 		{
-			throw new NotImplementedException();
+			_logger.LogError(e.ApiRequestException, "Telegram api error.");
 		}
 
 		private async void OnMessageAsync(object sender, global::Telegram.Bot.Args.MessageEventArgs e)

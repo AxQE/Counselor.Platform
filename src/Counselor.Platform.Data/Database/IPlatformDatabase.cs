@@ -16,6 +16,8 @@ namespace Counselor.Platform.Data.Database
 		DbSet<Message> Messages { get; set; }
 		DbSet<ErrorCode> ErrorCodes { get; set; }
 		DbSet<Bot> Bots { get; set; }
+		DbSet<Command> Commands { get; set; }
+
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 		int SaveChanges();
 	}

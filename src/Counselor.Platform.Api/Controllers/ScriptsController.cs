@@ -1,4 +1,5 @@
 ﻿using Counselor.Platform.Api.Entities.Dto;
+using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,7 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id <= 0) return BadRequest();
 
-			var script = await _service.GetScript(id);
+			var script = await _service.GetScript(id, HttpContext.GetCurrentUserId());
 
 			if (script == null) return NotFound();
 
@@ -42,7 +43,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllScripts()
 		{
-			return Ok(await _service.GetAllScripts());
+			return Ok(await _service.GetAllScripts(HttpContext.GetCurrentUserId()));
 		}
 
 		[HttpPost]
@@ -51,7 +52,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> CreateScript(ScriptDto script)
 		{
-			var created = await _service.Create(script);
+			var created = await _service.Create(script, HttpContext.GetCurrentUserId());
 			return Created(string.Empty, created);
 		}
 
@@ -89,7 +90,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> DeleteScript(int id)
 		{
-			await _service.Delete(id);
+			await _service.Delete(id, HttpContext.GetCurrentUserId());
 			return NoContent();
 		}
 	}

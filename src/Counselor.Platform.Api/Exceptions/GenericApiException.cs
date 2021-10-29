@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Runtime.Serialization;
 
 namespace Counselor.Platform.Api.Exceptions
@@ -12,6 +13,13 @@ namespace Counselor.Platform.Api.Exceptions
 		public GenericApiException(int httpStatusCode, int? errorCode = default, string errorReason = default)
 		{
 			HttpStatusCode = httpStatusCode;
+			ErrorCode = errorCode;
+			ErrorReason = errorReason;
+		}
+
+		public GenericApiException(HttpStatusCode statusCode, int? errorCode = default, string errorReason = default)
+		{
+			HttpStatusCode = (int)statusCode;
 			ErrorCode = errorCode;
 			ErrorReason = errorReason;
 		}

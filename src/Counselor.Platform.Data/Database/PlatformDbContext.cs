@@ -18,6 +18,7 @@ namespace Counselor.Platform.Database
 		public DbSet<Message> Messages { get; set; }
 		public DbSet<ErrorCode> ErrorCodes { get; set; }
 		public DbSet<Bot> Bots { get; set; }
+		public DbSet<Command> Commands { get; set; }
 
 		public PlatformDbContext(DbContextOptions<PlatformDbContext> options) : base(options)
 		{

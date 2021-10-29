@@ -6,14 +6,14 @@
     UserId: counselor
     Password: 
     Database: counselor.platform
-Telegram:
-  IsEnabled: true
-  Token:
-  SendErrorReport: false
-  DialogName: Sample
-Discord:
-  IsEnabled: false
-  Token:
-  SendErrorReport: false
 Cache:
   UserDataLifetime: 300
+TransportService:
+  ServiceIntervalMs: 60000
+  Transports:
+    - SystemName: Telegram
+      IsEnabled: true
+      SendErrorReport: false      
+    - SystemName: Discord
+      IsEnabled: false
+      SendErrorReport: false

@@ -7,6 +7,6 @@ namespace Counselor.Platform.Data.Entities
 		public string Name { get; set; }
 		public Transport Transport { get; set; }
 		public bool IsActive { get; set; }
-		public IEnumerable<CommandParameter> Paramaters { get; set; }
+		public List<CommandParameter> Paramaters { get; set; }
 	}
 }

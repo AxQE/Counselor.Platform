@@ -44,7 +44,6 @@ namespace Counselor.Platform.DependencyInjection
 			#endregion
 
 			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);
-			RegistrateCommands();
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)
@@ -53,31 +52,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
 			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
 			services.Configure<PlatformOptions>(hostContext.Configuration.GetSection(PlatformOptions.SectionName));
-		}
-
-		private static void RegistrateCommands()
-		{
-			var types = new Dictionary<string, (string, bool, IEnumerable<(string, string)>)>();
-
-			foreach (var type in TypeHelpers.GetTypesWithAttribute<InterpreterCommandAttribute>())
-			{
-				var attributes = MergeAttributes(TypeHelpers.GetAppliedAttributes<InterpreterCommandAttribute>(type));
-				types.Add(type.Name, (null, attributes.isActive, attributes.parameters));
-			}
-		}
-
-		private static (bool isActive, IEnumerable<(string, string)> parameters) MergeAttributes(IEnumerable<InterpreterCommandAttribute> attributes)
-		{
-			bool isActive = true;
-			var parameters = new List<(string, string)>();
-
-			foreach (var attribute in attributes)
-			{
-				if (!attribute.IsActive) isActive = false;
-				parameters.Add((attribute.ParameterName, attribute.ParameterType.Name));
-			}
-
-			return (isActive, parameters);
-		}
+			services.Configure<TransportServiceOptions>(hostContext.Configuration.GetSection(TransportServiceOptions.SectionName));
+		}		
 	}
 }

@@ -10,7 +10,7 @@ namespace Counselor.Platform.Services
 {
 	public abstract class OutgoingServiceBase : IOutgoingService
 	{
-		public string TransportSystemName => _options.TransportSystemName;
+		public string TransportSystemName => _options.SystemName;
 		private readonly ILogger<OutgoingServiceBase> _logger;
 		private readonly TransportOptions _options;
 		private readonly IConnectionsRepository _connections;

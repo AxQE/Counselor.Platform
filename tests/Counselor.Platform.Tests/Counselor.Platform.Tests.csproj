@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Counselor.Platform.Api\Counselor.Platform.Api.csproj" />
     <ProjectReference Include="..\..\src\Counselor.Platform.Interpreter\Counselor.Platform.Interpreter.csproj" />
+    <ProjectReference Include="..\..\src\Counselor.Platform.Worker\Counselor.Platform.Worker.csproj" />
     <ProjectReference Include="..\..\src\Counselor.Platform\Counselor.Platform.csproj" />
   </ItemGroup>
 
