@@ -1,8 +1,9 @@
-﻿using Counselor.Platform.Data.Entities;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -14,19 +15,20 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 		private readonly ILogger<TelegramService> _logger;
 		private readonly TelegramOptions _options;
 		private readonly TelegramBotClient _client;
-		private readonly Bot _bot;
+		private readonly int _botId;
 
 		public TelegramService(
 			ILogger<TelegramService> logger,
 			IOptions<TelegramOptions> options,
-			IServiceProvider serviceProvider,
+			IBehaviorExecutor behaviorExecutor,
+			IPlatformDatabase database,
 			Bot bot
 			)
-			: base(logger, options, serviceProvider)
+			: base(logger, options, behaviorExecutor, database, bot)
 		{
 			_logger = logger;
 			_options = options.Value;
-			_bot = bot;
+			_botId = bot.Id;
 
 			_client = new TelegramBotClient(_options.Token);
 			_client.OnMessage += OnMessageAsync;
@@ -35,7 +37,7 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 
 		private void OnReceiveError(object sender, global::Telegram.Bot.Args.ReceiveErrorEventArgs e)
 		{
-			_logger.LogError(e.ApiRequestException, "Telegram api error.");
+			_logger.LogError(e.ApiRequestException, $"Telegram api error. BotId: {_botId}.");
 		}
 
 		private async void OnMessageAsync(object sender, global::Telegram.Bot.Args.MessageEventArgs e)
@@ -59,7 +61,8 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 
 		protected override Task StopTransportServiceAsync(CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			_logger.LogInformation($"Telegram Service was stopped. BotId: {_botId}.");
+			return Task.CompletedTask;
 		}
 	}
 }

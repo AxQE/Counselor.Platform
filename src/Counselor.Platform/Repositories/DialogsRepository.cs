@@ -13,11 +13,7 @@ namespace Counselor.Platform.Repositories
 	{
 		private readonly ConcurrentDictionary<int, Dialog> _dialogs = new ConcurrentDictionary<int, Dialog>();
 
-		public DialogsRepository()
-		{
-		}
-
-		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction, string dialogName = null)
+		public async Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User client, string payload, MessageDirection direction, int botId = default)
 		{
 			var message = new Message
 			{
@@ -25,23 +21,23 @@ namespace Counselor.Platform.Repositories
 				Direction = direction
 			};
 
-			if (!_dialogs.TryGetValue(user.Id, out var dialog))
+			if (!_dialogs.TryGetValue(client.Id, out var dialog))
 			{
-				if (string.IsNullOrEmpty(dialogName))
-					throw new ArgumentNullException(nameof(dialogName), "Dialog cannot be creadted without dialog name.");
+				if (botId < 1)
+					throw new ArgumentOutOfRangeException(nameof(botId), "Dialog cannot be created without botId.");
 
 				dialog = new Dialog
 				{
-					User = user,
+					Client = client,
 					State = DialogState.Active,
-					Name = dialogName,
+					BotId = botId,
 					Messages = new List<Message>
 					{
 						message
 					}
 				};
 
-				_dialogs.TryAdd(user.Id, dialog);
+				_dialogs.TryAdd(client.Id, dialog);
 
 				//todo: нужна логика поиска диалога, пока что в случае если текущий диалог не будет найден в репо, то будет создан новый
 				await dbContext.Dialogs.AddAsync(dialog);
@@ -76,11 +72,11 @@ namespace Counselor.Platform.Repositories
 			return message;
 		}
 
-		public async Task FinishDialogAsync(IPlatformDatabase dbContext, Dialog dialog)
+		public Task FinishDialogAsync(IPlatformDatabase dbContext, Dialog dialog)
 		{
 			dialog.State = DialogState.Finished;
 			dbContext.Dialogs.Update(dialog);
-			await dbContext.SaveChangesAsync();
+			return dbContext.SaveChangesAsync();
 		}
 	}
 }

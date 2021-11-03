@@ -71,8 +71,7 @@ namespace Counselor.Platform.Api.Services
 				Script dbScript = new Script
 				{
 					Name = script.Name,
-					IsActive = true,
-					Data = script.Data,
+					Instruction = script.Data,
 					Owner = owner
 				};
 

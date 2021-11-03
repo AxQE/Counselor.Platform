@@ -1,4 +1,7 @@
-﻿using Counselor.Platform.Services;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
+using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
@@ -14,10 +17,12 @@ namespace Counselor.Platform.Worker.Transport.Discord
 
 		public DiscordService(
 			ILogger<DiscordService> logger,
-			IOptions<DiscordOptions> options,
-			IServiceProvider serviceProvider
+			IOptions<DiscordOptions> options,			
+			IBehaviorExecutor behaviorExecutor,
+			IPlatformDatabase database,
+			Bot bot
 			)
-			: base(logger, options, serviceProvider)
+			: base(logger, options, behaviorExecutor, database, bot)
 		{
 			_logger = logger;
 			_options = options.Value;

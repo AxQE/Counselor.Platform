@@ -23,7 +23,7 @@ namespace Counselor.Platform.Tests.Interpreter.Templates
 			var username = _fixture.Create<string>();
 
 			var dialog = _fixture.Build<Dialog>()
-				.With(x => x.User, new User { Username = username })
+				.With(x => x.Client, new User { Username = username })
 				.Create();
 
 			var result = TextTemplateHandler.InsertEntityParameters(template, dialog, null).Result;
@@ -37,7 +37,7 @@ namespace Counselor.Platform.Tests.Interpreter.Templates
 			var template = "{user:username}";			
 
 			var dialog = _fixture.Build<Dialog>()
-				.With(x => x.User, new User { Username = null })
+				.With(x => x.Client, new User { Username = null })
 				.Create();
 
 			var result = TextTemplateHandler.InsertEntityParameters(template, dialog, null).Result;

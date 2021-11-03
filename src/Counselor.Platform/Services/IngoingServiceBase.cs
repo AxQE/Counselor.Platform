@@ -1,11 +1,10 @@
-﻿using Akka.Actor;
-using Counselor.Platform.Core.Behavior;
+﻿using Counselor.Platform.Core.Behavior;
+using Counselor.Platform.Data.Database;
+using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Options;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,22 +13,37 @@ namespace Counselor.Platform.Services
 	public abstract class IngoingServiceBase
 	{
 		private readonly ILogger<IngoingServiceBase> _logger;
-		private readonly TransportOptions _options;
-		private readonly IServiceProvider _serviceProvider;
-		private readonly ActorSystem _actorSystem; //todo: перевести на акторы
-
-		//todo: нужно время жизни
-		private readonly ConcurrentDictionary<string, IBehaviorExecutor> _executors = new ConcurrentDictionary<string, IBehaviorExecutor>();
+		private readonly TransportOptions _options;		
+		private readonly Bot _bot;
+		private readonly ServiceContext _serviceContext;
+		private readonly IBehaviorExecutor _behaviorExecutor;
 
 		public IngoingServiceBase(
 			ILogger<IngoingServiceBase> logger,
 			IOptions<TransportOptions> options,
-			IServiceProvider serviceProvider
+			IBehaviorExecutor behaviorExecutor,
+			IPlatformDatabase database,
+			Bot bot
 			)
 		{
 			_logger = logger;
 			_options = options.Value;
-			_serviceProvider = serviceProvider;
+			_behaviorExecutor = behaviorExecutor;
+			_bot = bot;
+
+			_serviceContext = new ServiceContext
+			{
+				BotId = _bot.Id,
+				OwnerId = _bot.Owner.Id,
+				ScriptId = _bot.Script.Id,
+				TransportId = _bot.Transport.Id,
+				TransportName = _bot.Transport.Name
+			};
+
+			using (database)
+			{
+				_behaviorExecutor.Initialize(_serviceContext.ScriptId, database);
+			}
 		}
 
 		protected abstract Task StartTransportServiceAsync(CancellationToken cancellationToken);
@@ -66,19 +80,12 @@ namespace Counselor.Platform.Services
 		{
 			try
 			{
-				_logger.LogDebug($"Incoming message. Transport: {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
-
-				if (!_executors.TryGetValue(connectionId, out var begaviorExecutor))
-				{
-					begaviorExecutor = _serviceProvider.GetRequiredService<IBehaviorExecutor>();
-					_executors.TryAdd(connectionId, begaviorExecutor);
-				}
-
-				await begaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _options.SystemName, _options.DialogName);
+				_logger.LogDebug($"Incoming message. Transport: {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}. BotId: {_bot.Id}. OwnerId: {_bot.Owner.Id}.");
+				await _behaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _serviceContext);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Behavior failed for {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}.");
+				_logger.LogError(ex, $"Behavior failed for {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}. BotId: {_bot.Id}. OwnerId: {_bot.Owner.Id}.");
 			}
 		}
 
@@ -88,30 +95,23 @@ namespace Counselor.Platform.Services
 			{
 				try
 				{
-					_logger.LogInformation($"{_options.SystemName} service worker is starting.");
+					_logger.LogInformation($"{_options.SystemName} service worker is starting. BotId: {_bot.Id}.");
 					await StartTransportServiceAsync(token);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, $"{_options.SystemName} service worker got unprocessed error.");
+					_logger.LogCritical(ex, $"{_options.SystemName} service worker got unprocessed error. BotId: {_bot.Id}.");
 				}
 			}
 			else
 			{
-				_logger.LogInformation($"{_options.SystemName} service worker is disabled.");
+				_logger.LogInformation($"{_options.SystemName} service worker is disabled. BotId: {_bot.Id}.");
 			}
 		}
 
 		public Task StopAsync()
 		{
 			return StopTransportServiceAsync(CancellationToken.None);
-		}
-
-		class ExecutorMeta
-		{
-			public IBehaviorExecutor Executor { get; init; }
-			public DateTime CreatedOn { get; init; }
-			public DateTime LastExecution { get; set; }
 		}
 	}
 }

@@ -5,29 +5,30 @@ using Counselor.Platform.Interpreter;
 using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Behavior
 {
-	class BehaviorExecutor : IBehaviorExecutor
+	public class BehaviorExecutor : IBehaviorExecutor
 	{
 		private readonly IInterpreter _interpreter;
 		private readonly ILogger<BehaviorExecutor> _logger;
-		private readonly IPlatformDatabase _database;
+		private readonly IServiceProvider _serviceProvider;
 		private readonly IOutgoingServicePool _outgoingServicePool;
 		private readonly IConnectionsRepository _connectionsRepository;
 		private readonly IDialogsRepository _dialogsRepository;
-		private readonly IBehaviorRepository _behaviorManager;
 		private readonly SemaphoreSlim _executorSemaphore = new SemaphoreSlim(1, 1);
+		private IBehavior _behavior;
 
-		private Transport _transport;
-		private Dialog _dialog;
-		private User _user;
-		private string _connectionId;
+		private readonly Dictionary<string, BehaviorContext> _runningDialogs = new Dictionary<string, BehaviorContext>();
 
 		private static readonly Dictionary<string, Action> PredefinedBehaviorCommands = new Dictionary<string, Action>
 		{
@@ -37,70 +38,99 @@ namespace Counselor.Platform.Core.Behavior
 		};
 
 		public BehaviorExecutor(
-			IInterpreter interpreter, 
+			IInterpreter interpreter,
 			ILogger<BehaviorExecutor> logger,
-			IPlatformDatabase database,
+			IServiceProvider serviceProvider,
 			IOutgoingServicePool outgoingServicePool,
 			IConnectionsRepository connectionsRepository,
-			IDialogsRepository dialogsRepository,
-			IBehaviorRepository behaviorRepository)
+			IDialogsRepository dialogsRepository
+			)
 		{
 			_interpreter = interpreter;
 			_logger = logger;
-			_database = database;
+			_serviceProvider = serviceProvider;
 			_outgoingServicePool = outgoingServicePool;
 			_connectionsRepository = connectionsRepository;
 			_dialogsRepository = dialogsRepository;
-			_behaviorManager = behaviorRepository;
 		}
 
-		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, string transport, string dialogName)
+		public void Initialize(int scriptId, IPlatformDatabase database)
+		{
+			var script = database.Scripts.First(x => x.Id == scriptId);
+
+			var deserializer = new YamlDotNet.Serialization.Deserializer();
+			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Instruction)))
+			using (var reader = new StreamReader(stream))
+			{
+				var behavior = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
+
+				if (!string.IsNullOrEmpty(script.Name) && behavior != null)
+				{
+					_behavior = behavior;
+				}
+			}			
+		}
+
+		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, ServiceContext context)
+		{
+			var behaviorContext = await CreateBehaviorContextAsync(connectionId, username, payload, context);
+
+			while (behaviorContext.Iterator.Current() != null)
+			{
+				foreach (var step in behaviorContext.Iterator.Current())
+				{
+					if (step.IsActive)
+					{
+						await RunStepAsync(behaviorContext, _outgoingServicePool.Resolve(context.TransportName), step);
+					}
+				}
+
+				behaviorContext.Iterator.Next();
+			}
+		}
+
+		private async Task<BehaviorContext> CreateBehaviorContextAsync(string connectionId, string username, string payload, ServiceContext serviceContext)
 		{
 			try
 			{
 				await _executorSemaphore.WaitAsync();
 
-				_connectionId = connectionId;
+				if (!_runningDialogs.TryGetValue(connectionId, out var context))
+				{
+					_logger.LogTrace($"Behavior context was created for dialog. BotId: {serviceContext.BotId}. ConnectionId: {connectionId}.");
 
-				if (_transport == null) 
-					_transport = await _database.Transports.FirstOrDefaultAsync(x => x.Name.Equals(transport));
+					var database = _serviceProvider.GetRequiredService<IPlatformDatabase>();
+					var client = await FindOrCreateUserAsync(connectionId, username, database, serviceContext);
 
-				if (_user == null)
-					_user = await FindOrCreateUserAsync(connectionId, username);
+					context = new BehaviorContext
+					{
+						ConnectionId = connectionId,
+						Iterator = _behavior.Iterator,
+						ServiceContext = serviceContext,
+						Database = database,
+						Client = client
+					};
 
-				_dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(_database, _user, payload, MessageDirection.In, dialogName);
+					_runningDialogs.Add(connectionId, context);
+				}
 
-			}
+				context.Dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(context.Database, context.Client, payload, MessageDirection.In, serviceContext.BotId);
+
+				return context;
+			}			
 			finally
 			{
 				_executorSemaphore.Release();
 			}
-
-
-			if (string.IsNullOrEmpty(_dialog.Name))
-				throw new ArgumentNullException(nameof(_dialog.Name));
-
-			var behaviorIterator = _behaviorManager.GetBehavior(_dialog.Name);
-
-			while (behaviorIterator.Current() != null)
-			{
-				foreach (var step in behaviorIterator.Current())
-				{
-					if (step.IsActive)
-					{
-						await RunStepAsync(_database, _outgoingServicePool.Resolve(transport), _dialog, step);
-					}
-				}
-
-				behaviorIterator.Next();
-			}
 		}
 
-		private async Task RunStepAsync(IPlatformDatabase database, IOutgoingService outgoingService, Dialog dialog, BehaviorStep step)
+		private async Task RunStepAsync(BehaviorContext context, IOutgoingService outgoingService, BehaviorStep step)
 		{
+			_logger.LogDebug($"Step: {step.Id} is running for client: {context.Client.Id} within bot: {context.ServiceContext.BotId}.");
+
 			try
 			{
-				if (!(await _interpreter.Interpret(step.Condition, dialog, database, _transport.Name)).GetTypedResult<bool>())
+				if (!(await _interpreter.Interpret(step.Condition, context.Dialog, context.Database, context.ServiceContext.TransportName)).GetTypedResult<bool>())
 				{
 					return;
 				}
@@ -112,67 +142,71 @@ namespace Counselor.Platform.Core.Behavior
 						action?.Invoke();
 					}
 					else
-					{						
-						await HandleInterpretationResult(await _interpreter.Interpret(step.Command, dialog, database, _transport.Name));
+					{
+						await HandleInterpretationResult(await _interpreter.Interpret(step.Command, context.Dialog, context.Database, context.ServiceContext.TransportName), context);
 					}
 				}
 
 				if (!string.IsNullOrEmpty(step.Response))
 				{
-					var response = await _interpreter.InsertEntityParameters(step.Response, dialog, database);
-					await outgoingService.SendAsync(response, dialog.User.Id);
-				}				
+					var response = await _interpreter.InsertEntityParameters(step.Response, context.Dialog, context.Database);
+					await outgoingService.SendAsync(response, context.Client.Id);
+				}
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Behavior step failed. Id: {step.Id}.");
+				_logger.LogError(ex, $"Behavior step failed. StepId: {step.Id}. BotId: {context.ServiceContext.BotId}. ClientId: {context.Client.Id}.");
 				throw;
 			}
 		}
 
-		private async Task HandleInterpretationResult(InterpretationResult result)
+		private async Task HandleInterpretationResult(InterpretationResult result, BehaviorContext context)
 		{
 			if (result.State == InterpretationResultState.Failed)
-				await _outgoingServicePool.Resolve(_transport.Name).SendAsync("Невозможно выполнить команду. Обратитесь к системному администратору.", _user.Id); //todo: обработка ошибки интерпретации
+			{
+				_logger.LogError($"Interpretation step failed. BotId: {context.ServiceContext.BotId}");
+				await _outgoingServicePool.Resolve(context.ServiceContext.TransportName).SendAsync("Невозможно выполнить команду. Обратитесь к системному администратору.", context.Client.Id); //todo: обработка ошибки интерпретации
+			}
+				
 
 			if (result.ResultType == Interpreter.Expressions.ExpressionResultType.TransportCommand)
 			{
-				result.Command.ConnectionId = _connectionId;				
-				await _outgoingServicePool.Resolve(_transport.Name).SendAsync(result.Command);
+				result.Command.ConnectionId = context.ConnectionId;
+				await _outgoingServicePool.Resolve(context.ServiceContext.TransportName).SendAsync(result.Command);
 			}
 		}
 
-		private async Task<User> FindOrCreateUserAsync(string connectionId, string username)
+		private async Task<User> FindOrCreateUserAsync(string connectionId, string username, IPlatformDatabase database, ServiceContext serviceContext)
 		{
-			var user =
-				(await _database.UserTransports
+			var client =
+				(await database.UserTransports
 					.Include(x => x.User)
-					.FirstOrDefaultAsync(x => x.Id == _transport.Id && x.TransportUserId.Equals(connectionId)))?.User;
+					.FirstOrDefaultAsync(x => x.Id == serviceContext.TransportId && x.TransportUserId.Equals(connectionId)))?.User;
 
-			if (user is null)
+			if (client is null)
 			{
-				user = new User
+				client = new User
 				{
 					Username = username
 				};
 
-				_database.UserTransports.Add(
+				database.UserTransports.Add(
 					new UserTransport
 					{
-						Transport = _transport,
-						User = user,
+						Transport = await database.Transports.FirstAsync(x => x.Id == serviceContext.TransportId),
+						User = client,
 						TransportUserId = connectionId
 					});
 
-				_logger.LogInformation($"New user just created. Username: {username}. Transport: {_transport.Name}.");
+				_logger.LogInformation($"New user just created. Username: {username}. Transport: {serviceContext.TransportName}. BotId: {serviceContext.BotId}.");
 			}
 
-			user.LastActivity = DateTime.Now;
-			await _database.SaveChangesAsync();
+			client.LastActivity = DateTime.Now;
+			await database.SaveChangesAsync();
 
-			_connectionsRepository.AddConnection(user.Id, _transport.Name, connectionId);
+			_connectionsRepository.AddConnection(client.Id, serviceContext.TransportName, connectionId);
 
-			return user;
+			return client;
 		}
 
 		public void Dispose()

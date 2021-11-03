@@ -7,7 +7,7 @@ namespace Counselor.Platform.Repositories.Interfaces
 {
 	public interface IDialogsRepository
 	{
-		Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction, string dialogName = null);
+		Task<Dialog> CreateOrUpdateDialogAsync(IPlatformDatabase dbContext, User user, string payload, MessageDirection direction, int botId);
 		Task<Message> CreateDialogMessage(IPlatformDatabase dbContext, Dialog dialog, string payload, MessageDirection direction);
 		Task FinishDialogAsync(IPlatformDatabase dbContext, Dialog dialog);
 	}

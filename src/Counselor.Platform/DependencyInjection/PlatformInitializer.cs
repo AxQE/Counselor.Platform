@@ -40,7 +40,6 @@ namespace Counselor.Platform.DependencyInjection
 			#region repositories
 			services.AddSingleton<IConnectionsRepository, ConnectionsRepository>();
 			services.AddSingleton<IDialogsRepository, DialogsRepository>();
-			services.AddSingleton<IBehaviorRepository, BehaviorRepository>();
 			#endregion
 
 			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);

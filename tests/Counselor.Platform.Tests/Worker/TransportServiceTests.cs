@@ -1,4 +1,5 @@
 ﻿using AutoFixture;
+using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
@@ -24,7 +25,7 @@ namespace Counselor.Platform.Tests.Worker
 	public class TransportServiceTests
 	{
 		private const string TelegramSystemName = "Telegram";
-		private const string TelegramConfig = "{\r\n\t\"SendErrorReport\": true,\r\n\t\"Token\": \"12343545:aaaaaaaaaaaaaaaaa\",\r\n\t\"DialogName\": \"Sample\",\r\n\t\"IsEnabled\": true\r\n}";
+		private const string TelegramConfig = "{\"SendErrorReport\": true,\"Token\": \"12343545:aaaaaaaaaaaaaaaaa\",\"DialogName\": \"Sample\",\"IsEnabled\": true\n}";
 		private readonly Fixture _fixture = new Fixture();
 		private readonly LoggerFactory _loggerFactory = new LoggerFactory();
 		private Mock<IPlatformDatabase> _databaseMock;
@@ -35,26 +36,34 @@ namespace Counselor.Platform.Tests.Worker
 		{
 			_databaseMock = new Mock<IPlatformDatabase>();
 			_serviceProviderMock = new Mock<IServiceProvider>();
-		}		
+		}
 
 		[TestMethod]
 		public void CreateBot_Simple()
 		{
 			_serviceProviderMock.Setup(x => x.GetService(typeof(ILogger<TelegramService>)))
-				.Returns(_loggerFactory.CreateLogger<TelegramService>());		
+				.Returns(_loggerFactory.CreateLogger<TelegramService>());
+
+			_serviceProviderMock.Setup(x => x.GetService(typeof(IBehaviorExecutor)))
+				.Returns(new BehaviorExecutor(null, null, null, null, null, null));
+
+			_serviceProviderMock.Setup(x => x.GetService(typeof(IPlatformDatabase)))
+				.Returns(_databaseMock.Object);
 
 			var bot = _fixture.Build<Bot>()
 				.With(x => x.BotState, BotState.Pending)
 				.With(x => x.Configuration, TelegramConfig)
 				.With(x => x.Transport, new Transport { Name = TelegramSystemName, IsActive = true })
-				.With(x => x.Script, new Script { IsActive = true, Data = _fixture.Create<string>() })
+				.With(x => x.Script, new Script { Instruction = _fixture.Create<string>() })
 				.Create();
 
 			_databaseMock.Setup(x => x.Bots).ReturnsDbSet(new List<Bot> { bot });
+			_databaseMock.Setup(x => x.Scripts).ReturnsDbSet(new List<Script> { new Script { Instruction = string.Empty } });
 
 			var service = CreateService();
 
-			service.StartBotsAsync().Wait();
+			service.StartBotsAsync(_databaseMock.Object).Wait();
+			service.StartBotsAsync(_databaseMock.Object).Wait();
 
 			var runningBotDataObject = ((IEnumerable<object>)service.GetType().GetField("_runningBots", BindingFlags.NonPublic | BindingFlags.Instance)
 				.GetValue(service))
@@ -65,6 +74,37 @@ namespace Counselor.Platform.Tests.Worker
 			Assert.IsNotNull(result);
 			Assert.AreEqual(bot.Id, result.Id);
 			Assert.AreEqual(BotState.Started, result.BotState);
+		}
+
+		[TestMethod]
+		public void StopBots_Simple()
+		{
+			_serviceProviderMock.Setup(x => x.GetService(typeof(ILogger<TelegramService>)))
+				.Returns(_loggerFactory.CreateLogger<TelegramService>());
+
+			var bot = _fixture.Build<Bot>()
+				.With(x => x.BotState, BotState.Pending)
+				.With(x => x.Configuration, TelegramConfig)
+				.With(x => x.Transport, new Transport { Name = TelegramSystemName, IsActive = true })
+				.With(x => x.Script, new Script { Instruction = _fixture.Create<string>() })
+				.Create();
+
+			_databaseMock.Setup(x => x.Bots).ReturnsDbSet(new List<Bot> { bot });
+
+			var service = CreateService();
+
+			service.StartBotsAsync(_databaseMock.Object).Wait();
+
+			bot.BotState = BotState.Stopped;
+			bot.ModifiedOn = DateTime.Now;
+
+			service.StopBotsAsync(_databaseMock.Object).Wait();
+
+			var runningBotDataObject = ((IEnumerable<object>)service.GetType().GetField("_runningBots", BindingFlags.NonPublic | BindingFlags.Instance)
+				.GetValue(service))
+				.FirstOrDefault();
+
+			Assert.IsNull(runningBotDataObject);
 		}
 
 		private TransportService CreateService()
@@ -83,7 +123,7 @@ namespace Counselor.Platform.Tests.Worker
 				}
 			};
 
-			return new TransportService(_loggerFactory.CreateLogger<TransportService>(), _databaseMock.Object, _serviceProviderMock.Object, Options.Create(options));
+			return new TransportService(_loggerFactory.CreateLogger<TransportService>(), _serviceProviderMock.Object, Options.Create(options));
 		}
 	}
 }

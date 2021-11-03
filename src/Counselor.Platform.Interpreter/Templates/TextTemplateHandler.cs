@@ -34,10 +34,10 @@ namespace Counselor.Platform.Interpreter.Templates
 
 				if (entityParameter[0].Equals("user", StringComparison.OrdinalIgnoreCase))
 				{
-					var value = dialog.User.GetType()
+					var value = dialog.Client.GetType()
 						.GetProperties()
 						.FirstOrDefault(x => x.Name.Equals(entityParameter[1], StringComparison.OrdinalIgnoreCase))
-						.GetValue(dialog.User)
+						.GetValue(dialog.Client)
 						?.ToString() ?? "null";
 
 					resultString.Replace(parameters[p], value);

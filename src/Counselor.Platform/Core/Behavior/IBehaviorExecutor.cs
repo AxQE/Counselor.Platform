@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Counselor.Platform.Data.Database;
+using Counselor.Platform.Services;
+using System;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Core.Behavior
 {
-	interface IBehaviorExecutor : IDisposable
+	public interface IBehaviorExecutor : IDisposable
 	{
-		Task RunBehaviorLogicAsync(string connectionId, string username, string payload, string transport, string dialog);
+		void Initialize(int scriptId, IPlatformDatabase database);
+		Task RunBehaviorLogicAsync(string connectionId, string username, string payload, ServiceContext context);
 	}
 }
