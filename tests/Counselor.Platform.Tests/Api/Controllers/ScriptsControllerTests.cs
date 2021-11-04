@@ -64,9 +64,8 @@ namespace Counselor.Platform.Tests.Api.Controllers
 			var resultScript = result.Value as ScriptDto;
 			Assert.IsNotNull(resultScript);
 			Assert.AreEqual(script.Id, resultScript.Id);
-			Assert.AreEqual(script.Name, resultScript.Name);
-			Assert.AreEqual(script.IsActive, resultScript.IsActive);
-			Assert.AreEqual(script.Data, resultScript.Data);
+			Assert.AreEqual(script.Name, resultScript.Name);			
+			Assert.AreEqual(script.Instruction, resultScript.Instruction);
 
 			service.Verify(x => x.GetScript(It.Is<int>(v => v == script.Id), It.Is<int>(v => v == userId)), Times.Once);
 		}

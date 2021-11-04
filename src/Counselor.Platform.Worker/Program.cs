@@ -51,7 +51,7 @@ namespace Counselor.Platform.Worker
 
 		private static void RegistrateHostedServices(IServiceCollection services)
 		{
-			services.AddHostedService<TransportService>();
+			services.AddHostedService<Transport.TransportService>();
 		}
 
 		private static void CreateConfigurations(HostBuilderContext hostContext, IServiceCollection services)

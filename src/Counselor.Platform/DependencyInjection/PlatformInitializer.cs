@@ -51,7 +51,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.Configure<CacheOptions>(hostContext.Configuration.GetSection(CacheOptions.SectionName));
 			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
 			services.Configure<PlatformOptions>(hostContext.Configuration.GetSection(PlatformOptions.SectionName));
-			services.Configure<TransportServiceOptions>(hostContext.Configuration.GetSection(TransportServiceOptions.SectionName));
+			services.Configure<ServiceOptions>(hostContext.Configuration.GetSection(ServiceOptions.SectionName));
 		}		
 	}
 }

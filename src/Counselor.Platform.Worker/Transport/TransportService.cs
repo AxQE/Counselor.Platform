@@ -26,14 +26,14 @@ namespace Counselor.Platform.Worker.Transport
 	{
 		private readonly ILogger<TransportService> _logger;		
 		private readonly IServiceProvider _serviceProvider;
-		private readonly TransportServiceOptions _options;
+		private readonly ServiceOptions _options;
 
 		private readonly HashSet<TransportData> _runningBots = new HashSet<TransportData>();
 
 		public TransportService(
 			ILogger<TransportService> logger,			
 			IServiceProvider serviceProvider,
-			IOptions<TransportServiceOptions> options
+			IOptions<ServiceOptions> options
 			)
 		{
 			_logger = logger;
@@ -153,7 +153,8 @@ namespace Counselor.Platform.Worker.Transport
 		public async Task StartBotsAsync(IPlatformDatabase database)
 		{
 			var bots = await database.Bots				
-				.Where(x => x.BotState == BotState.Pending || x.BotState == BotState.Started)
+				.Where(x => (x.BotState == BotState.Pending || x.BotState == BotState.Started)
+					&& !_runningBots.Select(e => e.Bot.Id).Contains(x.Id))
 				.Include(x => x.Transport)
 				.Include(x => x.Owner)
 				.Include(x => x.Script)
@@ -163,8 +164,6 @@ namespace Counselor.Platform.Worker.Transport
 			{
 				foreach (var bot in bots)
 				{
-					if (_runningBots.Any(x => x.Bot.Id == bot.Id)) continue;
-
 					try
 					{
 						EnsureValidity(bot);
@@ -242,7 +241,14 @@ namespace Counselor.Platform.Worker.Transport
 										   Options.Create(JsonSerializer.Deserialize<TelegramOptions>(bot.Configuration)),
 										   _serviceProvider.GetRequiredService<IBehaviorExecutor>(),
 										   _serviceProvider.GetRequiredService<IPlatformDatabase>(),
-										   bot
+										   new ServiceContext
+										   {
+											   BotId = bot.Id,
+											   OwnerId = bot.Owner.Id,
+											   ScriptId = bot.Script.Id,
+											   TransportId = bot.Transport.Id,
+											   TransportName = bot.Transport.Name
+										   }
 										   ),
 				CancellationToken.None
 				),

@@ -1,6 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Database;
-using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -13,8 +12,7 @@ namespace Counselor.Platform.Services
 	public abstract class IngoingServiceBase
 	{
 		private readonly ILogger<IngoingServiceBase> _logger;
-		private readonly TransportOptions _options;		
-		private readonly Bot _bot;
+		private readonly TransportOptions _options;
 		private readonly ServiceContext _serviceContext;
 		private readonly IBehaviorExecutor _behaviorExecutor;
 
@@ -23,22 +21,13 @@ namespace Counselor.Platform.Services
 			IOptions<TransportOptions> options,
 			IBehaviorExecutor behaviorExecutor,
 			IPlatformDatabase database,
-			Bot bot
+			ServiceContext serviceContext
 			)
 		{
 			_logger = logger;
 			_options = options.Value;
 			_behaviorExecutor = behaviorExecutor;
-			_bot = bot;
-
-			_serviceContext = new ServiceContext
-			{
-				BotId = _bot.Id,
-				OwnerId = _bot.Owner.Id,
-				ScriptId = _bot.Script.Id,
-				TransportId = _bot.Transport.Id,
-				TransportName = _bot.Transport.Name
-			};
+			_serviceContext = serviceContext;
 
 			using (database)
 			{
@@ -80,12 +69,25 @@ namespace Counselor.Platform.Services
 		{
 			try
 			{
-				_logger.LogDebug($"Incoming message. Transport: {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}. BotId: {_bot.Id}. OwnerId: {_bot.Owner.Id}.");
+				_logger.LogDebug($"Incoming message. " +
+					$"Transport: {_options.SystemName}. " +
+					$"ConnectionId: {connectionId}. " +
+					$"Username: {username}. " +
+					$"Payload: {payload}. " +
+					$"BotId: {_serviceContext.BotId}. " +
+					$"OwnerId: {_serviceContext.OwnerId}.");
+
 				await _behaviorExecutor.RunBehaviorLogicAsync(connectionId, username, payload, _serviceContext);
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Behavior failed for {_options.SystemName}. ConnectionId: {connectionId}. Username: {username}. Payload: {payload}. BotId: {_bot.Id}. OwnerId: {_bot.Owner.Id}.");
+				_logger.LogError(ex, $"Message handling failed. " +
+					$"Transport: {_options.SystemName}. " +
+					$"ConnectionId: {connectionId}. " +
+					$"Username: {username}. " +
+					$"Payload: {payload}. " +
+					$"BotId: {_serviceContext.BotId}. " +
+					$"OwnerId: {_serviceContext.OwnerId}.");
 			}
 		}
 
@@ -95,17 +97,17 @@ namespace Counselor.Platform.Services
 			{
 				try
 				{
-					_logger.LogInformation($"{_options.SystemName} service worker is starting. BotId: {_bot.Id}.");
+					_logger.LogInformation($"{_options.SystemName} service worker is starting. BotId: {_serviceContext.BotId}.");
 					await StartTransportServiceAsync(token);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogCritical(ex, $"{_options.SystemName} service worker got unprocessed error. BotId: {_bot.Id}.");
+					_logger.LogCritical(ex, $"{_options.SystemName} service worker got unprocessed error. BotId: {_serviceContext.BotId}.");
 				}
 			}
 			else
 			{
-				_logger.LogInformation($"{_options.SystemName} service worker is disabled. BotId: {_bot.Id}.");
+				_logger.LogInformation($"{_options.SystemName} service worker is disabled. BotId: {_serviceContext.BotId}.");
 			}
 		}
 

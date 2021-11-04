@@ -22,13 +22,13 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 			IOptions<TelegramOptions> options,
 			IBehaviorExecutor behaviorExecutor,
 			IPlatformDatabase database,
-			Bot bot
+			ServiceContext serviceContext
 			)
-			: base(logger, options, behaviorExecutor, database, bot)
+			: base(logger, options, behaviorExecutor, database, serviceContext)
 		{
 			_logger = logger;
 			_options = options.Value;
-			_botId = bot.Id;
+			_botId = serviceContext.BotId;
 
 			_client = new TelegramBotClient(_options.Token);
 			_client.OnMessage += OnMessageAsync;

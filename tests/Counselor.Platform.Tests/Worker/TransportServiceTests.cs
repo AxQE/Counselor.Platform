@@ -45,7 +45,15 @@ namespace Counselor.Platform.Tests.Worker
 				.Returns(_loggerFactory.CreateLogger<TelegramService>());
 
 			_serviceProviderMock.Setup(x => x.GetService(typeof(IBehaviorExecutor)))
-				.Returns(new BehaviorExecutor(null, null, null, null, null, null));
+				.Returns(
+				new BehaviorExecutor(
+					null, 
+					null, 
+					null, 
+					null, 
+					null, 
+					null, 
+					Options.Create(new ServiceOptions())));
 
 			_serviceProviderMock.Setup(x => x.GetService(typeof(IPlatformDatabase)))
 				.Returns(_databaseMock.Object);
@@ -109,7 +117,7 @@ namespace Counselor.Platform.Tests.Worker
 
 		private TransportService CreateService()
 		{
-			var options = new TransportServiceOptions
+			var options = new ServiceOptions
 			{
 				ServiceIntervalMs = 100000,
 				Transports = new List<TransportOptions>

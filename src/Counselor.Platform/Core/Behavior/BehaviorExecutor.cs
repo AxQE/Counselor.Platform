@@ -1,12 +1,14 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
+using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
 using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,8 +27,11 @@ namespace Counselor.Platform.Core.Behavior
 		private readonly IOutgoingServicePool _outgoingServicePool;
 		private readonly IConnectionsRepository _connectionsRepository;
 		private readonly IDialogsRepository _dialogsRepository;
+		private readonly ServiceOptions _options;
 		private readonly SemaphoreSlim _executorSemaphore = new SemaphoreSlim(1, 1);
+		private readonly Timer _timer;
 		private IBehavior _behavior;
+
 
 		private readonly Dictionary<string, BehaviorContext> _runningDialogs = new Dictionary<string, BehaviorContext>();
 
@@ -43,7 +48,8 @@ namespace Counselor.Platform.Core.Behavior
 			IServiceProvider serviceProvider,
 			IOutgoingServicePool outgoingServicePool,
 			IConnectionsRepository connectionsRepository,
-			IDialogsRepository dialogsRepository
+			IDialogsRepository dialogsRepository,
+			IOptions<ServiceOptions> options
 			)
 		{
 			_interpreter = interpreter;
@@ -52,26 +58,37 @@ namespace Counselor.Platform.Core.Behavior
 			_outgoingServicePool = outgoingServicePool;
 			_connectionsRepository = connectionsRepository;
 			_dialogsRepository = dialogsRepository;
+			_options = options.Value;
+
+			_timer = new Timer(ClearExpiredDialogs, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(_options.DialogTTLMs * 2));
 		}
 
 		public void Initialize(int scriptId, IPlatformDatabase database)
 		{
-			var script = database.Scripts.First(x => x.Id == scriptId);
-
-			var deserializer = new YamlDotNet.Serialization.Deserializer();
-			using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Instruction)))
-			using (var reader = new StreamReader(stream))
+			try
 			{
-				var behavior = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
+				var script = database.Scripts.First(x => x.Id == scriptId);
 
-				if (!string.IsNullOrEmpty(script.Name) && behavior != null)
+				var deserializer = new YamlDotNet.Serialization.Deserializer();
+				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Instruction)))
+				using (var reader = new StreamReader(stream))
 				{
-					_behavior = behavior;
+					var behavior = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
+
+					if (!string.IsNullOrEmpty(script.Name) && behavior != null)
+					{
+						_behavior = behavior;
+					}
 				}
-			}			
+			}
+			catch (Exception ex)
+			{
+				_logger.LogCritical(ex, $"Cannot build behavior. ScriptId: {scriptId}.");
+				throw;
+			}
 		}
 
-		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, ServiceContext context)
+		public async Task RunBehaviorLogicAsync(string connectionId, string username, string payload, Services.ServiceContext context)
 		{
 			var behaviorContext = await CreateBehaviorContextAsync(connectionId, username, payload, context);
 
@@ -89,7 +106,7 @@ namespace Counselor.Platform.Core.Behavior
 			}
 		}
 
-		private async Task<BehaviorContext> CreateBehaviorContextAsync(string connectionId, string username, string payload, ServiceContext serviceContext)
+		private async Task<BehaviorContext> CreateBehaviorContextAsync(string connectionId, string username, string payload, Services.ServiceContext serviceContext)
 		{
 			try
 			{
@@ -115,6 +132,7 @@ namespace Counselor.Platform.Core.Behavior
 				}
 
 				context.Dialog = await _dialogsRepository.CreateOrUpdateDialogAsync(context.Database, context.Client, payload, MessageDirection.In, serviceContext.BotId);
+				context.LastUsedOn = DateTime.Now;
 
 				return context;
 			}			
@@ -176,7 +194,7 @@ namespace Counselor.Platform.Core.Behavior
 			}
 		}
 
-		private async Task<User> FindOrCreateUserAsync(string connectionId, string username, IPlatformDatabase database, ServiceContext serviceContext)
+		private async Task<User> FindOrCreateUserAsync(string connectionId, string username, IPlatformDatabase database, Services.ServiceContext serviceContext)
 		{
 			var client =
 				(await database.UserTransports
@@ -207,6 +225,17 @@ namespace Counselor.Platform.Core.Behavior
 			_connectionsRepository.AddConnection(client.Id, serviceContext.TransportName, connectionId);
 
 			return client;
+		}
+
+		private void ClearExpiredDialogs(object state)
+		{
+			foreach (var key in _runningDialogs.Keys)
+			{				
+				if (_runningDialogs[key].LastUsedOn.AddMilliseconds(_options.DialogTTLMs) < DateTime.Now)
+				{
+					_runningDialogs.Remove(key);
+				}
+			}
 		}
 
 		public void Dispose()

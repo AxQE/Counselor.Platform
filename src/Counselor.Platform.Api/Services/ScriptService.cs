@@ -71,7 +71,7 @@ namespace Counselor.Platform.Api.Services
 				Script dbScript = new Script
 				{
 					Name = script.Name,
-					Instruction = script.Data,
+					Instruction = script.Instruction,
 					Owner = owner
 				};
 

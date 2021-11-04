@@ -8,8 +8,9 @@
     Database: counselor.platform
 Cache:
   UserDataLifetime: 300
-TransportService:
+Service:
   ServiceIntervalMs: 60000
+  DialogTTLMs: 300000
   Transports:
     - SystemName: Telegram
       IsEnabled: true

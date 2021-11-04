@@ -20,9 +20,9 @@ namespace Counselor.Platform.Worker.Transport.Discord
 			IOptions<DiscordOptions> options,			
 			IBehaviorExecutor behaviorExecutor,
 			IPlatformDatabase database,
-			Bot bot
+			ServiceContext serviceContext
 			)
-			: base(logger, options, behaviorExecutor, database, bot)
+			: base(logger, options, behaviorExecutor, database, serviceContext)
 		{
 			_logger = logger;
 			_options = options.Value;

@@ -7,12 +7,14 @@ namespace Counselor.Platform.Core.Behavior
 {
 	class BehaviorContext : IDisposable
 	{
-		public ServiceContext ServiceContext { get; set; }
+		public Services.ServiceContext ServiceContext { get; set; }
 		public BehaviorIterator Iterator { get; set; }
 		public IPlatformDatabase Database { get; set; }
 		public Dialog Dialog { get; set; }
 		public User Client { get; set; }		
-		public string ConnectionId { get; set; }		
+		public string ConnectionId { get; set; }
+		public DateTime CreatedOn { get; } = DateTime.Now;
+		public DateTime LastUsedOn { get; set; }
 
 		public void Dispose()
 		{
