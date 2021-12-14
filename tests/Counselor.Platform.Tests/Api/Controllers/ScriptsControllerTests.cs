@@ -11,7 +11,7 @@ using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Counselor.Platform.Tests.Api.Controllers
 {
@@ -21,8 +21,8 @@ namespace Counselor.Platform.Tests.Api.Controllers
 		private readonly Fixture _fixture = new Fixture();
 
 		private ScriptsController CreateController(IScriptService service, int userId = 1, string username = "user")
-		{			
-			var httpContext = new Mock<HttpContext>();			
+		{
+			var httpContext = new Mock<HttpContext>();
 
 			httpContext.SetupGet(x => x.User)
 				.Returns
@@ -55,19 +55,19 @@ namespace Counselor.Platform.Tests.Api.Controllers
 			var service = new Mock<IScriptService>();
 			var script = _fixture.Create<ScriptDto>();
 			int userId = _fixture.Create<int>();
-			service.Setup(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(script);
+			service.Setup(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(script);
 			var controller = CreateController(service.Object, userId);
 
-			var result = controller.GetScript(script.Id).Result as OkObjectResult;
+			var result = controller.GetScript(script.Id, CancellationToken.None).Result as OkObjectResult;
 
 			Assert.IsNotNull(result);
 			var resultScript = result.Value as ScriptDto;
 			Assert.IsNotNull(resultScript);
 			Assert.AreEqual(script.Id, resultScript.Id);
-			Assert.AreEqual(script.Name, resultScript.Name);			
+			Assert.AreEqual(script.Name, resultScript.Name);
 			Assert.AreEqual(script.Instruction, resultScript.Instruction);
 
-			service.Verify(x => x.GetScript(It.Is<int>(v => v == script.Id), It.Is<int>(v => v == userId)), Times.Once);
+			service.Verify(x => x.GetScript(It.Is<int>(v => v == script.Id), It.Is<int>(v => v == userId), It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[TestMethod]
@@ -76,10 +76,10 @@ namespace Counselor.Platform.Tests.Api.Controllers
 			var service = new Mock<IScriptService>();
 			var controller = CreateController(service.Object);
 
-			var result = controller.GetScript(0).Result as BadRequestResult;
+			var result = controller.GetScript(0, CancellationToken.None).Result as BadRequestResult;
 
 			Assert.IsNotNull(result);
-			service.Verify(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+			service.Verify(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[TestMethod]
@@ -88,13 +88,13 @@ namespace Counselor.Platform.Tests.Api.Controllers
 			var service = new Mock<IScriptService>();
 			int scriptId = _fixture.Create<int>();
 			int userId = _fixture.Create<int>();
-			service.Setup(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((ScriptDto)null);
+			service.Setup(x => x.GetScript(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync((ScriptDto)null);
 			var controller = CreateController(service.Object, userId);
 
-			var result = controller.GetScript(scriptId).Result as NotFoundResult;
+			var result = controller.GetScript(scriptId, CancellationToken.None).Result as NotFoundResult;
 
 			Assert.IsNotNull(result);
-			service.Verify(x => x.GetScript(It.Is<int>(v => v == scriptId), It.Is<int>(v => v == userId)), Times.Once);
+			service.Verify(x => x.GetScript(It.Is<int>(v => v == scriptId), It.Is<int>(v => v == userId), It.IsAny<CancellationToken>()), Times.Once);
 		}
 		#endregion
 
@@ -104,14 +104,14 @@ namespace Counselor.Platform.Tests.Api.Controllers
 		{
 			var service = new Mock<IScriptService>();
 			int userId = _fixture.Create<int>();
-			service.Setup(x => x.GetAllScripts(It.IsAny<int>())).ReturnsAsync(_fixture.Build<ScriptHeaderDto>().CreateMany(5));
+			service.Setup(x => x.GetAllScripts(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(_fixture.Build<ScriptHeaderDto>().CreateMany(5));
 			var controller = CreateController(service.Object, userId);
 
-			var result = controller.GetAllScripts().Result as OkObjectResult;
+			var result = controller.GetAllScripts(CancellationToken.None).Result as OkObjectResult;
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(5, ((IEnumerable<ScriptHeaderDto>)result.Value).Count());
-			service.Verify(x => x.GetAllScripts(It.Is<int>(v => v == userId)), Times.Once);
+			service.Verify(x => x.GetAllScripts(It.Is<int>(v => v == userId), It.IsAny<CancellationToken>()), Times.Once);
 		}
 		#endregion
 

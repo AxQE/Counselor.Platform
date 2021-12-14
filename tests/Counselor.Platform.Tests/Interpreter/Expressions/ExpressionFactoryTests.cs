@@ -20,7 +20,7 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 		{
 			var expressionOperator = _fixture.Create<string>();
 			var expressionParameter = _fixture.Create<string>();
-			
+
 			var result = ExpressionFactory.ParseExpression($"[{expressionOperator}] {expressionParameter}");
 
 			Assert.IsNotNull(result);
@@ -65,7 +65,7 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(internalOperator, result.Operator);
-		}		
+		}
 
 		[TestMethod]
 		[ExpectedException(typeof(NotImplementedException))]

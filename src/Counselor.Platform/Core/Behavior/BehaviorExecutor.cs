@@ -135,7 +135,7 @@ namespace Counselor.Platform.Core.Behavior
 				context.LastUsedOn = DateTime.Now;
 
 				return context;
-			}			
+			}
 			finally
 			{
 				_executorSemaphore.Release();
@@ -185,7 +185,7 @@ namespace Counselor.Platform.Core.Behavior
 				_logger.LogError($"Interpretation step failed. BotId: {context.ServiceContext.BotId}");
 				await _outgoingServicePool.Resolve(context.ServiceContext.TransportName).SendAsync("Невозможно выполнить команду. Обратитесь к системному администратору.", context.Client.Id); //todo: обработка ошибки интерпретации
 			}
-				
+
 
 			if (result.ResultType == Interpreter.Expressions.ExpressionResultType.TransportCommand)
 			{
@@ -230,7 +230,7 @@ namespace Counselor.Platform.Core.Behavior
 		private void ClearExpiredDialogs(object state)
 		{
 			foreach (var key in _runningDialogs.Keys)
-			{				
+			{
 				if (_runningDialogs[key].LastUsedOn.AddMilliseconds(_options.DialogTTLMs) < DateTime.Now)
 				{
 					_runningDialogs.Remove(key);

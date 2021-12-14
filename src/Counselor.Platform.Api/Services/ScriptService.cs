@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services
@@ -26,16 +26,16 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public async Task Delete(int id, int userId)
+		public async Task Delete(int id, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<IEnumerable<ScriptHeaderDto>> GetAllScripts(int userId)
+		public async Task<IEnumerable<ScriptHeaderDto>> GetAllScripts(int userId, CancellationToken cancellationTokend)
 		{
 			try
 			{
-				var scripts = await _database.Scripts.ToListAsync();
+				var scripts = await _database.Scripts.ToListAsync(cancellationTokend);
 				return scripts.Adapt<IEnumerable<ScriptHeaderDto>>();
 			}
 			catch (Exception ex)
@@ -45,11 +45,11 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<ScriptDto> GetScript(int id, int userId)
+		public async Task<ScriptDto> GetScript(int id, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return (await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id)).Adapt<ScriptDto>();
+				return (await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken), cancellationToken).Adapt<ScriptDto>();
 			}
 			catch (Exception ex)
 			{
@@ -58,16 +58,16 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<ScriptHeaderDto> Update(ScriptDto script, int userId)
+		public async Task<ScriptHeaderDto> Update(ScriptDto script, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<ScriptHeaderDto> Create(ScriptDto script, int userId)
+		public async Task<ScriptHeaderDto> Create(ScriptDto script, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId);
+				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
 				Script dbScript = new Script
 				{
 					Name = script.Name,
@@ -75,8 +75,8 @@ namespace Counselor.Platform.Api.Services
 					Owner = owner
 				};
 
-				var result = await _database.Scripts.AddAsync(dbScript);
-				await _database.SaveChangesAsync();
+				var result = await _database.Scripts.AddAsync(dbScript, cancellationToken);
+				await _database.SaveChangesAsync(cancellationToken);
 				return result.Adapt<ScriptHeaderDto>();
 			}
 			catch (Exception ex)
@@ -86,12 +86,12 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public Task<IEnumerable<ScriptHeaderDto>> Activate(ScriptHeaderDto script)
+		public Task<IEnumerable<ScriptHeaderDto>> Activate(int scriptId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<ScriptHeaderDto> Deactivate(ScriptHeaderDto script)
+		public Task<ScriptHeaderDto> Deactivate(int scriptId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}

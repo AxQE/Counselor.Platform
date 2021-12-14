@@ -5,9 +5,9 @@ namespace Counselor.Platform.Worker.Transport.Telegram.Commands
 {
 	class TelegramCommandFactory : TransportCommandFactory
 	{
-		public TelegramCommandFactory(IOptions<TelegramOptions> options) 
+		public TelegramCommandFactory(IOptions<TelegramOptions> options)
 			: base(options.Value.SystemName)
-		{			
+		{
 		}
 	}
 }

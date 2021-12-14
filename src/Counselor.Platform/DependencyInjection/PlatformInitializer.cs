@@ -2,18 +2,12 @@
 using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
-using Counselor.Platform.Interpreter.Commands;
 using Counselor.Platform.Interpreter.Expressions;
-using Counselor.Platform.Interpreter.Templates;
 using Counselor.Platform.Repositories;
 using Counselor.Platform.Repositories.Interfaces;
 using Counselor.Platform.Services;
-using Counselor.Platform.Utils;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Counselor.Platform.DependencyInjection
 {
@@ -52,6 +46,6 @@ namespace Counselor.Platform.DependencyInjection
 			services.Configure<DatabaseOptions>(hostContext.Configuration.GetSection(DatabaseOptions.SectionName));
 			services.Configure<PlatformOptions>(hostContext.Configuration.GetSection(PlatformOptions.SectionName));
 			services.Configure<ServiceOptions>(hostContext.Configuration.GetSection(ServiceOptions.SectionName));
-		}		
+		}
 	}
 }

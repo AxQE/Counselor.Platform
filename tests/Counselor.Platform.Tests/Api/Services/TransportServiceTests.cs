@@ -8,6 +8,7 @@ using Moq;
 using Moq.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Counselor.Platform.Tests.Api.Services
 {
@@ -26,12 +27,12 @@ namespace Counselor.Platform.Tests.Api.Services
 			var data = new List<Transport>
 			{
 				transport
-			};			
+			};
 			db.Setup(x => x.Transports).ReturnsDbSet(data);
 
 			var service = new TransportService(db.Object, logger.Object);
 
-			var result = service.GetAllTransports().Result;
+			var result = service.GetAllTransports(CancellationToken.None).Result;
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(1, result.Count());

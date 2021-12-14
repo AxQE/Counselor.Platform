@@ -6,7 +6,7 @@ namespace Counselor.Platform.Interpreter.Commands
 	public class InterpreterCommandAttribute : Attribute
 	{
 		public string ParameterName { get; private set; }
-		public Type ParameterType { get; private set; }		
+		public Type ParameterType { get; private set; }
 		public bool IsActive { get; private set; }
 
 		public InterpreterCommandAttribute(string parameterName, Type parameterType, bool isActive = true)

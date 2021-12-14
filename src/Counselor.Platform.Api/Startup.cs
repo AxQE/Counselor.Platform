@@ -61,7 +61,7 @@ namespace Counselor.Platform.Api
 			services.AddResponseCaching();
 
 			services.AddAuthentication("BasicAuthentication")
-				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);				
+				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
 			services.AddScoped<IUserService, UserService>();
 			services.AddScoped<ITransportService, TransportService>();
@@ -96,7 +96,7 @@ namespace Counselor.Platform.Api
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-			});			
-		}		
+			});
+		}
 	}
 }

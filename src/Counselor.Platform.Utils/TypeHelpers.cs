@@ -19,7 +19,7 @@ namespace Counselor.Platform.Utils
 			return types;
 		}
 
-		public static IEnumerable<Type>	GetTypesWithAttribute<TAttribute>() where TAttribute : Attribute
+		public static IEnumerable<Type> GetTypesWithAttribute<TAttribute>() where TAttribute : Attribute
 		{
 			var attributedTypes = from assemblies in AppDomain.CurrentDomain.GetAssemblies()
 								  from types in assemblies.GetTypes()
@@ -29,7 +29,7 @@ namespace Counselor.Platform.Utils
 
 			return attributedTypes;
 		}
-		
+
 		public static IEnumerable<TAttribute> GetAppliedAttributes<TAttribute>(Type type) where TAttribute : Attribute
 		{
 			var attributes = type.GetCustomAttributes(typeof(TAttribute), false);
@@ -37,7 +37,7 @@ namespace Counselor.Platform.Utils
 			if (attributes.Any())
 			{
 				var attributesList = new List<TAttribute>(attributes.Length);
-				
+
 				foreach (var att in attributes)
 				{
 					attributesList.Add((TAttribute)att);

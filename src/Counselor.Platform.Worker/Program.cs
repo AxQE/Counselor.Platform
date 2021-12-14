@@ -1,7 +1,6 @@
 using Counselor.Platform.DependencyInjection;
 using Counselor.Platform.Interpreter.Commands;
 using Counselor.Platform.Services;
-using Counselor.Platform.Worker.Transport;
 using Counselor.Platform.Worker.Transport.Discord;
 using Counselor.Platform.Worker.Transport.Discord.Commands;
 using Counselor.Platform.Worker.Transport.Telegram;

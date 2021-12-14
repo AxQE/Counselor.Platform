@@ -1,6 +1,5 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Options;
-using Counselor.Platform.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

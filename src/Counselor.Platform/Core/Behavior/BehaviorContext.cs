@@ -1,6 +1,5 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Counselor.Platform.Services;
 using System;
 
 namespace Counselor.Platform.Core.Behavior
@@ -11,7 +10,7 @@ namespace Counselor.Platform.Core.Behavior
 		public BehaviorIterator Iterator { get; set; }
 		public IPlatformDatabase Database { get; set; }
 		public Dialog Dialog { get; set; }
-		public User Client { get; set; }		
+		public User Client { get; set; }
 		public string ConnectionId { get; set; }
 		public DateTime CreatedOn { get; } = DateTime.Now;
 		public DateTime LastUsedOn { get; set; }

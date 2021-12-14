@@ -13,7 +13,7 @@ namespace Counselor.Platform.Services
 			foreach (var service in outgoingServices)
 			{
 				_outgoingServices.TryAdd(service.TransportSystemName, service);
-			}			
+			}
 		}
 
 		public IOutgoingService Resolve(string transport)

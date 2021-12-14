@@ -12,7 +12,7 @@ namespace Counselor.Platform.Api.Helpers
 			{
 				Id = int.Parse(httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value),
 				Username = httpContext.User.FindFirst(ClaimTypes.Name).Value
-			};			
+			};
 		}
 
 		public static int GetCurrentUserId(this HttpContext httpContext)

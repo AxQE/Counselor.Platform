@@ -8,11 +8,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{3D1E2A3E-FB1B-4ED1-8FA8-DA7556230BB9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{E32106AD-DD39-4CF8-89A3-7B74C48D40AF}"
+ProjectSection(SolutionItems) = preProject
+	swagger-api-contract.yml = swagger-api-contract.yml
+	LICENSE.md = LICENSE.md
+	README.md = README.md
+EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2CA7C8B3-88F2-4127-9E7C-8B6F6D8AA7FB}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yaml = docker-compose.yaml
 		.github\workflows\dotnet.yml = .github\workflows\dotnet.yml
+		run_services.cmd = run_services.cmd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform", "src\Counselor.Platform\Counselor.Platform.csproj", "{2CB53410-1833-4B0D-A650-89A7318ECEF1}"
@@ -29,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Interpre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Api", "src\Counselor.Platform.Api\Counselor.Platform.Api.csproj", "{AC8AA77F-5026-43DB-BC9F-288AEC20FF28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Counselor.Platform.Utils", "src\Counselor.Platform.Utils\Counselor.Platform.Utils.csproj", "{2874A1BB-7585-4607-BA90-B3374DBF0D6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Counselor.Platform.Utils", "src\Counselor.Platform.Utils\Counselor.Platform.Utils.csproj", "{2874A1BB-7585-4607-BA90-B3374DBF0D6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

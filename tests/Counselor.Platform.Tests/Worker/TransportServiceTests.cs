@@ -6,7 +6,6 @@ using Counselor.Platform.Data.Entities.Enums;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Worker.Transport;
 using Counselor.Platform.Worker.Transport.Telegram;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,8 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Counselor.Platform.Tests.Worker
 {
@@ -47,12 +44,12 @@ namespace Counselor.Platform.Tests.Worker
 			_serviceProviderMock.Setup(x => x.GetService(typeof(IBehaviorExecutor)))
 				.Returns(
 				new BehaviorExecutor(
-					null, 
-					null, 
-					null, 
-					null, 
-					null, 
-					null, 
+					null,
+					null,
+					null,
+					null,
+					null,
+					null,
 					Options.Create(new ServiceOptions())));
 
 			_serviceProviderMock.Setup(x => x.GetService(typeof(IPlatformDatabase)))

@@ -24,14 +24,14 @@ namespace Counselor.Platform.Worker.Transport
 	//todo: большая часть логики относится больше к ядру, чем к транспортной части, всё за исключением фабричного метода  можно перенести в Counselor.Platform.
 	public class TransportService : BackgroundService, IDisposable
 	{
-		private readonly ILogger<TransportService> _logger;		
+		private readonly ILogger<TransportService> _logger;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly ServiceOptions _options;
 
 		private readonly HashSet<TransportData> _runningBots = new HashSet<TransportData>();
 
 		public TransportService(
-			ILogger<TransportService> logger,			
+			ILogger<TransportService> logger,
 			IServiceProvider serviceProvider,
 			IOptions<ServiceOptions> options
 			)
@@ -54,13 +54,13 @@ namespace Counselor.Platform.Worker.Transport
 						await StartBotsAsync(database);
 						await StopBotsAsync(database);
 					}
-
-					await Task.Delay(_options.ServiceIntervalMs, token);
 				}
 				catch (Exception ex)
 				{
 					_logger.LogCritical(ex, "Transport Service main loop error.");
 				}
+
+				await Task.Delay(_options.ServiceIntervalMs, token);
 			}
 		}
 
@@ -132,7 +132,7 @@ namespace Counselor.Platform.Worker.Transport
 					}
 				}
 
-				await database.SaveChangesAsync(); 
+				await database.SaveChangesAsync();
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace Counselor.Platform.Worker.Transport
 
 		public async Task StartBotsAsync(IPlatformDatabase database)
 		{
-			var bots = await database.Bots				
+			var bots = await database.Bots
 				.Where(x => (x.BotState == BotState.Pending || x.BotState == BotState.Started)
 					&& !_runningBots.Select(e => e.Bot.Id).Contains(x.Id))
 				.Include(x => x.Transport)
@@ -170,7 +170,7 @@ namespace Counselor.Platform.Worker.Transport
 
 						var transportData = CreateTransport(bot);
 						_runningBots.Add(transportData);
-						await transportData.Transport.StartAsync(transportData.CancellationToken);						
+						await transportData.Transport.StartAsync(transportData.CancellationToken);
 						bot.BotState = BotState.Started;
 					}
 					catch (Exception ex)
@@ -259,9 +259,9 @@ namespace Counselor.Platform.Worker.Transport
 
 	class TransportData
 	{
-		public Bot Bot { get; private set; }
-		public IngoingServiceBase Transport { get; private set; }
-		public CancellationToken CancellationToken { get; private set; }
+		public Bot Bot { get; }
+		public IngoingServiceBase Transport { get; }
+		public CancellationToken CancellationToken { get; }
 
 		public TransportData(Bot bot, IngoingServiceBase transport, CancellationToken token)
 		{
@@ -279,7 +279,8 @@ namespace Counselor.Platform.Worker.Transport
 		{
 			if (obj == null || obj is not TransportData data)
 				return false;
-			else return Bot.Id == data.Bot.Id;
+
+			return Bot.Id == data.Bot.Id;
 		}
 	}
 }

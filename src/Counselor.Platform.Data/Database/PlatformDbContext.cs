@@ -1,12 +1,11 @@
-﻿using Counselor.Platform.Data.Database;
-using Counselor.Platform.Data.Entities;
+﻿using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Counselor.Platform.Database
+namespace Counselor.Platform.Data.Database
 {
 	public partial class PlatformDbContext : DbContext, IPlatformDatabase
 	{

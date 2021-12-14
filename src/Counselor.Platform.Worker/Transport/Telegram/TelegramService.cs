@@ -1,6 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Database;
-using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,7 +13,7 @@ namespace Counselor.Platform.Worker.Transport.Telegram
 	{
 		private readonly ILogger<TelegramService> _logger;
 		private readonly TelegramOptions _options;
-		private readonly TelegramBotClient _client;
+		private readonly ITelegramBotClient _client;
 		private readonly int _botId;
 
 		public TelegramService(

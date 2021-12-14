@@ -1,0 +1,535 @@
+﻿openapi: 3.0.1
+info:
+  title: Counselor.Platform.Api
+  version: v1
+paths:
+  /api/Bots/{id}:
+    get:
+      tags:
+        - Bots
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BotDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Bots:
+    get:
+      tags:
+        - Bots
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BotDto'
+        '500':
+          description: Server Error
+    post:
+      tags:
+        - Bots
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BotDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/BotDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/BotDto'
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Bots/{id}/activate:
+    patch:
+      tags:
+        - Bots
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Bots/{id}/deactivate:
+    patch:
+      tags:
+        - Bots
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Scripts/{id}:
+    get:
+      tags:
+        - Scripts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Scripts:
+    get:
+      tags:
+        - Scripts
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScriptHeaderDto'
+        '500':
+          description: Server Error
+    post:
+      tags:
+        - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+    patch:
+      tags:
+        - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ScriptDto'
+      responses:
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+    delete:
+      tags:
+        - Scripts
+      parameters:
+        - name: id
+          in: query
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Scripts/activate:
+    patch:
+      tags:
+        - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScriptHeaderDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Scripts/deactivate:
+    patch:
+      tags:
+        - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ScriptHeaderDto'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptHeaderDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Transports:
+    get:
+      tags:
+        - Transports
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportDto'
+        '500':
+          description: Server Error
+  /api/Transports/{id}:
+    get:
+      tags:
+        - Transports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Transports/{id}/commands:
+    get:
+      tags:
+        - Transports
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransportDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '500':
+          description: Server Error
+  /api/Users/authenticate:
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+      responses:
+        '200':
+          description: Success
+  /api/Users:
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/AuthDto'
+      responses:
+        '200':
+          description: Success
+  /api/Users/current:
+    get:
+      tags:
+        - Users
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        username:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ScriptHeaderDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+      additionalProperties: false
+    BotState:
+      enum:
+        - 10
+        - 20
+        - 30
+        - 40
+        - 50
+        - 60
+      type: integer
+      format: int32
+    TransportDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+      additionalProperties: false
+    BotDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        owner:
+          $ref: '#/components/schemas/UserDto'
+        script:
+          $ref: '#/components/schemas/ScriptHeaderDto'
+        botState:
+          $ref: '#/components/schemas/BotState'
+        transport:
+          $ref: '#/components/schemas/TransportDto'
+        configuration:
+          type: string
+          nullable: true
+      additionalProperties: false
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: {}
+    ScriptDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+          nullable: true
+        instruction:
+          type: string
+          nullable: true
+      additionalProperties: false
+    AuthDto:
+      required:
+        - password
+        - username
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      additionalProperties: false

@@ -1,7 +1,7 @@
 ﻿using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace Counselor.Platform.Database
+namespace Counselor.Platform.Data.Database
 {
 	public partial class PlatformDbContext : DbContext
 	{

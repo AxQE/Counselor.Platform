@@ -2,7 +2,7 @@
 {
 	public class Script : AccessibleEntity
 	{
-		public string Name { get; set; }		
-		public string Instruction { get; set; }		
+		public string Name { get; set; }
+		public string Instruction { get; set; }
 	}
 }

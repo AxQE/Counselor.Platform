@@ -1,7 +1,6 @@
 ﻿using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Interpreter.Commands;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 

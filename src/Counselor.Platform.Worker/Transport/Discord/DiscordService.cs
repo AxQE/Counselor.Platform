@@ -1,6 +1,5 @@
 ﻿using Counselor.Platform.Core.Behavior;
 using Counselor.Platform.Data.Database;
-using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -17,7 +16,7 @@ namespace Counselor.Platform.Worker.Transport.Discord
 
 		public DiscordService(
 			ILogger<DiscordService> logger,
-			IOptions<DiscordOptions> options,			
+			IOptions<DiscordOptions> options,
 			IBehaviorExecutor behaviorExecutor,
 			IPlatformDatabase database,
 			ServiceContext serviceContext

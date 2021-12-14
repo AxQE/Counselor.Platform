@@ -40,6 +40,6 @@ namespace Counselor.Platform.Services
 			{
 				_logger.LogError(ex, $"Send message to {TransportSystemName} failed. Message: {payload}. User: {userId}.");
 			}
-		}				
+		}
 	}
 }

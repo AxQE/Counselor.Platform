@@ -12,11 +12,11 @@ namespace Counselor.Platform.Interpreter.Expressions
 		private readonly Stack<string> _expressionStack = new Stack<string>();
 		private readonly Queue<string> _expressionQueue = new Queue<string>();
 
-		private static readonly Regex _logicalOperationRegex = new Regex("And|Equal|NotEqual|Or");
-		private static readonly Regex _highPriorityOperationsRegex = new Regex("Equal|NotEqual");
-		private static readonly Regex _lowPriorityOperationsRegex = new Regex("And|Or");
+		private static readonly Regex LogicalOperationRegex = new Regex("And|Equal|NotEqual|Or");
+		private static readonly Regex HighPriorityOperationsRegex = new Regex("Equal|NotEqual");
+		private static readonly Regex LowPriorityOperationsRegex = new Regex("And|Or");
 
-		private static readonly Dictionary<string, Func<string, string, bool>> _expressionOperations =
+		private static readonly Dictionary<string, Func<string, string, bool>> ExpressionOperations =
 			new Dictionary<string, Func<string, string, bool>>
 		{
 			{"Equal", (left ,right) => left.Equals(right, StringComparison.OrdinalIgnoreCase) },
@@ -44,7 +44,7 @@ namespace Counselor.Platform.Interpreter.Expressions
 		{
 			if (string.IsNullOrEmpty(expression))
 				throw new ArgumentNullException(nameof(expression), "Boolean expression cannot be null or empty.");
-			
+
 			ConvertToPostfixExpression(expression);
 			return CalculateExpression();
 		}
@@ -63,11 +63,11 @@ namespace Counselor.Platform.Interpreter.Expressions
 				{
 					if (operands.Contains("(")) MoveFromStackToQueue();
 				}
-				else if (!_logicalOperationRegex.IsMatch(operand))
+				else if (!LogicalOperationRegex.IsMatch(operand))
 				{
 					_expressionQueue.Enqueue(operand);
 				}
-				else if (_lowPriorityOperationsRegex.IsMatch(operand))
+				else if (LowPriorityOperationsRegex.IsMatch(operand))
 				{
 					if (!_expressionStack.Any()
 						|| _expressionStack.TryPeek(out var i) && i == "(")
@@ -75,7 +75,7 @@ namespace Counselor.Platform.Interpreter.Expressions
 						_expressionStack.Push(operand);
 					}
 					else if (_expressionStack.TryPeek(out var j)
-						&& _highPriorityOperationsRegex.IsMatch(j))
+						&& HighPriorityOperationsRegex.IsMatch(j))
 					{
 						MoveFromStackToQueue();
 						_expressionStack.Push(operand);
@@ -86,17 +86,17 @@ namespace Counselor.Platform.Interpreter.Expressions
 						_expressionStack.Push(operand);
 					}
 				}
-				else if (_highPriorityOperationsRegex.IsMatch(operand))
+				else if (HighPriorityOperationsRegex.IsMatch(operand))
 				{
 					if (!_expressionStack.Any()
 						&& _expressionStack.TryPeek(out var i)
-						&& _highPriorityOperationsRegex.IsMatch(i))
+						&& HighPriorityOperationsRegex.IsMatch(i))
 					{
 						MoveFromStackToQueue();
 					}
 
 					_expressionStack.Push(operand);
-				}				
+				}
 			}
 
 			if (_expressionStack.Any())
@@ -124,13 +124,13 @@ namespace Counselor.Platform.Interpreter.Expressions
 		{
 			while (_expressionQueue.Any() && _expressionQueue.TryDequeue(out var i))
 			{
-				if (!_logicalOperationRegex.IsMatch(i))
+				if (!LogicalOperationRegex.IsMatch(i))
 				{
 					_expressionStack.Push(i);
 				}
 				else
 				{
-					var result = _expressionOperations[i](_expressionStack.Pop(), _expressionStack.Pop()).ToString();
+					var result = ExpressionOperations[i](_expressionStack.Pop(), _expressionStack.Pop()).ToString();
 					_expressionStack.Push(result);
 				}
 			}

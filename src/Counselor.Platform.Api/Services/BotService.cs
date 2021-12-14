@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services
@@ -29,10 +30,10 @@ namespace Counselor.Platform.Api.Services
 			_database = database;
 		}
 
-		public async Task<BotDto> Get(int botId, int userId)
-			=> (await FindBot(botId, userId)).Adapt<BotDto>();
+		public async Task<BotDto> Get(int botId, int userId, CancellationToken cancellationToken)
+			=> (await FindBot(botId, userId, cancellationToken)).Adapt<BotDto>();
 
-		public async Task<IEnumerable<BotDto>> GetAll(int userId)
+		public async Task<IEnumerable<BotDto>> GetAll(int userId, CancellationToken cancellationToken)
 		{
 			var bots = await _database.Bots
 				.AsNoTracking()
@@ -42,11 +43,11 @@ namespace Counselor.Platform.Api.Services
 			return bots.Adapt<IEnumerable<BotDto>>();
 		}
 
-		public async Task<bool> Activate(int botId, int userId)
+		public async Task<bool> Activate(int botId, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var bot = await FindBot(botId, userId);
+				var bot = await FindBot(botId, userId, cancellationToken);
 
 				switch (bot.BotState)
 				{
@@ -73,6 +74,10 @@ namespace Counselor.Platform.Api.Services
 
 				return true;
 			}
+			catch (OperationCanceledException)
+			{
+				return false;
+			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Error during bot activating.");
@@ -80,13 +85,13 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<BotDto> Create(BotDto bot)
+		public async Task<BotDto> Create(BotDto bot, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == bot.Owner.Id);
-				var script = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == bot.Script.Id && x.Owner.Id == bot.Owner.Id);
-				var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == bot.Transport.Id);
+				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == bot.Owner.Id, cancellationToken);
+				var script = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == bot.Script.Id && x.Owner.Id == bot.Owner.Id, cancellationToken);
+				var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == bot.Transport.Id, cancellationToken);
 
 				if (owner == null)
 				{
@@ -111,10 +116,14 @@ namespace Counselor.Platform.Api.Services
 					Configuration = bot.Configuration
 				};
 
-				var result = await _database.Bots.AddAsync(dbBot);
-				await _database.SaveChangesAsync();
+				var result = await _database.Bots.AddAsync(dbBot, cancellationToken);
+				await _database.SaveChangesAsync(cancellationToken);
 
 				return result.Adapt<BotDto>();
+			}
+			catch (OperationCanceledException)
+			{
+				return null;
 			}
 			catch (Exception ex)
 			{
@@ -123,26 +132,26 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<bool> Deactivate(int botId, int userId)
-		{
-			throw new NotImplementedException();
-		}		
-
-		public async Task<BotDto> Update(BotDto bot)
+		public async Task<bool> Deactivate(int botId, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<bool> Validate(int botId, int userId)
+		public async Task<BotDto> Update(BotDto bot, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		private Task<Bot> FindBot(int botId, int userId)
+		public async Task<bool> Validate(int botId, int userId, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
+
+		private Task<Bot> FindBot(int botId, int userId, CancellationToken cancellationToken)
 		{
 			return (from dbBot in _database.Bots
-						  where dbBot.Id == botId && dbBot.Owner.Id == userId
-						  select dbBot).FirstOrDefaultAsync();
-		}		
+					where dbBot.Id == botId && dbBot.Owner.Id == userId
+					select dbBot).FirstOrDefaultAsync(cancellationToken);
+		}
 	}
 }

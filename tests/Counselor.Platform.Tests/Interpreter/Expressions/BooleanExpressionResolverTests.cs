@@ -23,7 +23,7 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 		{
 			string expression = "a Equal b";
 			var resolver = new BooleanExpressionResolver();
-			
+
 			var result = resolver.Resolve(expression);
 
 			Assert.IsFalse(result);
@@ -98,10 +98,10 @@ namespace Counselor.Platform.Tests.Interpreter.Expressions
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentNullException))]
 		public void BooleanExpression_EmptyExpression()
-		{			
+		{
 			var resolver = new BooleanExpressionResolver();
 
-			resolver.Resolve(string.Empty);			
+			resolver.Resolve(string.Empty);
 		}
 	}
 }

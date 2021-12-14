@@ -35,7 +35,7 @@ namespace Counselor.Platform.Interpreter.Expressions
 			if (expression.@operator.Equals(nameof(ExternalCommand)))
 				return new ExternalCommand(_externalCommandFactories[transport], expression.parameters);
 
-			return Activator.CreateInstance(type, expression.parameters) as IExpression;			
+			return Activator.CreateInstance(type, expression.parameters) as IExpression;
 		}
 
 		public static (string @operator, string parameters) ParseExpression(string instruction)

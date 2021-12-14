@@ -1,5 +1,4 @@
 ﻿using Counselor.Platform.Api.Entities.Dto;
-using Counselor.Platform.Api.Exceptions;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
@@ -7,12 +6,9 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Services
@@ -28,12 +24,12 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public Task<UserDto> Authenticate(AuthDto auth)
+		public Task<UserDto> Authenticate(AuthDto auth, CancellationToken cancellationToken)
 		{
-			return Authenticate(auth.Username, auth.Password);
+			return Authenticate(auth.Username, auth.Password, cancellationToken);
 		}
 
-		public async Task<UserDto> Authenticate(string username, string password)
+		public async Task<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -60,7 +56,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<UserDto> CreateUser(AuthDto auth)
+		public async Task<UserDto> CreateUser(AuthDto auth, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -79,7 +75,7 @@ namespace Counselor.Platform.Api.Services
 					Username = auth.Username,
 					Password = HashPassword(auth.Password, salt),
 					Salt = Convert.ToBase64String(salt)
-				};				
+				};
 
 				await _database.Users.AddAsync(newUser);
 				await _database.SaveChangesAsync();
@@ -97,7 +93,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<UserDto> GetCurrentUser(ClaimsPrincipal principal)
+		public async Task<UserDto> GetCurrentUser(ClaimsPrincipal principal, CancellationToken cancellationToken)
 		{
 			try
 			{

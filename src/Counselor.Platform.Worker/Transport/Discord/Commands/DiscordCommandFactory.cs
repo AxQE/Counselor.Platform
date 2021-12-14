@@ -7,7 +7,7 @@ namespace Counselor.Platform.Worker.Transport.Discord.Commands
 	{
 		public DiscordCommandFactory(IOptions<DiscordOptions> options)
 			: base(options.Value.SystemName)
-		{			
+		{
 		}
 	}
 }

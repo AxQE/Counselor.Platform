@@ -3,6 +3,6 @@
 	public interface ITransportCommandFactory
 	{
 		string TransportName { get; }
-		ITransportCommand CreateCommand(string commandName);		
+		ITransportCommand CreateCommand(string commandName);
 	}
 }

@@ -18,13 +18,13 @@ namespace Counselor.Platform.Interpreter
 		public TResult GetTypedResult<TResult>()
 		{
 			switch (Type.GetTypeCode(typeof(TResult)))
-			{				
+			{
 				case TypeCode.Boolean:
 					return (TResult)Result;
 
 				default:
 					throw new NotImplementedException($"Cast operation is not implemented for the type: {typeof(TResult)}.");
-			}			
+			}
 		}
 	}
 }
