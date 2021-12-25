@@ -15,7 +15,7 @@ namespace Counselor.Platform.Services
 		private readonly TransportOptions _options;
 		private readonly IConnectionsRepository _connections;
 
-		public OutgoingServiceBase(
+		protected OutgoingServiceBase(
 			ILogger<OutgoingServiceBase> logger,
 			IOptions<TransportOptions> options,
 			IConnectionsRepository connections)

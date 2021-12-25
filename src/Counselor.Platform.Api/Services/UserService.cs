@@ -35,7 +35,7 @@ namespace Counselor.Platform.Api.Services
 			{
 				var user = await _database.Users
 					.AsNoTracking()
-					.FirstOrDefaultAsync(x => x.Username.ToUpper() == username.ToUpper());
+					.FirstOrDefaultAsync(x => string.Equals(x.Username, username, StringComparison.OrdinalIgnoreCase));
 
 				byte[] salt = Convert.FromBase64String(user.Salt);
 				var hashedPassword = HashPassword(password, salt);
@@ -62,7 +62,7 @@ namespace Counselor.Platform.Api.Services
 			{
 				var exists = await _database.Users
 						.AsNoTracking()
-						.FirstOrDefaultAsync(x => x.Username.ToUpper() == auth.Username.ToUpper());
+						.FirstOrDefaultAsync(x => string.Equals(x.Username, auth.Username, StringComparison.OrdinalIgnoreCase));
 
 				if (exists != null) return null;
 

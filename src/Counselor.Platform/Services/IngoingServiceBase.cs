@@ -16,7 +16,7 @@ namespace Counselor.Platform.Services
 		private readonly ServiceContext _serviceContext;
 		private readonly IBehaviorExecutor _behaviorExecutor;
 
-		public IngoingServiceBase(
+		protected IngoingServiceBase(
 			ILogger<IngoingServiceBase> logger,
 			IOptions<TransportOptions> options,
 			IBehaviorExecutor behaviorExecutor,

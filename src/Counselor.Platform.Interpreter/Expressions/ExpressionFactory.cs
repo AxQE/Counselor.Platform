@@ -46,8 +46,8 @@ namespace Counselor.Platform.Interpreter.Expressions
 			if (operatorOpen == -1 || operatorClose == -1)
 				throw new InvalidExpressionSyntaxException("Instruction does not contain expression operator.");
 
-			var @operator = instruction.Substring(1, operatorClose - 1);
-			var parameters = instruction.Substring(operatorClose + 1).Trim();
+			var @operator = instruction?.Substring(1, operatorClose - 1);
+			var parameters = instruction?.Substring(operatorClose + 1).Trim();
 
 			return (@operator, parameters);
 		}

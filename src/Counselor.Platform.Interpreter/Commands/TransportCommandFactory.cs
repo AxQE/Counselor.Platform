@@ -9,13 +9,13 @@ namespace Counselor.Platform.Interpreter.Commands
 		public string TransportName { get; }
 		private readonly Dictionary<string, Type> _commandTypes = new Dictionary<string, Type>();
 
-		public TransportCommandFactory(string transportName)
+		protected TransportCommandFactory(string transportName)
 		{
 			TransportName = transportName;
 
 			foreach (var command in TypeHelpers.GetTypeImplementations<ITransportCommand>())
 			{
-				if (command.FullName.Contains(TransportName))
+				if (command.FullName?.Contains(TransportName) ?? false)
 					_commandTypes.Add(command.Name, command);
 			}
 		}
