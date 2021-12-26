@@ -2,7 +2,7 @@
 
 namespace Counselor.Platform.Core.Behavior
 {
-	class Behavior : IBehavior
+	class Behavior
 	{
 		public string Name { get; set; }
 		public bool IsActive { get; set; }

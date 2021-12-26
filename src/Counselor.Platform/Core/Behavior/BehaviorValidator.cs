@@ -6,5 +6,10 @@
 		{
 			return true;
 		}
+
+		public static bool IsValid(Behavior behavior)
+		{
+			return true;
+		}
 	}
 }

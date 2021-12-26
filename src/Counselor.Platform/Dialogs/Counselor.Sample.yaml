@@ -13,10 +13,10 @@ Steps:
     After: 
     OnSuccess:
       Type: Instruction
-      Name: Next
+      Data: Next
     OnFailure: 
       Type: Instruction
-      Name: Stop
+      Data: None
     Command:
       Type: Instruction
       #Name: None

@@ -6,68 +6,57 @@ namespace Counselor.Platform.Core.Behavior
 {
 	class BehaviorIterator
 	{
-		private readonly IBehavior _behavior;
-		private readonly IReadOnlyCollection<BehaviorStep> _root;
-		private IEnumerable<BehaviorStep> _current;
+		private readonly Behavior _behavior;
+		private readonly IReadOnlyCollection<BehaviorStep> _rootNode;
+		private readonly Dictionary<string, IEnumerable<BehaviorStep>> _avalilableTransitions = new();
+		private IEnumerable<BehaviorStep> _currentTransitions;
 
-		public BehaviorIterator(IBehavior behavior)
+		public BehaviorIterator(Behavior behavior)
 		{
 			_behavior = behavior;
 
 			if (behavior?.Steps is null)
-				throw new ArgumentNullException($"Behavior steps was not created.");
+				throw new ArgumentNullException("Behavior steps was not created.");
 
-			var rootNode = behavior.Steps.FirstOrDefault(x => x.IsRoot);
+			var rootNode = behavior.Steps.Find(x => x.IsRoot);
 
 			if (rootNode is null)
 				throw new ArgumentNullException($"Root step not found for dialog: {behavior.Name}.");
 
-			_root = new List<BehaviorStep> { rootNode };
+			_rootNode = new BehaviorStep[1] { rootNode };
+			_currentTransitions = _rootNode;
 
-			_current = _root;
+			foreach (var step in behavior.Steps)
+			{
+				_avalilableTransitions.Add(step.Id, FindAvailableTransitions(step));
+			}
 		}
 
 		public IEnumerable<BehaviorStep> Current()
 		{
-			return _current;
+			return _currentTransitions;
 		}
 
-		public void Next(string processedId = null)
+		public void Next(string processedStepId)
 		{
-			//todo: пальцы быстрее мыслей. как то странно получилось нужно посмотреть потом
-			if (!string.IsNullOrEmpty(processedId))
+			if (!string.IsNullOrEmpty(processedStepId) && _avalilableTransitions.ContainsKey(processedStepId))
 			{
-				var processed = _behavior.Steps.First(x => x.Id.Equals(processedId)).Transitions;
-
-				if (processed?.Any() ?? false)
-					_current = _behavior.Steps.Where(x => processed.Contains(x.Id)).ToList();
-				else
-					_current = null;
+				_currentTransitions = _avalilableTransitions[processedStepId];
 			}
 			else
 			{
-				var availableTransitions = _current
-					?.Where(s => s?.Transitions?.Any() ?? false)
-					?.SelectMany(x => x.Transitions)?.ToList();
-
-				if (availableTransitions?.Any() ?? false)
-				{
-					var next = _behavior.Steps.Where(x => availableTransitions.Contains(x.Id));
-					if (next.Any())
-						_current = next.ToList();
-					else
-						_current = null;
-				}
-				else
-				{
-					_current = null;
-				}
+				_currentTransitions = null;
 			}
 		}
 
 		public void Reset()
 		{
-			_current = _root;
+			_currentTransitions = _rootNode;
+		}
+
+		private IEnumerable<BehaviorStep> FindAvailableTransitions(BehaviorStep step)
+		{
+			return _behavior.Steps.Where(x => x.IsActive && step?.Transitions != null && step.Transitions.Contains(x.Id));
 		}
 	}
 }

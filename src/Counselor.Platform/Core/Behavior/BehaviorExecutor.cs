@@ -30,17 +30,11 @@ namespace Counselor.Platform.Core.Behavior
 		private readonly ServiceOptions _options;
 		private readonly SemaphoreSlim _executorSemaphore = new SemaphoreSlim(1, 1);
 		private readonly Timer _timer;
-		private IBehavior _behavior;
-
+		private Behavior _behavior;
 
 		private readonly Dictionary<string, BehaviorContext> _runningDialogs = new Dictionary<string, BehaviorContext>();
-
-		private static readonly Dictionary<string, Action> PredefinedBehaviorCommands = new Dictionary<string, Action>
-		{
-			{ "Next", null },
-			{ "None", null },
-			{ "Stop", null }
-		};
+		private const string DefaultBehaviorInstructionNext = "Next";
+		private const string DefaultBehaviorInstructionNone = "None";
 
 		public BehaviorExecutor(
 			IInterpreter interpreter,
@@ -92,17 +86,27 @@ namespace Counselor.Platform.Core.Behavior
 		{
 			var behaviorContext = await CreateBehaviorContextAsync(connectionId, username, payload, context);
 
-			while (behaviorContext.Iterator.Current() != null)
-			{
-				foreach (var step in behaviorContext.Iterator.Current())
-				{
-					if (step.IsActive)
-					{
-						await RunStepAsync(behaviorContext, _outgoingServicePool.Resolve(context.TransportName), step);
-					}
-				}
+			var availableSteps = behaviorContext.Iterator.Current();
+			BehaviorStep currentStep = null;
 
-				behaviorContext.Iterator.Next();
+			foreach (var step in availableSteps)
+			{
+				if (await CheckStepCondition(behaviorContext, step))
+				{
+					currentStep = step;
+					break;
+				}
+			}
+
+			if (currentStep != null)
+			{
+				behaviorContext.Iterator.Next(currentStep?.Id);
+				await RunStepAsync(behaviorContext, _outgoingServicePool.Resolve(context.TransportName), currentStep);
+			}
+
+			if (!behaviorContext.Iterator.Current().Any())
+			{
+				behaviorContext.Iterator.Reset();
 			}
 		}
 
@@ -142,24 +146,29 @@ namespace Counselor.Platform.Core.Behavior
 			}
 		}
 
+		private async Task<bool> CheckStepCondition(BehaviorContext context, BehaviorStep step)
+		{
+			if (!string.IsNullOrEmpty(step.Condition?.Instruction))
+			{
+				if (step.Condition.Instruction.Equals(DefaultBehaviorInstructionNone)) return true;
+				if (step.Condition.Instruction.Equals(DefaultBehaviorInstructionNext)) return false;
+				return (await _interpreter.Interpret(step.Condition, context.Dialog, context.Database, context.ServiceContext.TransportName)).GetTypedResult<bool>();
+			}
+
+			return false;
+		}
+
 		private async Task RunStepAsync(BehaviorContext context, IOutgoingService outgoingService, BehaviorStep step)
 		{
 			_logger.LogDebug($"Step: {step.Id} is running for client: {context.Client.Id} within bot: {context.ServiceContext.BotId}.");
 
 			try
 			{
-				if (!(await _interpreter.Interpret(step.Condition, context.Dialog, context.Database, context.ServiceContext.TransportName)).GetTypedResult<bool>())
-				{
-					return;
-				}
-
 				if (step.Command != null)
 				{
-					if (!string.IsNullOrEmpty(step.Command?.Name) && PredefinedBehaviorCommands.TryGetValue(step.Command.Name, out var action))
-					{
-						action?.Invoke();
-					}
-					else
+					if (step.Command.Type == Enums.BehaviorInstructionType.Instruction //todo: не учитываются кейсы отсутвия инструкции и системной команды в инструкции
+						&& !string.IsNullOrEmpty(step.Command?.Instruction)
+						&& !step.Command.Instruction.Equals(DefaultBehaviorInstructionNone))
 					{
 						await HandleInterpretationResult(await _interpreter.Interpret(step.Command, context.Dialog, context.Database, context.ServiceContext.TransportName), context);
 					}
