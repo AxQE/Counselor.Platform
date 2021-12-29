@@ -19,7 +19,6 @@ Steps:
       Data: None
     Command:
       Type: Instruction
-      #Name: None
       Data: "[ExternalCommand] [SendMessage] Hello, {user:username}!"
     IsActive: true
     StepType: External
@@ -28,9 +27,13 @@ Steps:
 
   - Id: Child1
     Response: Child1
-    Command:    
+    Command:
+      Type: Instruction
+      Data: "[ExternalCommand] [SendMessage] Child1 invoked on condition."
     Condition:
-      Data: None
+      Data: "[MessageContains] Child1"
+    Transitions:
+     - Child4
 
   - Id: Child2
     Response: Child2
@@ -42,5 +45,13 @@ Steps:
   - Id: Child3
     Response: Child3
     Command:    
+    Condition:
+      Data: None
+
+  - Id: Child4
+    Response: Child4
+    Command:
+      Type: Instruction
+      Data: "[ExternalCommand] [SendMessage] yep. Child4."
     Condition:
       Data: None

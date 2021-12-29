@@ -63,15 +63,18 @@ namespace Counselor.Platform.Core.Behavior
 			{
 				var script = database.Scripts.First(x => x.Id == scriptId);
 
-				var deserializer = new YamlDotNet.Serialization.Deserializer();
-				using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Instruction)))
-				using (var reader = new StreamReader(stream))
+				if (!string.IsNullOrEmpty(script?.Name))
 				{
-					var behavior = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
-
-					if (!string.IsNullOrEmpty(script.Name) && behavior != null)
+					var deserializer = new YamlDotNet.Serialization.Deserializer();
+					using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(script.Instruction)))
+					using (var reader = new StreamReader(stream))
 					{
-						_behavior = behavior;
+						var behavior = deserializer.Deserialize<Behavior>(reader.ReadToEnd());
+
+						if (BehaviorValidator.IsValid(behavior))
+						{
+							_behavior = behavior;
+						}
 					}
 				}
 			}

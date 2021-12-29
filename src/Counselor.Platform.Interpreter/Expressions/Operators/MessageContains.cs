@@ -23,12 +23,13 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 
 			var result = new InterpretationResult
 			{
+				Result = false,
 				ResultType = ExpressionResultType.Boolean
 			};
 
 			foreach (var p in parameters)
 			{
-				if (dialog.CurrentMessage.Payload.Contains(p))
+				if (dialog.CurrentMessage.Payload.Contains(p, System.StringComparison.OrdinalIgnoreCase))
 					result.Result = true;
 			}
 
