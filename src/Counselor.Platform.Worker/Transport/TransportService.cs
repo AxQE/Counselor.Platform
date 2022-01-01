@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 namespace Counselor.Platform.Worker.Transport
 {
 	//todo: большая часть логики относится больше к ядру, чем к транспортной части, всё за исключением фабричного метода  можно перенести в Counselor.Platform.
-	public class TransportService : BackgroundService, IDisposable
+	public class TransportService : BackgroundService
 	{
 		private readonly ILogger<TransportService> _logger;
 		private readonly IServiceProvider _serviceProvider;

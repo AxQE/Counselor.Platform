@@ -40,13 +40,17 @@ Steps:
     Command:     
     IsActive: false
     Condition:
-      Data: None
+      Data: "[MessageContains] Child2"
+    Transitions:
+     - Child4
 
   - Id: Child3
     Response: Child3
     Command:    
     Condition:
-      Data: None
+      Data: "[MessageContains] Child3"
+    Transitions:
+     - Child4
 
   - Id: Child4
     Response: Child4
