@@ -1,14 +1,14 @@
 import { createWebHistory, createRouter } from 'vue-router';
-import { routePaths } from './common/defaults';
-
-function isAuthenticated() {
-    return true;
-}
+import { routePaths } from './common/constants';
+import { store } from './store';
 
 const routes = [
     {
         path: routePaths.home,
-        component: () => import('./views/Home')
+        component: () => import('./views/Home'),
+        meta: {
+            requeresAuth: true
+        }
     },
     {
         path: routePaths.error,        
@@ -19,7 +19,7 @@ const routes = [
         component: () => import('./views/Login')
     },
     {
-        path: routePaths.registration,        
+        path: routePaths.register,        
         component: () => import('./views/Registration')
     },
     {
@@ -34,8 +34,18 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.name !== 'login' && !isAuthenticated()) next({ name: 'login' });
-    else next();
+    if (to.matched.some(x => x.meta.requeresAuth) && !store.getters['isAuthenticated'])
+    {
+        next({ path: routePaths.login });
+    }
+    else if (to.path === routePaths.login || to.path === routePaths.register)
+    {
+        next();
+    }    
+    else
+    {
+        next();
+    }
 });
 
 export default router;

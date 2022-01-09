@@ -1,15 +1,32 @@
-function LogError (msg) {
+import { config } from "../config";
+import { logLevel } from './defaults';
 
-};
+export const Logger = {
+    logError: (exception, message) => {
+        if (config.logLevel <= logLevel.error)
+        {
+            console.error(message, exception);
+        }
+    },
 
-function LogInfo (msg) {
+    logWarning: (exception, message) => {
+        if (config.logLevel <= logLevel.warning)
+        {
+            console.log(message);
+        }
+    },
 
-};
+    logInfo: (message) => {
+        if (config.logLevel <= logLevel.information)
+        {
+            console.log(message);
+        }
+    },
 
-function LogWarning(msg) {
-
-};
-
-function LogDebug(msg) {
-
+    logDebug: (message) => {
+        if (config.logLevel <= logLevel.debug)
+        {
+            console.debug(message);
+        }
+    }
 };

@@ -3,9 +3,7 @@
     @click="click ? click() : () => null"
     :class="disallow ? 'disallowed': ''"
     :type="type || 'button'"
-    :disabled="disabled"
-    v-tooltip="hoverText"
-    :title="tooltip"
+    :disabled="disabled"    
   >
     <slot></slot>
     <slot name="text"></slot>
@@ -22,7 +20,7 @@ export default {
         disabled: Boolean,
         disallow: Boolean,
         type: String,
-        tooltip: String
+        // tooltip: String
     },
     computed: {
         hoverText() {

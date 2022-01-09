@@ -1,5 +1,5 @@
 <template>
-  <div :class="`input-container ${layout}`">
+  <div class="input-container">
     <label
       v-if="label"
       for="name"
@@ -9,7 +9,7 @@
     </label>
     <input
       :type="type"
-      :value="value"
+      :value="modelValue"
       v-on:input="updateValue($event.target.value)"
       :name="name"
       :id="name"
@@ -26,11 +26,10 @@
 </template>
 
 <script>
-
 export default {
-  name: 'Input',
+  name: 'Input',  
   props: {
-    value: [String, Number],
+    modelValue: [String, Number],
     label: String,
     name: String,
     placeholder: String,
@@ -38,16 +37,11 @@ export default {
     type: {
       default: 'text',
       type: String,
-    },
-    layout: {
-      validator: (value) => ['horizontal', 'vertical'].indexOf(value) !== -1,
-      type: String,
-      default: 'vertical',
-    },
+    }
   },
   methods: {
     updateValue(value) {
-      this.$emit('input', value);
+      this.$emit('update:modelValue', value);
     },
   },
 };
