@@ -58,6 +58,8 @@ namespace Counselor.Platform.Api
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Counselor.Platform.Api", Version = "v1" });
 			});
 
+			services.AddHealthChecks();
+
 			services.AddResponseCaching();
 
 			services.AddAuthentication("BasicAuthentication")
@@ -95,6 +97,7 @@ namespace Counselor.Platform.Api
 
 			app.UseEndpoints(endpoints =>
 			{
+				endpoints.MapHealthChecks("/api/health");
 				endpoints.MapControllers();
 			});
 		}

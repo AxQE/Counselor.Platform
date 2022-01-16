@@ -10,6 +10,12 @@ services:
       - "8080:8080"
       - "5432:5432"
     container_name: counselor-platform/api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:5000/api/health"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   counselor.platform.worker:
     image: ${DOCKER_REGISTRY-}counselorplatformworker
