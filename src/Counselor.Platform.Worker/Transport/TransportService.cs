@@ -249,7 +249,7 @@ namespace Counselor.Platform.Worker.Transport
 											   TransportId = bot.Transport.Id,
 											   TransportName = bot.Transport.Name
 										   }
-										   ),
+									),
 				CancellationToken.None
 				),
 			"Discord" => throw new NotImplementedException("Discord service is not implemented."),

@@ -1,5 +1,5 @@
 import { config } from '../../config';
-import { getAuthData, removeAuthData } from '../../common/storageHelpers';
+import { getAuthData, removeAuthData, removeUserData } from '../../common/storageHelpers';
 import { httpStatusCodes } from '../../common/constants';
 import { Mutations, store } from '../../store';
 
@@ -59,5 +59,6 @@ function hadleResponse(response) {
     if (response.status === httpStatusCodes.Unauthorized) {
         store.commit[Mutations.Auth.Remove];
         removeAuthData();
+        removeUserData();
     }
 }

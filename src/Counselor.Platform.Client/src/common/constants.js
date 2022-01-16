@@ -32,3 +32,11 @@ export const httpStatusCodes = {
     ServiceUnavailable: 503,
     GatewayTimeout: 504
 }
+export const botState = {
+    Created: 'Created',
+	Invalid: 'Invalid',
+	Pending: 'Pending',
+	Started: 'Started',
+	Stopped: 'Stopped',
+	Deactivated: 'Deactivated'
+}

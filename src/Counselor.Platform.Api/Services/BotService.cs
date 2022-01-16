@@ -38,6 +38,9 @@ namespace Counselor.Platform.Api.Services
 			var bots = await _database.Bots
 				.AsNoTracking()
 				.Where(x => x.Owner.Id == userId)
+				.Include(x => x.Transport)
+				.Include(x => x.Owner)
+				.Include(x => x.Script)
 				.ToListAsync();
 
 			return bots.Adapt<IEnumerable<BotDto>>();
@@ -47,7 +50,7 @@ namespace Counselor.Platform.Api.Services
 		{
 			try
 			{
-				var bot = await FindBot(botId, userId, cancellationToken);
+				var bot = await FindBot(botId, userId, cancellationToken, true);
 
 				switch (bot.BotState)
 				{
@@ -147,11 +150,19 @@ namespace Counselor.Platform.Api.Services
 			throw new NotImplementedException();
 		}
 
-		private Task<Bot> FindBot(int botId, int userId, CancellationToken cancellationToken)
+		private Task<Bot> FindBot(int botId, int userId, CancellationToken cancellationToken, bool tracking = false)
 		{
-			return (from dbBot in _database.Bots
-					where dbBot.Id == botId && dbBot.Owner.Id == userId
-					select dbBot).FirstOrDefaultAsync(cancellationToken);
+			var request = _database.Bots
+				.Include(x => x.Owner)
+				.Include(x => x.Transport)
+				.Include(x => x.Script);
+
+			if (tracking)
+			{
+				request.AsNoTracking();
+			}
+
+			return request.FirstOrDefaultAsync(x => x.Id == botId && x.Owner.Id == userId, cancellationToken);
 		}
 	}
 }

@@ -44,8 +44,9 @@ export default {
 
 <style lang="scss" scoped>
 
-.content-container div {
-    display: inline-block;
+.content-container {
+    display: flex;
+    justify-content: space-between;    
 }
 
 header {
@@ -56,7 +57,11 @@ header {
 
 #logout {
     width: 100px;
-    height: 40px;
+    height: 40px;    
+}
+
+#logout p {
+    margin: 0;
 }
 
 #logout:hover {

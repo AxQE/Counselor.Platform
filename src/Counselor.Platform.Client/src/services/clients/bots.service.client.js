@@ -7,7 +7,9 @@ export const getAllBots = async () => {
     const response = await GET('bots');
 
     if (response.status === httpStatusCodes.Ok) {
-        requestResult.data = JSON.parse(await response.text());
+
+        const result = await response.text();
+        requestResult.data = JSON.parse(result);
     }
     else {
         requestResult.error = response.statusText;

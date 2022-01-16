@@ -2,7 +2,7 @@ import { storageKeys } from "./constants"
 
 
 export const saveAuthData = (username, password) => {
-    localStorage.setItem(storageKeys.user.auth, window.btoa(`Basic ${username}:${password}`));
+    localStorage.setItem(storageKeys.user.auth, `Basic ${window.btoa(`${username}:${password}`)}`);
 }
 
 export const getAuthData = () => {
