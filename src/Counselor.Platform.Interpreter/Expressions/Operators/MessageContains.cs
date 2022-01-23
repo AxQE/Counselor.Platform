@@ -17,7 +17,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 			_parameters = parameters;
 		}
 
-		public async Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
+		public Task<InterpretationResult> InterpretAsync(IPlatformDatabase database, Dialog dialog)
 		{
 			var parameters = _parameters.Split(' ').Select(x => x.Trim());
 
@@ -33,7 +33,7 @@ namespace Counselor.Platform.Interpreter.Expressions.Operators
 					result.Result = true;
 			}
 
-			return result;
+			return Task.FromResult(result);
 		}
 	}
 }

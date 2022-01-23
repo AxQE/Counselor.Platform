@@ -1,5 +1,5 @@
 import { httpStatusCodes } from "../../common/constants";
-import { GET } from "./base.service.client"
+import { GET } from "./base.service.client";
 
 export const getAllBots = async () => {
     let requestResult = {};

@@ -4,22 +4,34 @@ import { store } from './store';
 
 const routes = [
     {
-        path: routePaths.home,
+        path: routePaths.home.path,
+        name: routePaths.home.name,
         component: () => import('./views/Home'),
         meta: {
             requeresAuth: true
         }
     },
     {
-        path: routePaths.error,        
+        path: routePaths.editor.path,
+        name: routePaths.editor.name,
+        component: () => import('./views/Editor'),
+        meta: {
+            requeresAuth: true
+        }
+    },
+    {
+        path: routePaths.error.path,        
+        name: routePaths.error.name,
         component: () => import('./views/Error')
     },
     {
-        path: routePaths.login,        
+        path: routePaths.login.path,        
+        name: routePaths.login.name,
         component: () => import('./views/Login')
     },
     {
-        path: routePaths.register,        
+        path: routePaths.register.path,        
+        name: routePaths.register.name,
         component: () => import('./views/Registration')
     },
     {
@@ -30,7 +42,7 @@ const routes = [
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes: routes
 });
 
 router.beforeEach((to, from, next) => {

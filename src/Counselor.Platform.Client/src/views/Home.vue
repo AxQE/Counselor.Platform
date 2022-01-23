@@ -13,7 +13,7 @@
         <ul class="scripts-list">
         </ul>
         <div class="bot-info">
-        </div>
+        </div>        
     </div>
 </template>
 
@@ -29,7 +29,7 @@ export default {
         }
     },    
     components: {
-        BotShort
+        BotShort        
     },
     computed: {
         allBots() {
@@ -57,10 +57,6 @@ ul {
 
 li {
     border: 1px solid black;
-}
-
-li:hover {
-    background-color: lightblue;
 }
 
 #create-bot-btn {

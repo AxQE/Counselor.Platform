@@ -18,6 +18,7 @@ export const store =  createStore({
     state () {
         return {
             status: '',
+            bots: {},
             user: {
                 isAuthenticated: false
             }

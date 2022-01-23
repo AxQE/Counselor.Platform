@@ -1,8 +1,9 @@
 export const routePaths = {
-    home: '/',
-    login: '/login',
-    register: '/registration',
-    error: '/error'
+    home: { path: '/', name: 'home' },
+    editor: { path: '/bot/:id', name: 'editor' },
+    login: { path: '/login', name: 'login' },
+    register: { path: '/registration', name: 'registration' },
+    error: { path: '/error', name: 'error' }
 };
 export const logLevel = {
     debug: 0,

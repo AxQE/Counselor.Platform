@@ -1,5 +1,5 @@
 <template>
-    <div class="bot-short">
+    <div class="bot-short" v-on:click="onBotClick">
         <div class="bot-element name">
             <p>{{ this.bot.name }}</p>
         </div>
@@ -20,17 +20,22 @@
 </template>
 
 <script>
-import { botState } from '../../common/constants'
+import { botState, routePaths } from '../../common/constants'
 export default {
     name: 'BotShort',
     props: {
-        bot: Object
+        bot: Object        
     },
     computed: {
         isRunning() {
             return this.bot.botState === botState.Created
                 || this.bot.botState === botState.Started
                 || this.bot.botState === botState.Pending
+        }
+    },
+    methods: {
+        onBotClick() {
+            this.$router.push({ name: routePaths.editor.name, params: { id: this.bot.id }});
         }
     }
 }
@@ -48,6 +53,11 @@ div {
 
 .bot-short:hover {
     cursor: pointer;
+    background-color: lightblue;
+}
+
+.bot-short:active {
+    background-color: red;
 }
 
 .bot-element {
