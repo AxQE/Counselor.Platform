@@ -2,13 +2,12 @@ version: '3.4'
 
 services:
   counselor.platform.api:
-    image: ${DOCKER_REGISTRY-}counselorplatformapi
+    image: ${DOCKER_REGISTRY-}counselor.platform.api
     build:
       context: .
       dockerfile: src/Counselor.Platform.Api/Dockerfile
     ports:
       - "8080:8080"
-      - "5432:5432"
     container_name: counselor-platform/api
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:5000/api/health"]
@@ -18,17 +17,16 @@ services:
       start_period: 30s
 
   counselor.platform.worker:
-    image: ${DOCKER_REGISTRY-}counselorplatformworker
+    image: ${DOCKER_REGISTRY-}counselor.platfor.mworker
     build:
       context: .
       dockerfile: src/Counselor.Platform.Worker/Dockerfile
     ports:
       - "32650:32650"
-      - "5432:5432"
     container_name: counselor-platform/worker
 
   counselor.platform.client:
-    image: ${DOCKER_REGISTRY-}counselorplatformclient
+    image: ${DOCKER_REGISTRY-}counselor.platform.client
     build:
       context: .
       dockerfile: src/Counselor.Platform.Client/Dockerfile
