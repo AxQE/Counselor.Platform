@@ -1,4 +1,6 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading;
@@ -15,6 +18,9 @@ namespace Counselor.Platform.Api.Services
 {
 	public class UserService : IUserService
 	{
+		private const string UserOrPasswordNotFound = "Incorrect username or password.";
+		private const string UsernameAlreadyExists = "Username already axists.";
+
 		private readonly IPlatformDatabase _database;
 		private readonly ILogger<UserService> _logger;
 
@@ -24,12 +30,12 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public Task<UserDto> Authenticate(AuthDto auth, CancellationToken cancellationToken)
+		public Task<Envelope<UserDto>> Authenticate(AuthDto auth, CancellationToken cancellationToken)
 		{
 			return Authenticate(auth.Username, auth.Password, cancellationToken);
 		}
 
-		public async Task<UserDto> Authenticate(string username, string password, CancellationToken cancellationToken)
+		public async Task<Envelope<UserDto>> Authenticate(string username, string password, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -37,18 +43,20 @@ namespace Counselor.Platform.Api.Services
 					.AsNoTracking()
 					.FirstOrDefaultAsync(x => string.Equals(x.Username, username));
 
-				if (user == null) return null;
+				if (user == null)
+				{
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, message: UserOrPasswordNotFound);
+				}
 
 				byte[] salt = Convert.FromBase64String(user.Salt);
 				var hashedPassword = HashPassword(password, salt);
 
-				if (!user.Password.Equals(hashedPassword)) return null;
-
-				return new UserDto
+				if (!user.Password.Equals(hashedPassword))
 				{
-					Id = user.Id,
-					Username = user.Username
-				};
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, message: UserOrPasswordNotFound);
+				}
+
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);
 
 			}
 			catch (Exception ex)
@@ -58,7 +66,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<UserDto> CreateUser(AuthDto auth, CancellationToken cancellationToken)
+		public async Task<Envelope<UserDto>> CreateUser(AuthDto auth, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -66,7 +74,10 @@ namespace Counselor.Platform.Api.Services
 						.AsNoTracking()
 						.FirstOrDefaultAsync(x => string.Equals(x.Username, auth.Username));
 
-				if (exists != null) return null;
+				if (exists != null)
+				{
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, UsernameAlreadyExists);
+				}
 
 				byte[] salt = new byte[16]; //128 bit
 				using var random = RandomNumberGenerator.Create();
@@ -82,11 +93,7 @@ namespace Counselor.Platform.Api.Services
 				await _database.Users.AddAsync(newUser);
 				await _database.SaveChangesAsync();
 
-				return new UserDto
-				{
-					Id = newUser.Id,
-					Username = newUser.Username
-				};
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, newUser);
 			}
 			catch (Exception ex)
 			{
@@ -95,7 +102,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<UserDto> GetCurrentUser(ClaimsPrincipal principal, CancellationToken cancellationToken)
+		public async Task<Envelope<UserDto>> GetCurrentUser(ClaimsPrincipal principal, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -107,14 +114,10 @@ namespace Counselor.Platform.Api.Services
 
 				if (user != null)
 				{
-					return new UserDto
-					{
-						Id = user.Id,
-						Username = user.Username
-					};
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);
 				}
 
-				return null;
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.NotFound);
 			}
 			catch (Exception ex)
 			{

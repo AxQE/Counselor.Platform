@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -24,7 +24,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ScriptDto))]
+		[ProducesResponseType(typeof(ScriptDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -32,19 +32,15 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id <= 0) return BadRequest();
 
-			var script = await _service.GetScript(id, HttpContext.GetCurrentUserId(), cancellationToken);
-
-			if (script == null) return NotFound();
-
-			return Ok(script);
+			return ResolveResponse(await _service.GetScript(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ScriptHeaderDto>))]
+		[ProducesResponseType(typeof(IEnumerable<ScriptHeaderDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllScripts(CancellationToken cancellationToken)
 		{
-			return Ok(await _service.GetAllScripts(HttpContext.GetCurrentUserId(), cancellationToken));
+			return ResolveResponse(await _service.GetAllScripts(HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -54,27 +50,27 @@ namespace Counselor.Platform.Api.Controllers
 		public async Task<IActionResult> CreateScript(ScriptDto script, CancellationToken cancellationToken)
 		{
 			var created = await _service.Create(script, HttpContext.GetCurrentUserId(), cancellationToken);
-			return Created(string.Empty, created);
+			return ResolveResponse(created);
 		}
 
 		[HttpPatch("{id}/activate")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ScriptHeaderDto>))]
+		[ProducesResponseType(typeof(IEnumerable<ScriptHeaderDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> ActivateScript(int id, CancellationToken cancellationToken)
 		{
 			if (id <= 0) return BadRequest();
-			return Ok(await _service.Activate(id, cancellationToken));
+			return ResolveResponse(await _service.Activate(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPatch("{id}/deactivate")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ScriptHeaderDto))]
+		[ProducesResponseType(typeof(ScriptHeaderDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> DeactivateScript(int id, CancellationToken cancellationToken)
 		{
 			if (id <= 0) return BadRequest();
-			return Ok(await _service.Deactivate(id, cancellationToken));
+			return ResolveResponse(await _service.Deactivate(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPatch]
@@ -82,7 +78,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> UpdateScript(ScriptDto script, CancellationToken cancellationToken)
 		{
-			return Ok(await _service.Update(script, HttpContext.GetCurrentUserId(), cancellationToken));
+			return ResolveResponse(await _service.Update(script, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpDelete]

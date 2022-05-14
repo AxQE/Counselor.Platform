@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ namespace Counselor.Platform.Api.Services.Interfaces
 {
 	public interface ITransportService
 	{
-		Task<IEnumerable<TransportDto>> GetAllTransports(CancellationToken cancellationToken);
-		Task<TransportDto> GetTransportById(int transportId, CancellationToken cancellationToken);
+		Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(CancellationToken cancellationToken);
+		Task<Envelope<TransportDto>> GetTransportById(int transportId, CancellationToken cancellationToken);
 	}
 }

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Counselor.Platform.Interpreter.Expressions.Operators
 {
 	[InterpreterCommand(null, typeof(string))]
-	class HistoryConstains : IExpression
+	class HistoryContains : IExpression
 	{
 		private readonly string _parameters;
-		public string Operator => nameof(HistoryConstains);
+		public string Operator => nameof(HistoryContains);
 
-		public HistoryConstains(string parameters)
+		public HistoryContains(string parameters)
 		{
 			_parameters = parameters;
 		}

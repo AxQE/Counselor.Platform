@@ -1,4 +1,4 @@
-﻿namespace Counselor.Platform.Api.Entities.Dto
+﻿namespace Counselor.Platform.Api.Models.Dto
 {
 	public class ScriptHeaderDto
 	{

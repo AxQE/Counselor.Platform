@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models.Dto;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 

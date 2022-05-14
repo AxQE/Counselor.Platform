@@ -1,10 +1,10 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
-using Counselor.Platform.Api.Exceptions;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,6 +18,8 @@ namespace Counselor.Platform.Api.Services
 {
 	public class BotService : IBotService
 	{
+		private const string ScriptNotFoundOrNotOwned = "";
+
 		private readonly ILogger<BotService> _logger;
 		private readonly IPlatformDatabase _database;
 
@@ -30,10 +32,10 @@ namespace Counselor.Platform.Api.Services
 			_database = database;
 		}
 
-		public async Task<BotDto> Get(int botId, int userId, CancellationToken cancellationToken)
-			=> (await FindBot(botId, userId, cancellationToken)).Adapt<BotDto>();
+		public async Task<Envelope<BotDto>> Get(int botId, int userId, CancellationToken cancellationToken)
+			=> EnvelopeFactory.Create<BotDto>(HttpStatusCode.OK, await FindBot(botId, userId, cancellationToken));
 
-		public async Task<IEnumerable<BotDto>> GetAll(int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<IEnumerable<BotDto>>> GetAll(int userId, CancellationToken cancellationToken)
 		{
 			var bots = await _database.Bots
 				.AsNoTracking()
@@ -43,10 +45,10 @@ namespace Counselor.Platform.Api.Services
 				.Include(x => x.Script)
 				.ToListAsync();
 
-			return bots.Adapt<IEnumerable<BotDto>>();
+			return EnvelopeFactory.Create<IEnumerable<BotDto>>(HttpStatusCode.OK, bots);
 		}
 
-		public async Task<bool> Activate(int botId, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<OperationResultDto>> Activate(int botId, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -75,11 +77,11 @@ namespace Counselor.Platform.Api.Services
 				_database.Bots.Update(bot);
 				await _database.SaveChangesAsync();
 
-				return true;
+				return EnvelopeFactory.Create<OperationResultDto>(HttpStatusCode.OK, new OperationResultDto { Result = OperationResult.Success });
 			}
 			catch (OperationCanceledException)
 			{
-				return false;
+				return EnvelopeFactory.Create<OperationResultDto>(HttpStatusCode.OK, new OperationResultDto { Result = OperationResult.Failed });
 			}
 			catch (Exception ex)
 			{
@@ -88,7 +90,7 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<BotDto> Create(BotDto bot, CancellationToken cancellationToken)
+		public async Task<Envelope<BotDto>> Create(BotDto bot, int userId, CancellationToken cancellationToken) //todo: странно что id владельца передается в теле, нужно брать из клеймов
 		{
 			try
 			{
@@ -96,17 +98,17 @@ namespace Counselor.Platform.Api.Services
 				var script = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == bot.Script.Id && x.Owner.Id == bot.Owner.Id, cancellationToken);
 				var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == bot.Transport.Id, cancellationToken);
 
-				if (owner == null)
+				if (owner == null) //todo: блок проверок закрыт заглушками
 				{
-					throw new GenericApiException((int)HttpStatusCode.UnprocessableEntity);
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
 				}
 				else if (script == null)
 				{
-
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
 				}
 				else if (transport == null)
 				{
-
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
 				}
 
 				var dbBot = new Bot
@@ -122,11 +124,11 @@ namespace Counselor.Platform.Api.Services
 				var result = await _database.Bots.AddAsync(dbBot, cancellationToken);
 				await _database.SaveChangesAsync(cancellationToken);
 
-				return result.Adapt<BotDto>();
+				return EnvelopeFactory.Create<BotDto>(HttpStatusCode.OK, result);
 			}
 			catch (OperationCanceledException)
 			{
-				return null;
+				return EnvelopeFactory.Create<BotDto>(HttpStatusCode.OK);
 			}
 			catch (Exception ex)
 			{
@@ -135,17 +137,17 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<bool> Deactivate(int botId, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<OperationResultDto>> Deactivate(int botId, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<BotDto> Update(BotDto bot, CancellationToken cancellationToken)
+		public async Task<Envelope<BotDto>> Update(BotDto bot, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<bool> Validate(int botId, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<OperationResultDto>> Validate(int botId, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}

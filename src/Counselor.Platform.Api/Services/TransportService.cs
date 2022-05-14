@@ -1,11 +1,13 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,19 +27,19 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public async Task<IEnumerable<TransportDto>> GetAllTransports(CancellationToken cancellationToken)
+		public async Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(CancellationToken cancellationToken)
 		{
 			var transports = await _database.Transports.ToListAsync(cancellationToken);
-			return transports.Adapt<IEnumerable<TransportDto>>();
+			return EnvelopeFactory.Create<IEnumerable<TransportDto>>(HttpStatusCode.OK, transports);
 		}
 
-		public async Task<TransportDto> GetTransportById(int transportId, CancellationToken cancellationToken)
+		public async Task<Envelope<TransportDto>> GetTransportById(int transportId, CancellationToken cancellationToken)
 		{
 			var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == transportId, cancellationToken);
-			return transport.Adapt<TransportDto>();
+			return EnvelopeFactory.Create<TransportDto>(HttpStatusCode.OK, transport);
 		}
 
-		public async Task<IEnumerable<InterpreterCommandDto>> GetTranposportCommands(int transportId, CancellationToken cancellationToken)
+		public async Task<Envelope<IEnumerable<InterpreterCommandDto>>> GetTranposportCommands(int transportId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}

@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -39,7 +40,7 @@ namespace Counselor.Platform.Api.Helpers
 			if (!Request.Headers.ContainsKey("Authorization"))
 				return AuthenticateResult.Fail("Missing Authorization Header");
 
-			UserDto user = null;
+			Envelope<UserDto> authResult = null;
 			try
 			{
 				var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
@@ -47,19 +48,19 @@ namespace Counselor.Platform.Api.Helpers
 				var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
 				var username = credentials[0];
 				var password = credentials[1];
-				user = await _service.Authenticate(username, password, CancellationToken.None);
+				authResult = await _service.Authenticate(username, password, CancellationToken.None);
 			}
 			catch
 			{
 				return AuthenticateResult.Fail("Invalid Authorization Header");
 			}
 
-			if (user == null)
-				return AuthenticateResult.Fail("Invalid Username or Password");
+			if (authResult.Data == null)
+				return AuthenticateResult.Fail(authResult.Message);
 
 			var claims = new[] {
-				new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-				new Claim(ClaimTypes.Name, user.Username),
+				new Claim(ClaimTypes.NameIdentifier, authResult.Data.Id.ToString()),
+				new Claim(ClaimTypes.Name, authResult.Data.Username),
 			};
 			var identity = new ClaimsIdentity(claims, Scheme.Name);
 			var principal = new ClaimsPrincipal(identity);

@@ -1,4 +1,4 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +13,7 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
-	public class TransportsController : Controller
+	public class TransportsController : ControllerBase
 	{
 		private readonly ITransportService _service;
 
@@ -23,15 +23,15 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TransportDto))]
+		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllTransports(CancellationToken cancellationToken)
 		{
-			return Ok(await _service.GetAllTransports(cancellationToken));
+			return ResolveResponse(await _service.GetAllTransports(cancellationToken));
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TransportDto))]
+		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -39,15 +39,11 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id < 0) return BadRequest();
 
-			var result = await _service.GetTransportById(id, cancellationToken);
-
-			if (result == null) return NotFound();
-
-			return Ok(result);
+			return ResolveResponse(await _service.GetTransportById(id, cancellationToken));
 		}
 
 		[HttpGet("{id}/commands")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TransportDto))]
+		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]

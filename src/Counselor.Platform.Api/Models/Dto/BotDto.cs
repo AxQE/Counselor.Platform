@@ -1,7 +1,7 @@
 ﻿using Counselor.Platform.Data.Entities.Enums;
 using System.Text.Json.Serialization;
 
-namespace Counselor.Platform.Api.Entities.Dto
+namespace Counselor.Platform.Api.Models.Dto
 {
 	public class BotDto
 	{

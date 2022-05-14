@@ -1,5 +1,6 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
-using Counselor.Platform.Api.Helpers;
+﻿using Counselor.Platform.Api.Helpers;
+using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BotDto))]
+		[ProducesResponseType(typeof(Envelope<BotDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -32,19 +33,15 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id < 1) return BadRequest();
 
-			BotDto result = await _botService.Get(id, HttpContext.GetCurrentUserId(), cancellationToken);
-
-			if (result == null) return NotFound();
-
-			return Ok(result);
+			return ResolveResponse(await _botService.Get(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BotDto>))]
+		[ProducesResponseType(typeof(Envelope<IEnumerable<BotDto>>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
 		{
-			return Ok(await _botService.GetAll(HttpContext.GetCurrentUserId(), cancellationToken));
+			return ResolveResponse(await _botService.GetAll(HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPost]
@@ -54,25 +51,25 @@ namespace Counselor.Platform.Api.Controllers
 		public async Task<IActionResult> Create(BotDto bot, CancellationToken cancellationToken)
 		{
 			bot.Owner = HttpContext.GetCurrentUser();
-			return Created(string.Empty, await _botService.Create(bot, cancellationToken));
+			return ResolveResponse(await _botService.Create(bot, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPatch("{id}/activate")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+		[ProducesResponseType(typeof(Envelope<OperationResultDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> Activate(int id, CancellationToken cancellationToken)
 		{
-			return Ok(await _botService.Activate(id, HttpContext.GetCurrentUserId(), cancellationToken));
+			return ResolveResponse(await _botService.Activate(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 
 		[HttpPatch("{id}/deactivate")]
-		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(bool))]
+		[ProducesResponseType(typeof(Envelope<OperationResultDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> Deactivate(int id, CancellationToken cancellationToken)
 		{
-			return Ok(await _botService.Deactivate(id, HttpContext.GetCurrentUserId(), cancellationToken));
+			return ResolveResponse(await _botService.Deactivate(id, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 	}
 }

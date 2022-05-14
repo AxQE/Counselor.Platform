@@ -1,12 +1,14 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,12 +33,12 @@ namespace Counselor.Platform.Api.Services
 			throw new NotImplementedException();
 		}
 
-		public async Task<IEnumerable<ScriptHeaderDto>> GetAllScripts(int userId, CancellationToken cancellationTokend)
+		public async Task<Envelope<IEnumerable<ScriptHeaderDto>>> GetAllScripts(int userId, CancellationToken cancellationTokend)
 		{
 			try
 			{
 				var scripts = await _database.Scripts.ToListAsync(cancellationTokend);
-				return scripts.Adapt<IEnumerable<ScriptHeaderDto>>();
+				return EnvelopeFactory.Create<IEnumerable<ScriptHeaderDto>>(HttpStatusCode.OK, scripts);
 			}
 			catch (Exception ex)
 			{
@@ -45,11 +47,12 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<ScriptDto> GetScript(int id, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptDto>> GetScript(int id, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				return (await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken), cancellationToken).Adapt<ScriptDto>();
+				var result = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+				return EnvelopeFactory.Create<ScriptDto>(HttpStatusCode.OK, result);
 			}
 			catch (Exception ex)
 			{
@@ -58,12 +61,12 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<ScriptHeaderDto> Update(ScriptDto script, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptHeaderDto>> Update(ScriptDto script, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<ScriptHeaderDto> Create(ScriptDto script, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptHeaderDto>> Create(ScriptDto script, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -77,7 +80,7 @@ namespace Counselor.Platform.Api.Services
 
 				var result = await _database.Scripts.AddAsync(dbScript, cancellationToken);
 				await _database.SaveChangesAsync(cancellationToken);
-				return result.Adapt<ScriptHeaderDto>();
+				return EnvelopeFactory.Create<ScriptHeaderDto>(HttpStatusCode.Created, result);
 			}
 			catch (Exception ex)
 			{
@@ -86,12 +89,12 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public Task<IEnumerable<ScriptHeaderDto>> Activate(int scriptId, CancellationToken cancellationToken)
+		public Task<Envelope<IEnumerable<ScriptHeaderDto>>> Activate(int scriptId, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public Task<ScriptHeaderDto> Deactivate(int scriptId, CancellationToken cancellationToken)
+		public Task<Envelope<ScriptHeaderDto>> Deactivate(int scriptId, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}

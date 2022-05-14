@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Api.Entities.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,38 +24,35 @@ namespace Counselor.Platform.Api.Controllers
 
 		[AllowAnonymous]
 		[HttpPost("authenticate")]
+		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> Authenticate(AuthDto auth, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid) return BadRequest();
 
 			var user = await _service.Authenticate(auth, cancellationToken);
 
-			if (user == null) return Unauthorized();
-
-			return Ok(user);
+			return ResolveResponse(user);
 		}
 
 		[AllowAnonymous]
 		[HttpPost]
+		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> CreateUser(AuthDto auth, CancellationToken cancellationToken)
 		{
-			if (!ModelState.IsValid) return UnprocessableEntity();
+			if (!ModelState.IsValid) return BadRequest();
 
 			var newUser = await _service.CreateUser(auth, cancellationToken);
 
-			if (newUser == null) return UnprocessableEntity();
-
-			return Created(string.Empty, newUser);
+			return ResolveResponse(newUser);
 		}
 
 		[HttpGet("current")]
+		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
 		{
 			var user = await _service.GetCurrentUser(HttpContext.User, cancellationToken);
 
-			if (user == null) return NotFound();
-
-			return Ok(user);
+			return ResolveResponse(user);
 		}
 	}
 }

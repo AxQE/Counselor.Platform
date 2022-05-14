@@ -35,8 +35,8 @@ namespace Counselor.Platform.Tests.Api.Services
 			var result = service.GetAllTransports(CancellationToken.None).Result;
 
 			Assert.IsNotNull(result);
-			Assert.AreEqual(1, result.Count());
-			Assert.AreEqual(transport.Name, result.First().Name);
+			Assert.AreEqual(1, result.Data.Count());
+			Assert.AreEqual(transport.Name, result.Data.First().Name);
 		}
 	}
 }

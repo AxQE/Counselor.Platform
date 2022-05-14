@@ -23,9 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\Factories\" />
     <Folder Include="ActionFilters\" />
-    <Folder Include="Entities\Mapping\" />
+    <Folder Include="Models\Mapping\" />
   </ItemGroup>
 
   <ItemGroup>

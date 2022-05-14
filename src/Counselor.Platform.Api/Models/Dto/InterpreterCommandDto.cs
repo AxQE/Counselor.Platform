@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Counselor.Platform.Api.Entities.Dto
+namespace Counselor.Platform.Api.Models.Dto
 {
 	public class InterpreterCommandDto
 	{
