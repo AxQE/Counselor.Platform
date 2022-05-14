@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Counselor.Platform.Api.Models;
 
 namespace Counselor.Platform.Api.Controllers
 {
@@ -24,7 +25,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(ScriptDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<ScriptDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -36,7 +37,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(typeof(IEnumerable<ScriptHeaderDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<IEnumerable<ScriptHeaderDto>>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllScripts(CancellationToken cancellationToken)
 		{
@@ -54,7 +55,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpPatch("{id}/activate")]
-		[ProducesResponseType(typeof(IEnumerable<ScriptHeaderDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<IEnumerable<ScriptHeaderDto>>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> ActivateScript(int id, CancellationToken cancellationToken)
@@ -64,7 +65,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpPatch("{id}/deactivate")]
-		[ProducesResponseType(typeof(ScriptHeaderDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<ScriptHeaderDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> DeactivateScript(int id, CancellationToken cancellationToken)

@@ -1,4 +1,5 @@
-﻿using Counselor.Platform.Api.Models.Dto;
+﻿using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet]
-		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllTransports(CancellationToken cancellationToken)
 		{
@@ -31,7 +32,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("{id}")]
-		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -43,7 +44,7 @@ namespace Counselor.Platform.Api.Controllers
 		}
 
 		[HttpGet("{id}/commands")]
-		[ProducesResponseType(typeof(TransportDto), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
