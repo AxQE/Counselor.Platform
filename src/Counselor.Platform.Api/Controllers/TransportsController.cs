@@ -14,6 +14,9 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class TransportsController : ControllerBase
 	{
 		private readonly ITransportService _service;
@@ -25,7 +28,6 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetAllTransports(CancellationToken cancellationToken)
 		{
 			return ResolveResponse(await _service.GetAllTransports(cancellationToken));
@@ -33,9 +35,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpGet("{id}")]
 		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetTransportById(int id, CancellationToken cancellationToken)
 		{
 			if (id < 0) return BadRequest();
@@ -45,9 +45,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpGet("{id}/commands")]
 		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<IActionResult> GetTransportCommands(int id, CancellationToken cancellationToken)
 		{
 			if (id < 0) return BadRequest();

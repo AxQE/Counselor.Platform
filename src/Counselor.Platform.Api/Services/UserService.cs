@@ -93,7 +93,7 @@ namespace Counselor.Platform.Api.Services
 				await _database.Users.AddAsync(newUser);
 				await _database.SaveChangesAsync();
 
-				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, newUser);
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Created, newUser);
 			}
 			catch (Exception ex)
 			{

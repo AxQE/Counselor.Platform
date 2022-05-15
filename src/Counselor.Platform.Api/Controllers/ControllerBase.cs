@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Counselor.Platform.Api.Controllers

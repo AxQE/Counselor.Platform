@@ -13,6 +13,9 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserService _service;
@@ -36,7 +39,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[AllowAnonymous]
 		[HttpPost]
-		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status201Created)]
 		public async Task<IActionResult> CreateUser(AuthDto auth, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid) return BadRequest();
