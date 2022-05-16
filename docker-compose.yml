@@ -1,32 +1,36 @@
 version: '3.4'
 
+x-common-environment: &common-environment
+  Platform__Database__Server: "host.docker.internal"
+
+name: counselor-platform
 services:
+  counselor.platform.worker:
+    image: ${DOCKER_REGISTRY-}counselor-platform.worker
+    build:
+      context: .
+      dockerfile: src/Counselor.Platform.Worker/Dockerfile
+    environment:
+      <<: *common-environment
+    container_name: counselor-platform.worker
+
   counselor.platform.api:
-    image: ${DOCKER_REGISTRY-}counselorplatformapi
+    image: ${DOCKER_REGISTRY-}counselor-platform.api
     build:
       context: .
       dockerfile: src/Counselor.Platform.Api/Dockerfile
     ports:
-      - "8080:8080"
-      - "5432:5432"
-    container_name: counselor-platform/api
-
-  counselor.platform.worker:
-    image: ${DOCKER_REGISTRY-}counselorplatformworker
-    build:
-      context: .
-      dockerfile: src/Counselor.Platform.Worker/Dockerfile
-    ports:
-      - "32650:32650"
-      - "5432:5432"
-    container_name: counselor-platform/worker
+      - 32600:80
+      - 44345:443
+    environment:
+      <<: *common-environment
+    container_name: counselor-platform.api
 
   counselor.platform.client:
-    image: ${DOCKER_REGISTRY-}counselorplatformclient
+    image: ${DOCKER_REGISTRY-}counselor-platform.client
     build:
       context: .
       dockerfile: src/Counselor.Platform.Client/Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
-    container_name: counselor-platform/client
+      - 32620:80
+    container_name: counselor-platform.client

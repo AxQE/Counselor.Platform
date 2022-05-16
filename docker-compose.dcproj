@@ -4,6 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>57aa0914-e42a-4b2e-9d9e-ff3baff751d4</ProjectGuid>
+    <DockerComposeProjectName>counselor-platform</DockerComposeProjectName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">
