@@ -2,9 +2,9 @@
 
 namespace Counselor.Platform.Api.Models
 {
-	public class ErrorResponse
+	public class Error
 	{
 		public Guid? Id { get; set; }
-		public string Error { get; set; }
+		public string Message { get; set; }
 	}
 }

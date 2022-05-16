@@ -2,7 +2,7 @@ using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Middleware;
 using Counselor.Platform.Api.Services;
 using Counselor.Platform.Api.Services.Interfaces;
-using Counselor.Platform.Data.DependencyInjection;
+using Counselor.Platform.Data.Database;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +33,7 @@ namespace Counselor.Platform.Api
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			DatabaseDI.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
+			DependencyInjection.ConfigureDatabase(services, Configuration, ServiceLifetime.Scoped);
 			services.AddMemoryCache();
 
 			services.AddCors(options =>
@@ -84,6 +84,7 @@ namespace Counselor.Platform.Api
 			//app.UseHttpsRedirection();
 
 			app.UseMiddleware<LoggingMiddleware>();
+			app.UseMiddleware<ErrorHandlingMiddleware>();
 
 			app.UseCors();
 

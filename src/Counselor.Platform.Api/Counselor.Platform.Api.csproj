@@ -25,6 +25,7 @@
   <ItemGroup>
     <Folder Include="ActionFilters\" />
     <Folder Include="Models\Mapping\" />
+    <Folder Include="Models\Requests\" />
   </ItemGroup>
 
   <ItemGroup>

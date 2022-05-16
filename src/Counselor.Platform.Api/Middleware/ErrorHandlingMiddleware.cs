@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Counselor.Platform.Api.Exceptions;
+using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Middleware
@@ -18,17 +21,38 @@ namespace Counselor.Platform.Api.Middleware
 			try
 			{
 				await _next(context);
+
+				if (context.Response.StatusCode >= 400 && !context.Response.HasStarted)
+				{
+					await HandleExceptionAsync(context, null);
+				}
 			}
 			catch (Exception ex)
 			{
 				await HandleExceptionAsync(context, ex);
-				throw;
 			}
 		}
 
-		private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+		private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
 		{
-			return Task.CompletedTask;
+			var errors = new List<string>();
+			HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
+
+			if (statusCode == HttpStatusCode.OK)
+			{
+				statusCode = HttpStatusCode.InternalServerError;
+			}
+
+			if (exception != null)
+			{
+				if (exception is GenericApiException genericException)
+				{
+				}
+				else
+				{
+
+				}
+			}
 		}
 	}
 }

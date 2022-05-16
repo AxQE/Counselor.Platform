@@ -1,5 +1,4 @@
 ﻿using Counselor.Platform.Core.Behavior;
-using Counselor.Platform.Data.DependencyInjection;
 using Counselor.Platform.Data.Options;
 using Counselor.Platform.Interpreter;
 using Counselor.Platform.Interpreter.Expressions;
@@ -36,7 +35,7 @@ namespace Counselor.Platform.DependencyInjection
 			services.AddSingleton<IDialogsRepository, DialogsRepository>();
 			#endregion
 
-			DatabaseDI.ConfigureDatabase(services, hostContext.Configuration);
+			Data.Database.DependencyInjection.ConfigureDatabase(services, hostContext.Configuration);
 		}
 
 		private static void CreateConfigurations(IServiceCollection services, HostBuilderContext hostContext)

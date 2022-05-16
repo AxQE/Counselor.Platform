@@ -53,7 +53,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
 		{
-			var user = await _service.GetCurrentUser(HttpContext.User, cancellationToken);
+			var user = await _service.GetCurrentUser(CurrentUserId, cancellationToken);
 
 			return ResolveResponse(user);
 		}

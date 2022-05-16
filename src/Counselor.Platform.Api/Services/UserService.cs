@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,12 +101,10 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<Envelope<UserDto>> GetCurrentUser(ClaimsPrincipal principal, CancellationToken cancellationToken)
+		public async Task<Envelope<UserDto>> GetCurrentUser(int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				int userId = int.Parse(principal.FindFirstValue(ClaimTypes.NameIdentifier));
-
 				var user = await _database.Users
 						.AsNoTracking()
 						.FirstOrDefaultAsync(x => x.Id == userId);
