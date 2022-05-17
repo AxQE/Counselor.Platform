@@ -100,15 +100,15 @@ namespace Counselor.Platform.Api.Services
 
 				if (owner == null) //todo: блок проверок закрыт заглушками
 				{
-					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, errorMessage: ScriptNotFoundOrNotOwned);
 				}
 				else if (script == null)
 				{
-					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, errorMessage: ScriptNotFoundOrNotOwned);
 				}
 				else if (transport == null)
 				{
-					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, message: ScriptNotFoundOrNotOwned);
+					return EnvelopeFactory.Create<BotDto>(HttpStatusCode.UnprocessableEntity, errorMessage: ScriptNotFoundOrNotOwned);
 				}
 
 				var dbBot = new Bot

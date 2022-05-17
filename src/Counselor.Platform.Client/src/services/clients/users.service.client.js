@@ -6,8 +6,6 @@ export const isAuthenticated = () => {
 }
 
 export const authenticate = async (username, password) => {
-    let requestResult = {};
-
     const response = await POST(
         'users/authenticate', 
         {
@@ -15,33 +13,19 @@ export const authenticate = async (username, password) => {
             Password: password 
         });
 
-    if (response.status === httpStatusCodes.Ok) {
-        requestResult.data = JSON.parse(await response.text());         
-    }
-    else{
-        requestResult.error = response.statusText;
-    }
-
-    return requestResult;
+    return response;
 }
 
 export const createUser = async (username, email, password) => {
-    let requestResult = {};
-
     const response = await POST(
         'users',
         {
             Username: username,
             Email: email,
             Password: password
-        });
+        },
+        null,
+        httpStatusCodes.Created);
 
-    if (response.status === httpStatusCodes.Created) {
-        requestResult.data = JSON.parse(await response.text());
-    }
-    else {
-        requestResult.error = response.statusText;
-    }
-
-    return requestResult;
+    return response;
 }

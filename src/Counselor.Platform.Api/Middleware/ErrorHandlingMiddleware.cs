@@ -1,8 +1,11 @@
 ﻿using Counselor.Platform.Api.Exceptions;
+using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Factories;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Counselor.Platform.Api.Middleware
@@ -10,10 +13,12 @@ namespace Counselor.Platform.Api.Middleware
 	public class ErrorHandlingMiddleware
 	{
 		private readonly RequestDelegate _next;
+		private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-		public ErrorHandlingMiddleware(RequestDelegate next)
+		public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
 		{
 			_next = next;
+			_logger = logger;
 		}
 
 		public async Task Invoke(HttpContext context)
@@ -33,9 +38,9 @@ namespace Counselor.Platform.Api.Middleware
 			}
 		}
 
-		private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
+		private async Task HandleExceptionAsync(HttpContext context, Exception exception)
 		{
-			var errors = new List<string>();
+			Envelope<object> errorResponse = null;
 			HttpStatusCode statusCode = (HttpStatusCode)context.Response.StatusCode;
 
 			if (statusCode == HttpStatusCode.OK)
@@ -47,12 +52,24 @@ namespace Counselor.Platform.Api.Middleware
 			{
 				if (exception is GenericApiException genericException)
 				{
+					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, genericException.Message, genericException.ErrorId);
+					_logger.LogError(exception, genericException.Message);
 				}
 				else
 				{
-
+					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, "Something went wrong.");
+					_logger.LogError(exception, "Unhandled API exception.");
 				}
 			}
+
+			if (errorResponse != null)
+			{
+				context.Response.Clear();
+				await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+			}
+
+			context.Response.StatusCode = (int)statusCode;
+			context.Response.ContentType = "application/json";
 		}
 	}
 }

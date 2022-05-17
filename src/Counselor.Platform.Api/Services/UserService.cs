@@ -44,7 +44,7 @@ namespace Counselor.Platform.Api.Services
 
 				if (user == null)
 				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, message: UserOrPasswordNotFound);
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: UserOrPasswordNotFound);
 				}
 
 				byte[] salt = Convert.FromBase64String(user.Salt);
@@ -52,7 +52,7 @@ namespace Counselor.Platform.Api.Services
 
 				if (!user.Password.Equals(hashedPassword))
 				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, message: UserOrPasswordNotFound);
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: UserOrPasswordNotFound);
 				}
 
 				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);

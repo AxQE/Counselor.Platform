@@ -55,12 +55,12 @@ namespace Counselor.Platform.Api.Helpers
 				return AuthenticateResult.Fail("Invalid Authorization Header");
 			}
 
-			if (authResult.Data == null)
-				return AuthenticateResult.Fail(authResult.Message);
+			if (authResult.Payload == null)
+				return AuthenticateResult.Fail(authResult.Error.Message);
 
 			var claims = new[] {
-				new Claim(ClaimTypes.NameIdentifier, authResult.Data.Id.ToString()),
-				new Claim(ClaimTypes.Name, authResult.Data.Username),
+				new Claim(ClaimTypes.NameIdentifier, authResult.Payload.Id.ToString()),
+				new Claim(ClaimTypes.Name, authResult.Payload.Username),
 			};
 			var identity = new ClaimsIdentity(claims, Scheme.Name);
 			var principal = new ClaimsPrincipal(identity);

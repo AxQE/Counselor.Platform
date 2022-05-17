@@ -6,13 +6,15 @@ export const getScript = (id) => {
 
     const response = GET(`scripts/${id}`);
 
-    if (response.status === httpStatusCodes.Ok) {
 
-        const result = await response.text();
-        requestResult.data = JSON.parse(result);
+    const result = await response.text();
+
+    if (response.status === httpStatusCodes.Ok) {
+        requestResult.data = result.payload;
     }
-    else {
-        requestResult.error = response.statusText;
+    else{
+        requestResult.error = result.error;        
+        requestResult.statusText = response.statusText;
     }
 
     return requestResult;

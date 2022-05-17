@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using System;
 using System.Net;
 
 namespace Counselor.Platform.Api.Models.Factories
@@ -11,14 +12,14 @@ namespace Counselor.Platform.Api.Models.Factories
 		/// <typeparam name="T">Тип транспортной dto</typeparam>
 		/// <param name="httpStatus">Код ответа</param>
 		/// <param name="data">Данные для маппинга к dto</param>
-		/// <param name="message">Сообщение об ошибке</param>
+		/// <param name="errorMessage">Сообщение об ошибке</param>
 		/// <returns></returns>
-		public static Envelope<T> Create<T>(HttpStatusCode httpStatus, object data = null, string message = null) where T : class
+		public static Envelope<T> Create<T>(HttpStatusCode httpStatus, object data = null, string errorMessage = null, Guid? errorId = null) where T : class
 		{
 			return new Envelope<T>
 			{
-				Data = data?.Adapt<T>(),
-				Message = message,
+				Payload = data?.Adapt<T>(),
+				Error = !string.IsNullOrEmpty(errorMessage) ? new Error { Message = errorMessage, Id = errorId } : null,
 				HttpStatus = httpStatus
 			};
 		}

@@ -3,42 +3,44 @@ import { Getters, Mutations, store } from "../store"
 import { authenticate, createUser } from "./clients/users.service.client"
 
 export const login = async (username, password) => {
-    const user = await authenticate(username, password);
+    const response = await authenticate(username, password);
     let result = {};
 
-    if (user.data !== undefined)
-    {        
+    if (response.data !== undefined)
+    {
+        const user = response.data;
         store.commit(Mutations.Auth.Success, { id: user.id, username: user.username });
         saveAuthData(username, password);
-        saveUserData(user.data);
+        saveUserData(user);
 
         result.success = true;
     }
     else
-    {
+    {        
         result.success = false;
-        result.error = '';
+        result.error = response.error.message;
     }
 
     return result;
 }
 
 export const registrate = async (username, email, password) => {
-    const user = await createUser(username, email, password);
+    const response = await createUser(username, email, password);
     let result = {};
 
-    if (user.data !== undefined) 
-    {
+    if (response.data !== undefined) 
+    {       
+        const user = response.data; 
         store.commit(Mutations.Auth.Success, { id: user.id, username: user.username });
         saveAuthData(username, password);
-        saveUserData(user.data);
+        saveUserData(user);
 
         result.success = true;
     }
     else
     {
         result.success = false;
-        result.error = '';
+        result.error = response.error.message;
     }
 
     return result;

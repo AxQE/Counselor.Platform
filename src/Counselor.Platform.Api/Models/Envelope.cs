@@ -6,10 +6,7 @@ namespace Counselor.Platform.Api.Models
 	public record Envelope<TData> where TData : class
 	{
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-		public TData Data { get; set; }
-
-		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-		public string Message { get; set; }
+		public TData Payload { get; set; }
 
 		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 		public Error Error { get; set; }

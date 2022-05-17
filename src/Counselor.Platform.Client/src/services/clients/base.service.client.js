@@ -3,20 +3,20 @@ import { getAuthData, removeAuthData, removeUserData } from '../../common/storag
 import { httpStatusCodes } from '../../common/constants';
 import { Mutations, store } from '../../store';
 
-export const GET = async (url) => {
+export const GET = async (url, headers, successStatusCode = httpStatusCodes.Ok) => {
     const params = {
         method: 'GET',
-        headers: createHeaders()
+        headers: createHeaders(headers)
     }
-
+    
     const response = await fetch(formatRequestUrl(url), params);
 
-    hadleResponse(response);
+    cancelAuthIfUnauthorizedResponse(response);
 
-    return response;
+    return handleResponse(response, successStatusCode);
 }
 
-export const POST = async (url, body, headers) => {
+export const POST = async (url, body, headers, successStatusCode = httpStatusCodes.Ok) => {
     const params = {
         method: 'POST',
         body: JSON.stringify(body),
@@ -25,12 +25,12 @@ export const POST = async (url, body, headers) => {
 
     const response = await fetch(formatRequestUrl(url), params);
 
-    hadleResponse(response);
+    cancelAuthIfUnauthorizedResponse(response);
 
-    return response;
+    return handleResponse(response, successStatusCode);
 }
 
-export const PATCH = (url, body) => {
+export const PATCH = (url, body, headers, successStatusCode = httpStatusCodes.Ok) => {
 
 }
 
@@ -55,10 +55,27 @@ function createHeaders(headers) {
     return headers;
 }
 
-function hadleResponse(response) {
+function cancelAuthIfUnauthorizedResponse(response) {
     if (response.status === httpStatusCodes.Unauthorized) {
         store.commit[Mutations.Auth.Remove];
         removeAuthData();
         removeUserData();
     }
+}
+
+async function handleResponse (response, successStatusCode = httpStatusCodes.Ok) {
+    let requestResult = {};
+    requestResult.status = response.status;
+
+    const result = JSON.parse(await response.text());
+
+    if (response.status === successStatusCode) {
+        requestResult.data = result.payload;
+    }
+    else {
+        requestResult.error = result.error;        
+        requestResult.statusText = response.statusText;
+    }
+
+    return requestResult;
 }
