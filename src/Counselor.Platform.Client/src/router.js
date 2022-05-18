@@ -8,7 +8,7 @@ const routes = [
         name: routePaths.home.name,
         component: () => import('./views/Home'),
         meta: {
-            requeresAuth: true
+            requiresAuth: true
         }
     },
     {
@@ -16,7 +16,7 @@ const routes = [
         name: routePaths.editor.name,
         component: () => import('./views/Editor'),
         meta: {
-            requeresAuth: true
+            requiresAuth: true
         }
     },
     {
@@ -46,9 +46,9 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(x => x.meta.requeresAuth) && !store.getters['isAuthenticated'])
+    if (to.matched.some(x => x.meta.requiresAuth) && !store.getters['isAuthenticated'])
     {
-        next({ path: routePaths.login });
+        next({ path: routePaths.login.path });
     }
     else if (to.path === routePaths.login || to.path === routePaths.register)
     {

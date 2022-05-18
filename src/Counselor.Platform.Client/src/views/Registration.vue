@@ -52,7 +52,7 @@ export default {
             if (this.validateInput()) {
                 const result = await registrate(this.username, this.email, this.password);
                 if (result.success) {
-                    this.$router.replace({ path: routePaths.home });
+                    this.$router.replace({ path: routePaths.home.path });
                 }
                 else {
                     console.log(result.error);

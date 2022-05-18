@@ -17,8 +17,8 @@
 </template>
 
 <script>
-import { routePaths } from '../common/constants';
 import AccountShort from '../components/AccountShort.vue';
+import { routePaths } from '../common/constants';
 import { logout } from '../services/auth.service';
 import { Getters } from '../store';
 
@@ -35,7 +35,7 @@ export default {
     methods: {
         logoutUser() {
             logout();
-            this.$router.replace({ path: routePaths.login });
+            this.$router.replace({ path: routePaths.login.path });
         }
     }
 }

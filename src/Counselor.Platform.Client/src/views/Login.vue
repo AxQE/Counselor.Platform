@@ -49,7 +49,7 @@ export default {
                 const result = await login(this.username, this.password);
 
                 if (result.success) {
-                    this.$router.replace({ path: routePaths.home });
+                    this.$router.replace({ path: routePaths.home.path });
                 }
                 else {
                     console.log(result.error);
