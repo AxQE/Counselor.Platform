@@ -8,7 +8,8 @@ namespace Counselor.Platform.Api.Services.Interfaces
 {
 	public interface ITransportService
 	{
-		Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(CancellationToken cancellationToken);
+		Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(bool onlyActive, CancellationToken cancellationToken);
 		Task<Envelope<TransportDto>> GetTransportById(int transportId, CancellationToken cancellationToken);
+		Task<Envelope<IEnumerable<CommandDto>>> GetTranposportCommands(int transportId, CancellationToken cancellationToken);
 	}
 }

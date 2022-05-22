@@ -63,7 +63,7 @@ function cancelAuthIfUnauthorizedResponse(response) {
     }
 }
 
-async function handleResponse (response, successStatusCode = httpStatusCodes.Ok) {
+async function handleResponse (response, successStatusCode) {
     let requestResult = {};
     requestResult.status = response.status;
 

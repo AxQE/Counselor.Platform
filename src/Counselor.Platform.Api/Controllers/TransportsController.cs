@@ -4,7 +4,6 @@ using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -28,9 +27,9 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(typeof(Envelope<TransportDto>), StatusCodes.Status200OK)]
-		public async Task<IActionResult> GetAllTransports(CancellationToken cancellationToken)
+		public async Task<IActionResult> GetAllTransports([FromQuery] bool onlyActive, CancellationToken cancellationToken)
 		{
-			return ResolveResponse(await _service.GetAllTransports(cancellationToken));
+			return ResolveResponse(await _service.GetAllTransports(onlyActive, cancellationToken));
 		}
 
 		[HttpGet("{id}")]
@@ -50,7 +49,7 @@ namespace Counselor.Platform.Api.Controllers
 		{
 			if (id < 0) return BadRequest();
 
-			throw new NotImplementedException();
+			return ResolveResponse(await _service.GetTranposportCommands(id, cancellationToken));
 		}
 	}
 }

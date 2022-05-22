@@ -5,8 +5,8 @@ using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,9 +27,13 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public async Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(CancellationToken cancellationToken)
+		public async Task<Envelope<IEnumerable<TransportDto>>> GetAllTransports(bool onlyActive, CancellationToken cancellationToken)
 		{
-			var transports = await _database.Transports.ToListAsync(cancellationToken);
+			var transports = await _database.Transports
+				.AsNoTracking()
+				.Where(x => onlyActive ? x.IsActive : true)
+				.ToListAsync(cancellationToken);
+
 			return EnvelopeFactory.Create<IEnumerable<TransportDto>>(HttpStatusCode.OK, transports);
 		}
 
@@ -39,9 +43,16 @@ namespace Counselor.Platform.Api.Services
 			return EnvelopeFactory.Create<TransportDto>(HttpStatusCode.OK, transport);
 		}
 
-		public async Task<Envelope<IEnumerable<InterpreterCommandDto>>> GetTranposportCommands(int transportId, CancellationToken cancellationToken)
+		public async Task<Envelope<IEnumerable<CommandDto>>> GetTranposportCommands(int transportId, CancellationToken cancellationToken)
 		{
-			throw new NotImplementedException();
+			var commands = await _database.Commands
+				.AsNoTracking()
+				.Include(x => x.Transport)
+				.Include(x => x.Paramaters)
+				.Where(x => x.Transport.Id == transportId)
+				.ToListAsync(cancellationToken);
+
+			return EnvelopeFactory.Create<IEnumerable<CommandDto>>(HttpStatusCode.OK, commands);
 		}
 	}
 }

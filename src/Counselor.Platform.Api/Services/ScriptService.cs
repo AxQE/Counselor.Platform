@@ -80,7 +80,7 @@ namespace Counselor.Platform.Api.Services
 
 				var result = await _database.Scripts.AddAsync(dbScript, cancellationToken);
 				await _database.SaveChangesAsync(cancellationToken);
-				return EnvelopeFactory.Create<ScriptHeaderDto>(HttpStatusCode.Created, result);
+				return EnvelopeFactory.Create<ScriptHeaderDto>(HttpStatusCode.Created, result.Entity);
 			}
 			catch (Exception ex)
 			{

@@ -2,24 +2,17 @@
 
 namespace Counselor.Platform.Api.Models.Dto
 {
-	public class InterpreterCommandDto
+	public class CommandDto
 	{
 		public string Name { get; set; }
-		public CommandType CommandType { get; set; }
 		public string Transport { get; set; }
 		public bool IsActive { get; set; }
-		public IEnumerable<InterpreterCommandParameterDto> Parameters { get; set; }
+		public IEnumerable<CommandParameterDto> Parameters { get; set; }
 	}
 
-	public class InterpreterCommandParameterDto
+	public class CommandParameterDto
 	{
 		public string Name { get; set; }
 		public string TypeName { get; set; }
-	}
-
-	public enum CommandType
-	{
-		Internal,
-		External
 	}
 }

@@ -124,7 +124,7 @@ namespace Counselor.Platform.Api.Services
 				var result = await _database.Bots.AddAsync(dbBot, cancellationToken);
 				await _database.SaveChangesAsync(cancellationToken);
 
-				return EnvelopeFactory.Create<BotDto>(HttpStatusCode.OK, result);
+				return EnvelopeFactory.Create<BotDto>(HttpStatusCode.OK, result.Entity);
 			}
 			catch (OperationCanceledException)
 			{

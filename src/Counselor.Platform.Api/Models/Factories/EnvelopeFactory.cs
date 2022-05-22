@@ -1,11 +1,21 @@
 ﻿using Mapster;
 using System;
 using System.Net;
+using System.Reflection;
 
 namespace Counselor.Platform.Api.Models.Factories
 {
 	public static class EnvelopeFactory
 	{
+		private static readonly TypeAdapterConfig _config;
+
+		static EnvelopeFactory()
+		{
+			var config = new TypeAdapterConfig();
+			config.Scan(Assembly.GetExecutingAssembly());
+			_config = config;
+		}
+
 		/// <summary>
 		/// Создать объект ответа сервиса с маппингом даннных к переданному типу dto
 		/// </summary>
@@ -18,7 +28,7 @@ namespace Counselor.Platform.Api.Models.Factories
 		{
 			return new Envelope<T>
 			{
-				Payload = data?.Adapt<T>(),
+				Payload = data?.Adapt<T>(_config),
 				Error = !string.IsNullOrEmpty(errorMessage) ? new Error { Message = errorMessage, Id = errorId } : null,
 				HttpStatus = httpStatus
 			};

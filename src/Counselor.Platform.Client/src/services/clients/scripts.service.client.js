@@ -1,21 +1,14 @@
 import { httpStatusCodes } from "../../common/constants";
-import { GET } from "./base.service.client";
+import { GET, POST } from "./base.service.client";
+
+export const getAllScripts = () => {
+    return GET('scripts');
+}
 
 export const getScript = (id) => {
-    let requestResult = {};
+    return GET(`scripts/${id}`);
+}
 
-    const response = GET(`scripts/${id}`);
-
-
-    const result = await response.text();
-
-    if (response.status === httpStatusCodes.Ok) {
-        requestResult.data = result.payload;
-    }
-    else{
-        requestResult.error = result.error;        
-        requestResult.statusText = response.statusText;
-    }
-
-    return requestResult;
+export const createScript = (script) => {
+    return POST('scripts', script, null, httpStatusCodes.Created);
 }
