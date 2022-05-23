@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Counselor.Platform.Api.Models;
+using Counselor.Platform.Api.Models.Requests;
 
 namespace Counselor.Platform.Api.Controllers
 {
@@ -47,7 +48,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
-		public async Task<IActionResult> CreateScript(ScriptDto script, CancellationToken cancellationToken)
+		public async Task<IActionResult> CreateScript(ScriptCreateRequest script, CancellationToken cancellationToken)
 		{
 			var created = await _service.Create(script, HttpContext.GetCurrentUserId(), cancellationToken);
 			return ResolveResponse(created);
@@ -71,7 +72,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpPatch]
 		[ProducesResponseType(typeof(Envelope<ScriptHeaderDto>), StatusCodes.Status200OK)]
-		public async Task<IActionResult> UpdateScript(ScriptDto script, CancellationToken cancellationToken)
+		public async Task<IActionResult> UpdateScript(ScriptUpdateRequest script, CancellationToken cancellationToken)
 		{
 			return ResolveResponse(await _service.Update(script, HttpContext.GetCurrentUserId(), cancellationToken));
 		}

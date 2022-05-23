@@ -27,7 +27,8 @@ export default {
     },
     getters: {
         getBotId() {
-            const path = window.location.path;
+            const id = window.location.path.substring(window.location.path.lastIndexOf('/') + 1, window.location.path.length);
+            return id;
         }
     }
 }

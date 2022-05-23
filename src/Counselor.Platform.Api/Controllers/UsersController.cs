@@ -1,5 +1,6 @@
 ﻿using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,7 +29,7 @@ namespace Counselor.Platform.Api.Controllers
 		[AllowAnonymous]
 		[HttpPost("authenticate")]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
-		public async Task<IActionResult> Authenticate(AuthDto auth, CancellationToken cancellationToken)
+		public async Task<IActionResult> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid) return BadRequest();
 
@@ -40,11 +41,11 @@ namespace Counselor.Platform.Api.Controllers
 		[AllowAnonymous]
 		[HttpPost]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status201Created)]
-		public async Task<IActionResult> CreateUser(AuthDto auth, CancellationToken cancellationToken)
+		public async Task<IActionResult> CreateUser(UserCreateRequest data, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid) return BadRequest();
 
-			var newUser = await _service.CreateUser(auth, cancellationToken);
+			var newUser = await _service.CreateUser(data, cancellationToken);
 
 			return ResolveResponse(newUser);
 		}

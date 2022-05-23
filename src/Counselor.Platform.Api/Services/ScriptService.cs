@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Models.Factories;
+using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
@@ -61,12 +62,12 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<Envelope<ScriptHeaderDto>> Update(ScriptDto script, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptHeaderDto>> Update(ScriptUpdateRequest script, int userId, CancellationToken cancellationToken)
 		{
 			throw new NotImplementedException();
 		}
 
-		public async Task<Envelope<ScriptHeaderDto>> Create(ScriptDto script, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptHeaderDto>> Create(ScriptCreateRequest script, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{

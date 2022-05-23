@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Models.Factories;
+using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
@@ -90,13 +91,13 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<Envelope<BotDto>> Create(BotDto bot, int userId, CancellationToken cancellationToken) //todo: странно что id владельца передается в теле, нужно брать из клеймов
+		public async Task<Envelope<BotDto>> Create(BotCreateRequest bot, int userId, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == bot.Owner.Id, cancellationToken);
-				var script = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == bot.Script.Id && x.Owner.Id == bot.Owner.Id, cancellationToken);
-				var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == bot.Transport.Id, cancellationToken);
+				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+				var script = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == bot.ScriptId && x.Owner.Id == userId, cancellationToken);
+				var transport = await _database.Transports.FirstOrDefaultAsync(x => x.Id == bot.TransportId, cancellationToken);
 
 				if (owner == null) //todo: блок проверок закрыт заглушками
 				{

@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Models.Factories;
+using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
@@ -18,7 +19,8 @@ namespace Counselor.Platform.Api.Services
 	public class UserService : IUserService
 	{
 		private const string UserOrPasswordNotFound = "Incorrect username or password.";
-		private const string UsernameAlreadyExists = "Username already axists.";
+		private const string UsernameAlreadyExists = "Username already exists.";
+		private const string EmailAlreadyInUse = "Email already in use.";
 
 		private readonly IPlatformDatabase _database;
 		private readonly ILogger<UserService> _logger;
@@ -29,7 +31,7 @@ namespace Counselor.Platform.Api.Services
 			_logger = logger;
 		}
 
-		public Task<Envelope<UserDto>> Authenticate(AuthDto auth, CancellationToken cancellationToken)
+		public Task<Envelope<UserDto>> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
 		{
 			return Authenticate(auth.Username, auth.Password, cancellationToken);
 		}
@@ -40,7 +42,7 @@ namespace Counselor.Platform.Api.Services
 			{
 				var user = await _database.Users
 					.AsNoTracking()
-					.FirstOrDefaultAsync(x => string.Equals(x.Username, username));
+					.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Username, $"%{username}%"));
 
 				if (user == null)
 				{
@@ -65,17 +67,26 @@ namespace Counselor.Platform.Api.Services
 			}
 		}
 
-		public async Task<Envelope<UserDto>> CreateUser(AuthDto auth, CancellationToken cancellationToken)
+		public async Task<Envelope<UserDto>> CreateUser(UserCreateRequest data, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var exists = await _database.Users
+				var existingUsername = await _database.Users
 						.AsNoTracking()
-						.FirstOrDefaultAsync(x => string.Equals(x.Username, auth.Username));
+						.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Username, $"%{data.Username}%"));
 
-				if (exists != null)
+				if (existingUsername != null)
 				{
 					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, UsernameAlreadyExists);
+				}
+
+				var existingEmail = await _database.Users
+						.AsNoTracking()
+						.FirstOrDefaultAsync(x => x.Email == data.Email.ToLowerInvariant());
+
+				if (existingEmail != null)
+				{
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, EmailAlreadyInUse);
 				}
 
 				byte[] salt = new byte[16]; //128 bit
@@ -84,8 +95,9 @@ namespace Counselor.Platform.Api.Services
 
 				var newUser = new User
 				{
-					Username = auth.Username,
-					Password = HashPassword(auth.Password, salt),
+					Username = data.Username,
+					Email = data.Email.ToLowerInvariant(),
+					Password = HashPassword(data.Password, salt),
 					Salt = Convert.ToBase64String(salt)
 				};
 

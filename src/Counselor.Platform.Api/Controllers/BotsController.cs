@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Dto;
+using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -48,9 +49,8 @@ namespace Counselor.Platform.Api.Controllers
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
-		public async Task<IActionResult> Create(BotDto bot, CancellationToken cancellationToken)
+		public async Task<IActionResult> Create(BotCreateRequest bot, CancellationToken cancellationToken)
 		{
-			bot.Owner = HttpContext.GetCurrentUser();
 			return ResolveResponse(await _botService.Create(bot, HttpContext.GetCurrentUserId(), cancellationToken));
 		}
 

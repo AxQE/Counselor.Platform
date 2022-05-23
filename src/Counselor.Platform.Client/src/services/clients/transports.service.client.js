@@ -1,7 +1,7 @@
 import { GET } from "./base.service.client";
 
 export const getAllTransports = (onlyActive = true) => {
-    return GET(`transports?onlyActive${onlyActive}`);
+    return GET(`transports?onlyActive=${onlyActive}`);
 }
 
 export const getTransport = (id) => {
