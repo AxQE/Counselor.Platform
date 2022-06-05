@@ -6,6 +6,7 @@
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<Version>0.1.0</Version>
 		<DockerfileContext>..\..</DockerfileContext>
+		<Nullable>warnings</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>
