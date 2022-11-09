@@ -1,5 +1,5 @@
 <template>
-    <div class="command-node-short">{{ title }}</div>
+    <div class="node">{{ title }}</div>
 </template>
 
 <script>

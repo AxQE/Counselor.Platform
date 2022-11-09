@@ -32,7 +32,7 @@ namespace Counselor.Platform.Tests.Api.Services
 
 			var service = new TransportService(db.Object, logger.Object);
 
-			var result = service.GetAllTransports(CancellationToken.None).Result;
+			var result = service.GetAllTransports(onlyActive: false, CancellationToken.None).Result;
 
 			Assert.IsNotNull(result);
 			Assert.AreEqual(1, result.Payload.Count());

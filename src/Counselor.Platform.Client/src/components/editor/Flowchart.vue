@@ -1,9 +1,15 @@
 <template>
     <div class="command-nodes">
-        <ul>
-            <li draggable="true" @dragstart="drag($event)" class="drag-dragflow">Node</li>
-            <li class="command" v-for="t in transports" :key="t.transport.id">
-                {{ t }}
+        <ul>            
+            <li 
+                v-for="command in commandNodesList"
+                :key="command"
+                :data-node="command.item"
+                draggable="true"
+                @dragstart="drag($event)"
+                class="drag-dragflow"            
+                >
+                <CommandNodeShort :title="command.name"/>
             </li>
         </ul>
     </div>
@@ -14,6 +20,8 @@
 "use strict"
 
 import CommandNode from './CommandNode.vue'
+import CommandRootNode from './CommandRootNode.vue'
+import CommandNodeShort from './CommandNodeShort.vue'
 import Drawflow from 'drawflow'
 import styleDrawflow from 'drawflow/dist/drawflow.min.css'
 import { onMounted, shallowRef, h, getCurrentInstance, render, readonly, ref } from 'vue'
@@ -22,11 +30,17 @@ import { getAllTransports, getTransportCommand } from '../../services/clients/tr
 export default {
     name: 'Flowchart',
     data() {
-        return {
-            transports: []
+        return {            
+            commands: []
         }
     },
+    components: {
+        // CommandNode,
+        CommandNodeShort
+    },
     setup() {
+
+        console.log('setup flowchart')
         const commandNodesList = [];
 
         const editor = shallowRef({});
@@ -34,7 +48,7 @@ export default {
         const dialogData = ref({});
         const Vue = { version: 3, h, render };
         const internalInstance = getCurrentInstance();
-        internalInstance.appContext.app._context.config.globalProperties.$df = editor;
+        internalInstance.appContext.app._context.config.globalProperties.$df = editor;        
 
         function exportEditor() {
             dialogData.value = editor.value.export();
@@ -79,12 +93,12 @@ export default {
             pos_x = pos_x * ( editor.value.precanvas.clientWidth / (editor.value.precanvas.clientWidth * editor.value.zoom)) - (editor.value.precanvas.getBoundingClientRect().x * ( editor.value.precanvas.clientWidth / (editor.value.precanvas.clientWidth * editor.value.zoom)));
             pos_y = pos_y * ( editor.value.precanvas.clientHeight / (editor.value.precanvas.clientHeight * editor.value.zoom)) - (editor.value.precanvas.getBoundingClientRect().y * ( editor.value.precanvas.clientHeight / (editor.value.precanvas.clientHeight * editor.value.zoom)));
             
-            const nodeSelected = commandNodesList.find(ele => ele.item == name);
-            editor.value.addNode(name, nodeSelected.input,  nodeSelected.output, pos_x, pos_y, name, {}, name, 'vue');        
+            const nodeSelected = commandNodesList.find(ele => ele.item == name);            
+            editor.value.addNode(name, nodeSelected.input,  nodeSelected.output, pos_x, pos_y, name, {}, name, 'vue');
         }
 
         onMounted(() => {
-
+            console.log('on mounted flowchart')
             var elements = document.getElementsByClassName('drag-drawflow');
             for (var i = 0; i < elements.length; i++) {
                 elements[i].addEventListener('touchend', drop, false);
@@ -97,6 +111,18 @@ export default {
             editor.value.start();
             
             editor.value.registerNode('CommandNode', CommandNode, {}, {});
+            editor.value.registerNode('CommandRootNode', CommandRootNode, {}, {});
+
+            commandNodesList.push(
+                {
+                    name: 'root',
+                    color: '#49494970',
+                    item: 'CommandRootNode',
+                    input: 0,
+                    output: 1
+                }
+            );
+            // addNodeToDrawFlow('CommandRootNode', 0, 0);
         });
 
         return {
@@ -104,29 +130,53 @@ export default {
         }
     },
     methods: {
-        async initTransports() {
+        currentTransportCommands() {
+            const transport = this.$data.transports.filter(x => x.Name === "Telegram")
+            return transport.commands;
+        },
+
+        async initTransports () {
+
+            console.log('init transports begin flowchart')
             const availableTransports = await getAllTransports();
 
              if (availableTransports.data) {
                  availableTransports.data.forEach(async transport => {
                     const commands = await getTransportCommand(transport.id);
-                    this.transports.push(
-                        {
-                            transport: transport,
-                            commands: commands.data
-                        }
-                    );
+                    this.commands.push(commands.data);
+
+                    commands.data.forEach(command => this.commandNodesList.push({
+                        name: command.name,
+                        color: '#49494970',
+                        item: 'CommandNode',
+                        input: 1,
+                        output: 1
+                    }));                    
                  });
-             }             
+             }
+
+             console.log('init transports end flowchart')
         }
     },
-    mounted() {
-        this.initTransports();
+
+    beforeMount(){
+        console.log('before mount flowchart')
+        this.initTransports();        
     }
 }
 </script>
 
 <style lang="scss" scoped>
+ul {
+    list-style-type: none;
+    text-align: center;    
+    padding: 0;
+}
+
+li {
+    display: inline-flex;    
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -153,15 +203,17 @@ export default {
     border: 2px solid #494949;
     display: block;
     height:60px;
+    width: 140px;
+    background-color: #c5c343;
     line-height:40px;
     padding: 10px;
     margin: 10px 0px;
     cursor: move;
-
 }
+
 #drawflow {
   width: 100%;
-  height: 100%;
+  height: 800px;
   text-align: initial;
   background: #2b2c30;
   background-size: 20px 20px;
@@ -188,7 +240,7 @@ export default {
     width: 20px;
     height: 20px;
     margin-top: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 14px;    
 }
 
 .drawflow .drawflow-node .input {

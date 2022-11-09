@@ -1,8 +1,8 @@
 <template>
-    <div class="command-node">
-        <div class="command-node-header">
+    <div class="flowchart-node">
+        <div class="flowchart-node-header">
         </div>
-        <div class="command-node-body">
+        <div class="flowchart-node-body">
             <Input 
                 v-model="commandId"
                 type="text"
@@ -32,6 +32,9 @@ import Instruction from './Instruction.vue'
 
 export default {
     name: 'Command',
+    props: {
+
+    },
     components: {
         Input,
         Instruction
@@ -48,13 +51,23 @@ export default {
 
 <style lang="scss" scoped>
 
-.command-node {
-    width: 100px;
-    height: 300px;
+.flowchart-node {
+    width: 200px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: black;
 }
 
-.command-node-header {
-    height: 50px;
+.flowchart-node-header {
+    height: 12px;
     width: 100%;
+}
+
+.input-container {
+    width: 50px;
+}
+
+.input-container input {
+    width: 150px;
 }
 </style>
