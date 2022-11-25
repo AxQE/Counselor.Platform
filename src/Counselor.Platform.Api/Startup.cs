@@ -2,6 +2,7 @@ using Counselor.Platform.Api.Helpers;
 using Counselor.Platform.Api.Middleware;
 using Counselor.Platform.Api.Services;
 using Counselor.Platform.Api.Services.Interfaces;
+using Counselor.Platform.Data;
 using Counselor.Platform.Data.Database;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
@@ -71,6 +72,7 @@ namespace Counselor.Platform.Api
 			services.AddScoped<IDialogService, DialogService>();
 			services.AddScoped<IScriptService, ScriptService>();
 			services.AddScoped<IBotService, BotService>();
+			services.AddScoped<IAccessChecker, AccessChecker>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

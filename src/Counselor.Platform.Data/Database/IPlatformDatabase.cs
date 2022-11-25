@@ -20,5 +20,7 @@ namespace Counselor.Platform.Data.Database
 
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 		int SaveChanges();
+
+		ValueTask<object> GetAccessibleEntityAsync(int id, Type entityType);
 	}
 }

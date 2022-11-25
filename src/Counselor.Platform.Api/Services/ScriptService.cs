@@ -3,6 +3,7 @@ using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
+using Counselor.Platform.Data;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,17 @@ namespace Counselor.Platform.Api.Services
 	{
 		private readonly IPlatformDatabase _database;
 		private readonly ILogger<ScriptService> _logger;
+		private readonly IAccessChecker _accessChecker;
 
 		public ScriptService(
 			IPlatformDatabase database,
-			ILogger<ScriptService> logger
+			ILogger<ScriptService> logger,
+			IAccessChecker accessChecker
 			)
 		{
 			_database = database;
 			_logger = logger;
+			_accessChecker = accessChecker;
 		}
 
 		public async Task Delete(int id, int userId, CancellationToken cancellationToken)
@@ -36,30 +40,15 @@ namespace Counselor.Platform.Api.Services
 
 		public async Task<Envelope<IEnumerable<ScriptHeaderDto>>> GetAllScripts(int userId, CancellationToken cancellationTokend)
 		{
-			try
-			{
-				var scripts = await _database.Scripts.ToListAsync(cancellationTokend);
-				return EnvelopeFactory.Create<IEnumerable<ScriptHeaderDto>>(HttpStatusCode.OK, scripts);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Request failed.");
-				throw;
-			}
+			var scripts = await _database.Scripts.ToListAsync(cancellationTokend);
+			return EnvelopeFactory.Create<IEnumerable<ScriptHeaderDto>>(HttpStatusCode.OK, scripts);
 		}
 
-		public async Task<Envelope<ScriptDto>> GetScript(int id, int userId, CancellationToken cancellationToken)
+		public async Task<Envelope<ScriptDto>> GetScript(int id, int OwnerId, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var result = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-				return EnvelopeFactory.Create<ScriptDto>(HttpStatusCode.OK, result);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, $"Request failed. Unable to get script by id: {id}.");
-				throw;
-			}
+			var result = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+			var rrr = await _database.Scripts.FindAsync(id, OwnerId);
+			return EnvelopeFactory.Create<ScriptDto>(HttpStatusCode.OK, result);
 		}
 
 		public async Task<Envelope<ScriptHeaderDto>> Update(ScriptUpdateRequest script, int userId, CancellationToken cancellationToken)
@@ -69,25 +58,17 @@ namespace Counselor.Platform.Api.Services
 
 		public async Task<Envelope<ScriptHeaderDto>> Create(ScriptCreateRequest script, int userId, CancellationToken cancellationToken)
 		{
-			try
+			var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+			Script dbScript = new Script
 			{
-				var owner = await _database.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-				Script dbScript = new Script
-				{
-					Name = script.Name,
-					Instruction = script.Instruction,
-					Owner = owner
-				};
+				Name = script.Name,
+				Instruction = script.Instruction,
+				Owner = owner
+			};
 
-				var result = await _database.Scripts.AddAsync(dbScript, cancellationToken);
-				await _database.SaveChangesAsync(cancellationToken);
-				return EnvelopeFactory.Create<ScriptHeaderDto>(HttpStatusCode.Created, result.Entity);
-			}
-			catch (Exception ex)
-			{
-				_logger.LogError(ex, "Error during script creation.");
-				throw;
-			}
+			var result = await _database.Scripts.AddAsync(dbScript, cancellationToken);
+			await _database.SaveChangesAsync(cancellationToken);
+			return EnvelopeFactory.Create<ScriptHeaderDto>(HttpStatusCode.Created, result.Entity);
 		}
 
 		public Task<Envelope<IEnumerable<ScriptHeaderDto>>> Activate(int scriptId, int userId, CancellationToken cancellationToken)

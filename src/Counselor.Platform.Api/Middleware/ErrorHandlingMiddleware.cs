@@ -1,6 +1,7 @@
 ﻿using Counselor.Platform.Api.Exceptions;
 using Counselor.Platform.Api.Models;
 using Counselor.Platform.Api.Models.Factories;
+using Counselor.Platform.Data.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
@@ -54,6 +55,11 @@ namespace Counselor.Platform.Api.Middleware
 				{
 					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, genericException.Message, genericException.ErrorId);
 					_logger.LogError(exception, genericException.Message);
+				}
+				else if(exception is AccessDeniedException accessDeniedException)
+				{
+					statusCode = HttpStatusCode.Forbidden;
+					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, accessDeniedException.Message);
 				}
 				else
 				{

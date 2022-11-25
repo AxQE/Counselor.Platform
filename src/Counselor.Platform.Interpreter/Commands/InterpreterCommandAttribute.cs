@@ -5,9 +5,9 @@ namespace Counselor.Platform.Interpreter.Commands
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 	public class InterpreterCommandAttribute : Attribute
 	{
-		public string ParameterName { get; private set; }
-		public Type ParameterType { get; private set; }
-		public bool IsActive { get; private set; }
+		public string ParameterName { get; }
+		public Type ParameterType { get; }
+		public bool IsActive { get; }
 
 		public InterpreterCommandAttribute(string parameterName, Type parameterType, bool isActive = true)
 		{

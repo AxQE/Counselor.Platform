@@ -5,6 +5,7 @@ using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
+using Counselor.Platform.Data.Entities.Constants;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -69,70 +70,55 @@ namespace Counselor.Platform.Api.Services
 
 		public async Task<Envelope<UserDto>> CreateUser(UserCreateRequest data, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var existingUsername = await _database.Users
+			var existingUsername = await _database.Users
 						.AsNoTracking()
 						.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Username, $"%{data.Username}%"));
 
-				if (existingUsername != null)
-				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, UsernameAlreadyExists);
-				}
-
-				var existingEmail = await _database.Users
-						.AsNoTracking()
-						.FirstOrDefaultAsync(x => x.Email == data.Email.ToLowerInvariant());
-
-				if (existingEmail != null)
-				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, EmailAlreadyInUse);
-				}
-
-				byte[] salt = new byte[16]; //128 bit
-				using var random = RandomNumberGenerator.Create();
-				random.GetBytes(salt);
-
-				var newUser = new User
-				{
-					Username = data.Username,
-					Email = data.Email.ToLowerInvariant(),
-					Password = HashPassword(data.Password, salt),
-					Salt = Convert.ToBase64String(salt)
-				};
-
-				await _database.Users.AddAsync(newUser);
-				await _database.SaveChangesAsync();
-
-				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Created, newUser);
-			}
-			catch (Exception ex)
+			if (existingUsername != null)
 			{
-				_logger.LogError(ex, "Error during user creation.");
-				throw;
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, UsernameAlreadyExists);
 			}
+
+			var existingEmail = await _database.Users
+					.AsNoTracking()
+					.FirstOrDefaultAsync(x => x.Email == data.Email.ToLowerInvariant());
+
+			if (existingEmail != null)
+			{
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.UnprocessableEntity, null, EmailAlreadyInUse);
+			}
+
+			byte[] salt = new byte[16]; //128 bit
+			using var random = RandomNumberGenerator.Create();
+			random.GetBytes(salt);
+
+			var newUser = new User
+			{
+				Username = data.Username,
+				Email = data.Email.ToLowerInvariant(),
+				Password = HashPassword(data.Password, salt),
+				Salt = Convert.ToBase64String(salt),
+				//Role = Roles.Client
+			};
+
+			await _database.Users.AddAsync(newUser);
+			await _database.SaveChangesAsync();
+
+			return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Created, newUser);
 		}
 
 		public async Task<Envelope<UserDto>> GetCurrentUser(int userId, CancellationToken cancellationToken)
 		{
-			try
-			{
-				var user = await _database.Users
+			var user = await _database.Users
 						.AsNoTracking()
 						.FirstOrDefaultAsync(x => x.Id == userId);
 
-				if (user != null)
-				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);
-				}
-
-				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.NotFound);
-			}
-			catch (Exception ex)
+			if (user != null)
 			{
-				_logger.LogError(ex, "Error during getuser.");
-				throw;
+				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);
 			}
+
+			return EnvelopeFactory.Create<UserDto>(HttpStatusCode.NotFound);
 		}
 
 		private string HashPassword(string password, byte[] salt)

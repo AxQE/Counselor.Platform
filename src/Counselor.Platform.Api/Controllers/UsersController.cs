@@ -31,11 +31,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
 		{
-			if (!ModelState.IsValid) return BadRequest();
-
-			var user = await _service.Authenticate(auth, cancellationToken);
-
-			return ResolveResponse(user);
+			return ResolveResponse(await _service.Authenticate(auth, cancellationToken));
 		}
 
 		[AllowAnonymous]
@@ -43,20 +39,14 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status201Created)]
 		public async Task<IActionResult> CreateUser(UserCreateRequest data, CancellationToken cancellationToken)
 		{
-			if (!ModelState.IsValid) return BadRequest();
-
-			var newUser = await _service.CreateUser(data, cancellationToken);
-
-			return ResolveResponse(newUser);
+			return ResolveResponse(await _service.CreateUser(data, cancellationToken));
 		}
 
 		[HttpGet("current")]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
 		public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
 		{
-			var user = await _service.GetCurrentUser(CurrentUserId, cancellationToken);
-
-			return ResolveResponse(user);
+			return ResolveResponse(await _service.GetCurrentUser(CurrentUserId, cancellationToken));
 		}
 	}
 }
