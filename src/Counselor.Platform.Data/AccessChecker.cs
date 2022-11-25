@@ -30,17 +30,5 @@ namespace Counselor.Platform.Data
 				throw new AccessDeniedException(userId, entity.OwnerId, entity.GetType().Name);
 			}
 		}
-
-		public async Task EnsureAvailable(int userId, int entityId, Type entityType)
-		{
-			var entity = (AccessibleEntity)(await _database.GetAccessibleEntityAsync(entityId, entityType));
-
-			if (entity.OwnerId != userId)
-			{
-				throw new AccessDeniedException(userId, entity.OwnerId, entity.GetType().Name);
-			}
-		}
-
-		
 	}
 }

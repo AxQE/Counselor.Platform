@@ -54,10 +54,5 @@ namespace Counselor.Platform.Data.Database
 				entity.ModifiedOn = now;
 			}
 		}
-
-		public ValueTask<object> GetAccessibleEntityAsync(int id, Type entityType)
-		{
-			return FindAsync(entityType, id);
-		}
 	}
 }
