@@ -5,7 +5,9 @@ using Counselor.Platform.Data.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -51,20 +53,22 @@ namespace Counselor.Platform.Api.Middleware
 
 			if (exception != null)
 			{
-				if (exception is GenericApiException genericException)
+				switch (exception)
 				{
-					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, genericException.Message, genericException.ErrorId);
-					_logger.LogError(exception, genericException.Message);
-				}
-				else if(exception is AccessDeniedException accessDeniedException)
-				{
-					statusCode = HttpStatusCode.Forbidden;
-					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, accessDeniedException.Message);
-				}
-				else
-				{
-					errorResponse = EnvelopeFactory.Create<object>(statusCode, null, "Something went wrong.");
-					_logger.LogError(exception, "Unhandled API exception.");
+					case AccessDeniedException accessDeniedException:
+						statusCode = HttpStatusCode.Forbidden;
+						errorResponse = EnvelopeFactory.Create<object>(statusCode, null, accessDeniedException.Message);
+						break;
+
+					case GenericApiException genericException:
+						errorResponse = EnvelopeFactory.Create<object>(statusCode, null, genericException.Message, genericException.ErrorId);
+						_logger.LogError(exception, genericException.Message);
+						break;
+
+					default:
+						errorResponse = EnvelopeFactory.Create<object>(statusCode, null, "Something went wrong.");
+						_logger.LogError(exception, "Unhandled API exception.");
+						break;
 				}
 			}
 
