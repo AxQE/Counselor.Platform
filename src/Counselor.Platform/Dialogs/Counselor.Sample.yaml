@@ -2,60 +2,41 @@
 IsActive: true
 Steps:
   - Id: Greeting
-    FriendlyName: 
+    FriendlyName: null
     IsRoot: true
     Transitions:
       - Child1
       - Child2
       - Child3
-    Response: "Hello, {user:username}!"
-    Before: 
-    After: 
+    Response: 'Hello, {user:username}!'
+    Before: null
+    After: null
     OnSuccess:
       Type: Instruction
       Data: Next
-    OnFailure: 
+    OnFailure:
       Type: Instruction
-      Data: None
+      Data: Stop
     Command:
       Type: Instruction
-      Data: "[ExternalCommand] [SendMessage] Hello, {user:username}!"
+      Data: '[ExternalCommand] [SendMessage] Hello, {user:username}!'
     IsActive: true
     StepType: External
     Condition:
-      Data: "[Boolean] {user:username} NotEqual null"
-
+      Data: '[Boolean] {user:username} NotEqual null'
   - Id: Child1
     Response: Child1
-    Command:
-      Type: Instruction
-      Data: "[ExternalCommand] [SendMessage] Child1 invoked on condition."
+    Command: null
     Condition:
-      Data: "[MessageContains] Child1"
-    Transitions:
-     - Child4
-
+      Data: None
   - Id: Child2
     Response: Child2
-    Command:     
+    Command: null
     IsActive: false
     Condition:
-      Data: "[MessageContains] Child2"
-    Transitions:
-     - Child4
-
+      Data: None
   - Id: Child3
     Response: Child3
-    Command:    
-    Condition:
-      Data: "[MessageContains] Child3"
-    Transitions:
-     - Child4
-
-  - Id: Child4
-    Response: Child4
-    Command:
-      Type: Instruction
-      Data: "[ExternalCommand] [SendMessage] yep. Child4."
+    Command: null
     Condition:
       Data: None
