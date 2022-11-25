@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Counselor.Platform.Api.Controllers
 {
+	[ProducesResponseType(StatusCodes.Status400BadRequest)]
+	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class ControllerBase : Microsoft.AspNetCore.Mvc.ControllerBase
 	{
 		protected int CurrentUserId => HttpContext.GetCurrentUserId();

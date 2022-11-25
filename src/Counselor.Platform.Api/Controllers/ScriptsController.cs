@@ -16,10 +16,8 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	[ProducesResponseType(StatusCodes.Status403Forbidden)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class ScriptsController : ControllerBase
 	{
 		private readonly IScriptService _service;

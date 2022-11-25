@@ -14,9 +14,6 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
-	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class UsersController : ControllerBase
 	{
 		private readonly IUserService _service;
@@ -29,6 +26,7 @@ namespace Counselor.Platform.Api.Controllers
 		[AllowAnonymous]
 		[HttpPost("authenticate")]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
 		{
 			return ResolveResponse(await _service.Authenticate(auth, cancellationToken));
@@ -37,6 +35,7 @@ namespace Counselor.Platform.Api.Controllers
 		[AllowAnonymous]
 		[HttpPost]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
 		public async Task<IActionResult> CreateUser(UserCreateRequest data, CancellationToken cancellationToken)
 		{
 			return ResolveResponse(await _service.CreateUser(data, cancellationToken));
@@ -44,6 +43,7 @@ namespace Counselor.Platform.Api.Controllers
 
 		[HttpGet("current")]
 		[ProducesResponseType(typeof(Envelope<UserDto>), StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken)
 		{
 			return ResolveResponse(await _service.GetCurrentUser(CurrentUserId, cancellationToken));

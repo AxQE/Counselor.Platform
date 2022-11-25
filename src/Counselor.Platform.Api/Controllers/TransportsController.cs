@@ -14,9 +14,7 @@ namespace Counselor.Platform.Api.Controllers
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	[ApiController]
-	[ProducesResponseType(StatusCodes.Status400BadRequest)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 	public class TransportsController : ControllerBase
 	{
 		private readonly ITransportService _service;
