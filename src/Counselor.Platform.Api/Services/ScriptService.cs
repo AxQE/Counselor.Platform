@@ -20,17 +20,14 @@ namespace Counselor.Platform.Api.Services
 	{
 		private readonly IPlatformDatabase _database;
 		private readonly ILogger<ScriptService> _logger;
-		private readonly IAccessChecker _accessChecker;
 
 		public ScriptService(
 			IPlatformDatabase database,
-			ILogger<ScriptService> logger,
-			IAccessChecker accessChecker
+			ILogger<ScriptService> logger
 			)
 		{
 			_database = database;
 			_logger = logger;
-			_accessChecker = accessChecker;
 		}
 
 		public async Task Delete(int id, int userId, CancellationToken cancellationToken)

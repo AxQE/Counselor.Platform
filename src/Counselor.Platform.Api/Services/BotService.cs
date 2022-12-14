@@ -3,7 +3,6 @@ using Counselor.Platform.Api.Models.Dto;
 using Counselor.Platform.Api.Models.Factories;
 using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
-using Counselor.Platform.Data;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
 using Counselor.Platform.Data.Entities.Enums;
@@ -24,17 +23,14 @@ namespace Counselor.Platform.Api.Services
 
 		private readonly ILogger<BotService> _logger;
 		private readonly IPlatformDatabase _database;
-		private readonly IAccessChecker _accessChecker;
 
 		public BotService(
 			ILogger<BotService> logger,
-			IPlatformDatabase database,
-			IAccessChecker accessChecker
+			IPlatformDatabase database
 			)
 		{
 			_logger = logger;
 			_database = database;
-			_accessChecker = accessChecker;
 		}
 
 		public async Task<Envelope<BotDto>> Get(int botId, int userId, CancellationToken cancellationToken)
