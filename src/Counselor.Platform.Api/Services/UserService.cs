@@ -5,7 +5,6 @@ using Counselor.Platform.Api.Models.Requests;
 using Counselor.Platform.Api.Services.Interfaces;
 using Counselor.Platform.Data.Database;
 using Counselor.Platform.Data.Entities;
-using Counselor.Platform.Data.Entities.Constants;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,22 +18,20 @@ namespace Counselor.Platform.Api.Services
 {
 	public class UserService : IUserService
 	{
-		private const string UserOrPasswordNotFound = "Incorrect username or password.";
+		private const string AuthenticationFailed = "Incorrect username or password.";
 		private const string UsernameAlreadyExists = "Username already exists.";
 		private const string EmailAlreadyInUse = "Email already in use.";
 
 		private readonly IPlatformDatabase _database;
 		private readonly ILogger<UserService> _logger;
 
-		public UserService(IPlatformDatabase database, ILogger<UserService> logger)
+		public UserService(
+			IPlatformDatabase database,
+			ILogger<UserService> logger
+			)
 		{
 			_database = database;
 			_logger = logger;
-		}
-
-		public Task<Envelope<UserDto>> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
-		{
-			return Authenticate(auth.Username, auth.Password, cancellationToken);
 		}
 
 		public async Task<Envelope<UserDto>> Authenticate(string username, string password, CancellationToken cancellationToken)
@@ -47,7 +44,7 @@ namespace Counselor.Platform.Api.Services
 
 				if (user == null)
 				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: UserOrPasswordNotFound);
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: AuthenticationFailed);
 				}
 
 				byte[] salt = Convert.FromBase64String(user.Salt);
@@ -55,7 +52,7 @@ namespace Counselor.Platform.Api.Services
 
 				if (!user.Password.Equals(hashedPassword))
 				{
-					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: UserOrPasswordNotFound);
+					return EnvelopeFactory.Create<UserDto>(HttpStatusCode.Unauthorized, errorMessage: AuthenticationFailed);
 				}
 
 				return EnvelopeFactory.Create<UserDto>(HttpStatusCode.OK, user);
@@ -63,7 +60,7 @@ namespace Counselor.Platform.Api.Services
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, $"Error during user authentication. Username: {username}.");
+				_logger.LogError(ex, "Error during user authentication. Username: {Username}.", username);
 				throw;
 			}
 		}

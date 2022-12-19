@@ -29,7 +29,7 @@ namespace Counselor.Platform.Api.Controllers
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> Authenticate(AuthRequest auth, CancellationToken cancellationToken)
 		{
-			return ResolveResponse(await _service.Authenticate(auth, cancellationToken));
+			return ResolveResponse(await _service.Authenticate(auth.Username, auth.Password, cancellationToken));
 		}
 
 		[AllowAnonymous]

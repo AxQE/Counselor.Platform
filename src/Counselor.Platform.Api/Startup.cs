@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
 
 namespace Counselor.Platform.Api
 {
@@ -53,14 +52,13 @@ namespace Counselor.Platform.Api
 				c.ReturnHttpNotAcceptable = true;
 			});
 
-			services.AddSwaggerGen(c =>
-			{
-				c.SwaggerDoc("v1", new OpenApiInfo { Title = "Counselor.Platform.Api", Version = "v1" });
-			});
-
 			services.AddHealthChecks();
 
 			services.AddResponseCaching();
+
+			services.AddDataProtection();
+
+			services.AddHttpContextAccessor();
 
 			services.AddAuthentication("BasicAuthentication")
 				.AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
@@ -79,8 +77,6 @@ namespace Counselor.Platform.Api
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseSwagger();
-				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Counselor.Platform.Api v1"));
 			}
 
 			//app.UseHttpsRedirection();

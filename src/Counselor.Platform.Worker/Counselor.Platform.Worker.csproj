@@ -26,11 +26,11 @@
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
 		<PackageReference Include="NetEscapades.Configuration.Yaml" Version="2.1.0" />
 		<PackageReference Include="NetMQ" Version="4.0.1.6" />
-		<PackageReference Include="Roslynator.Analyzers" Version="3.3.0">
+		<PackageReference Include="Roslynator.Analyzers" Version="4.2.0">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Telegram.Bot" Version="15.7.1" />
+		<PackageReference Include="Telegram.Bot" Version="18.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

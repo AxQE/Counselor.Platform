@@ -1,6 +1,7 @@
 ﻿Name: Sample
 IsActive: true
 Steps:
+
   - Id: Greeting
     FriendlyName: null
     IsRoot: true
@@ -24,17 +25,20 @@ Steps:
     StepType: External
     Condition:
       Data: '[Boolean] {user:username} NotEqual null'
+
   - Id: Child1
     Response: Child1
     Command: null
     Condition:
       Data: None
+
   - Id: Child2
     Response: Child2
     Command: null
     IsActive: false
     Condition:
       Data: None
+
   - Id: Child3
     Response: Child3
     Command: null
