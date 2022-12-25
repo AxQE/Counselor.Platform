@@ -1,5 +1,5 @@
 <template>
-    <div class="node">{{ title }}</div>
+    <div class="command-short">{{ title }}</div>
 </template>
 
 <script>
@@ -12,12 +12,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-div {
-    background: #494949;
-    margin-top: -15px;
-    margin-left: -15px;
-    margin-right: -15px;
-    padding: 10px 15px;
-    margin-bottom: 15px;
+.command-short {
+    border-radius: 8px;
+    border: 2px solid #494949;
+    display: block;
+    height:60px;
+    width: 120px;
+    background-color: #c5c343;
+    line-height:40px;
+    padding: 10px;
+    margin: 10px 0px;
+    cursor: move;
 }
 </style>

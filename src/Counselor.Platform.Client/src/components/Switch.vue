@@ -1,12 +1,20 @@
 <template>
     <label class="switch">
-        <input type="checkbox">
+        <input type="checkbox" :checked="isChecked">
         <span class="slider round"></span>
     </label>
 </template>
 
-<style lang="scss" scoped>
+<script>
+export default {
+  name: 'Switch',
+  props: {
+    isChecked: Boolean
+  }
+}
+</script>
 
+<style lang="scss" scoped>
 .switch {
   position: relative;
   display: inline-block;

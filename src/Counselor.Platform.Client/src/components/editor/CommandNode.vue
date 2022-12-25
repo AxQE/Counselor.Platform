@@ -1,27 +1,18 @@
 <template>
-    <div class="flowchart-node">
-        <div class="flowchart-node-header">
-        </div>
-        <div class="flowchart-node-body">
+    <div ref="el" class="command-node">
+        <div class="command-node-body">
             <Input 
-                v-model="commandId"
                 type="text"
                 class=""
-                placeholder="name" 
+                placeholder="name"
             />
             <Input 
-                v-model="friendlyName"
                 type="text"
                 class=""
-                placeholder="friendly name" 
-            />
-            <Input 
-                v-model="isActive"
-                type="checkbox"
-                class=""
-                name="active"
+                placeholder="response"
             />
             <Instruction />
+            <Switch :isChecked="isActive" />
         </div>
     </div>    
 </template>
@@ -29,15 +20,18 @@
 <script>
 import Input from '../Input.vue'
 import Instruction from './Instruction.vue'
+import Switch from '../Switch.vue'
+import { defineComponent, onMounted, getCurrentInstance, readonly, ref, nextTick } from 'vue'
 
-export default {
-    name: 'Command',
-    props: {
-
+export default defineComponent({
+    name: 'CommandNode',
+    props: {        
+        title: String
     },
     components: {
         Input,
-        Instruction
+        Instruction,
+        Switch
     },
     data() {
         return {
@@ -45,29 +39,59 @@ export default {
             friendlyName: '',
             isActive: true
         }
+    },
+    setup(){
+        const el = ref(null);
+        const nodeId = ref(0);
+        
+
+        const updateSelect = (value) => {
+            console.log(value);
+        }
+        
+        onMounted(async () => {
+            await nextTick()
+            // nodeId.value = el.value.parentElement.parentElement.id.slice(5)
+            // dataNode.value = df.getNodeFromId(nodeId.value)
+            
+            // url.value = dataNode.value.data.url;
+            // method.value = dataNode.value.data.method;
+        });
+        
+        return {
+            el, updateSelect
+        }
     }
-}
+})
 </script>
 
 <style lang="scss" scoped>
+* {
+    box-sizing: border-box;
+}
 
-.flowchart-node {
-    width: 200px;
-    height: 100px;
+.switch {
+    height: 15px;
+    width: 30px;
+}
+
+.slider {
+    border-radius: 5px;
+}
+
+:deep(.slider:before) {
+    height: 15px;
+    width: 15px;
+    left: 0px;
+    bottom: 0px;
     border-radius: 50%;
-    background-color: black;
+    background-color: white;
 }
 
-.flowchart-node-header {
-    height: 12px;
-    width: 100%;
+:deep(input:checked + .slider:before) {
+  -webkit-transform: translateX(16px);
+  -ms-transform: translateX(16px);
+  transform: translateX(16px);
 }
 
-.input-container {
-    width: 50px;
-}
-
-.input-container input {
-    width: 150px;
-}
 </style>

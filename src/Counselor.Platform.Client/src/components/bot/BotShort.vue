@@ -73,9 +73,13 @@ div {
 }
 
 #stop-bot {
-    width: 10px;
-    height: 10px;
+    width: 20px;
+    height: 20px;
     background-color: red;    
+}
+
+#stop-bot:hover {
+    border: 2px solid blue;
 }
 
 </style>
