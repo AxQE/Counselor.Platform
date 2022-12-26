@@ -160,7 +160,7 @@ namespace Counselor.Platform.Api.Services
 				.Include(x => x.Transport)
 				.Include(x => x.Script);
 
-			if (tracking)
+			if (!tracking)
 			{
 				request.AsNoTracking();
 			}

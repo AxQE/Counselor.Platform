@@ -12,8 +12,26 @@
                 <CommandNodeShort :title="command.name"/>
             </li>
         </ul>
+        <div class="import control-button" v-on:click="importFlowchart"><p>IMPORT</p></div>
+        <div class="export control-button" v-on:click="exportFlowchart"><p>EXPORT</p></div>
     </div>
-    <div id="drawflow" @drop="drop($event)" @dragover="allowDrop($event)"></div>    
+    <div id="drawflow" @drop="drop($event)" @dragover="allowDrop($event)"></div>
+    <el-dialog
+    v-model="dialogVisible"
+    title="Export"
+    width="50%"
+    >
+    <span>Data:</span>
+    <pre><code>{{dialogData}}</code></pre>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >Confirm</el-button
+        >
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
@@ -27,6 +45,7 @@ import styleDrawflow from 'drawflow/dist/drawflow.min.css'
 import flowchart from '../../assets/styles/flowchart.css'
 import { onMounted, shallowRef, h, getCurrentInstance, render, readonly, ref } from 'vue'
 import { getAllTransports, getTransportCommand } from '../../services/clients/transports.service.client'
+import { getScript } from '../../services/clients/scripts.service.client'
 
 export default {
     name: 'Flowchart',
@@ -52,7 +71,11 @@ export default {
 
         function exportEditor() {
             dialogData.value = editor.value.export();
-            dialogVisible.value.true;
+            dialogVisible.value = true;
+        }
+
+        function importEditor() {
+
         }
 
         const drag = (event) => {
@@ -132,16 +155,28 @@ export default {
         });
 
         return {
-            exportEditor, commandNodesList: commandNodesList, drag, drop, allowDrop, dialogVisible, dialogData
+            exportEditor, importEditor, commandNodesList: commandNodesList, drag, drop, allowDrop, dialogVisible, dialogData
         }
     },
     methods: {
         currentTransportCommands() {
             const transport = this.$data.transports.filter(x => x.Name === "Telegram")
             return transport.commands;
+        },
+
+        exportFlowchart() {
+            this.exportEditor();
+            console.log('export');
+        },
+
+        importFlowchart() {
+            console.log('import');
         }
     },
     async mounted() {
+
+        const currentScript = await getScript(1);
+
         const commandNodesList = this.commandNodesList;
         const availableCommands = this.commands;
 
@@ -186,6 +221,19 @@ li {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid #494949;
+}
+
+.control-button {
+    width: 80px;
+    height: 30px;
+    background-color: cadetblue;
+    text-align: center;
+    cursor: pointer;
+}
+
+.control-button:active {
+    background-color: cornflowerblue;
+    border: 2x solid gray;
 }
 
 #drawflow {

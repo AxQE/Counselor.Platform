@@ -44,7 +44,6 @@ namespace Counselor.Platform.Api.Services
 		public async Task<Envelope<ScriptDto>> GetScript(int id, int OwnerId, CancellationToken cancellationToken)
 		{
 			var result = await _database.Scripts.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-			var rrr = await _database.Scripts.FindAsync(id, OwnerId);
 			return EnvelopeFactory.Create<ScriptDto>(HttpStatusCode.OK, result);
 		}
 
