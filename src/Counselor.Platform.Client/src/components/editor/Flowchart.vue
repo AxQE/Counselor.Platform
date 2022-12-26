@@ -74,8 +74,8 @@ export default {
             dialogVisible.value = true;
         }
 
-        function importEditor() {
-
+        function importEditor(data) {
+            editor.value.import(data);
         }
 
         const drag = (event) => {
@@ -169,14 +169,13 @@ export default {
             console.log('export');
         },
 
-        importFlowchart() {
+        async importFlowchart() {
+            const currentScript = await getScript(2);
+            this.importEditor(currentScript.data.Instruction);
             console.log('import');
         }
     },
     async mounted() {
-
-        const currentScript = await getScript(1);
-
         const commandNodesList = this.commandNodesList;
         const availableCommands = this.commands;
 
