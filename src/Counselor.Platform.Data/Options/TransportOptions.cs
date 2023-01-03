@@ -1,8 +1,8 @@
 ﻿namespace Counselor.Platform.Data.Options
 {
-	public class TransportOptions
+	public abstract class TransportOptions
 	{
-		public virtual string SystemName { get; set; }
+		public abstract string SystemName { get; }
 		public virtual bool IsEnabled { get; set; }
 		public virtual bool SendErrorReport { get; set; }
 		public virtual string DialogName { get; set; }
